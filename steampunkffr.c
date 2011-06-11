@@ -858,14 +858,13 @@ void ort20(void) {
 	raum = 20;
 	textausgabe("Du öffnest die eiserne Treppe und gehst die Kellertreppe hinunter. Als du am Fuße der Treppe ankommst, siehst du vor dir die eiserne Doppeltüre, die in den Heizungskeller führt. Nach rechts führt ein weiterer Weg zum Lagerraum, wo deine Großmutter ihre Kartoffeln lagerte. Neben der Treppe führt ein Weg nach hinten, wo die Mieter des Hauses ihre Kellerabteile haben.");
 	auswahl("Wenn du zurück nach oben gehen willst (1). Möchtest du in den Heizungskeller (2). Willst du in den Gang, der zum Kartoffellager deiner Großmutter führt (3). Würdest du gerne in den rückwärtigen Bereich gehen (4).", 4, ort21, ort22, ort23, ort24, NULL, NULL);
-	}
 }
 
 void ort21(void) {
 // Treppenflur
 	raum = 21;
 	textausgabe("Du stehst in einem großen Treppenflur. An der Seite befindet sich der Hängeschrank mit den ganzen Ablesegeräten für Elektrizität und Wasser. Rechts an der Wand für eine Steintreppe hinauf in das erste Stockwerk. Geradeaus ist eine Holztüre, durch die man in den Kellerbereich der Gaststätte kommt, allerdings ist sie dauerhaft abgeschlossen. Rechts neben der Holztüre, unterhalb der Steintreppe, befindet sich eine Eisentüre, hinter der sich der Abstieg in den Keller befindet.");
-	textausgabe("Willst du die Treppe hinaufsteigen (1), in den Keller hinuntergehen (2), oder das Haus verlassen und zurück auf den Alten Markt (3)?", 3, ort25, ort20, ort26, NULL, NULL, NULL);
+	auswahl("Willst du die Treppe hinaufsteigen (1), in den Keller hinuntergehen (2), oder das Haus verlassen und zurück auf den Alten Markt (3)?", 3, ort25, ort20, ort26, NULL, NULL, NULL);
 }
 
 void ort22(void) {
@@ -1948,6 +1947,7 @@ void ort345(void) {
 }
 
 void ort346(void) {
+}
 
 void ort347(void) {
 }
@@ -2657,7 +2657,7 @@ int speichern(void) {
 	fprintf(datei, "%d\n", (int) kartegefunden);
 	fprintf(datei, "%d\n", (int) sargverschoben);
 	fprintf(datei, "%d\n", (int) durchganggeoeffnet);
-	fprintf(datei, "%d\n", (int) schluesselgefunden;
+	fprintf(datei, "%d\n", (int) schluesselgefunden);
 	fclose(datei);
 
 	color_set(3, 0);
