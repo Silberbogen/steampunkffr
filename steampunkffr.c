@@ -6,7 +6,7 @@
  *    Description:  Steampunk FFR - Der Anfang
  *    				Ein "Das-ist-dein-Abenteuer"-Roman
  *
- *        Version:  0.009
+ *        Version:  0.010
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -41,6 +41,7 @@
  *   - 22.05.2011 Schusswaffen und Munition implementiert
  *   - 22.05.2011 Tripodenauftauchen eingebaut
  *   - 24.06.2011 Eine Auswahl fehlte bei ort1()
+ *   - 24.06.2011 Beginne damit, eine erweiterten Stadtplan einzusetzen
  *
  * =====================================================================================
  */
@@ -125,7 +126,7 @@ bool beenden = false;
 // Spezialmonster (immun außer gegen Silber)
 // -----------------------------------------
 
-charakter_t Schuppiges_scheusal = { "Schuppiges Scheusal", 9, 9, 6, 6 };
+charakter_t mechanicher_geher = { "mechanicher Geher", 14, 13, 12, 12 };
 
 // -------------------
 // Funktionsprototypen
@@ -889,7 +890,12 @@ void ort22(void) {
 void ort23(void) {
 // Gang zum Kartoffelkeller
 	raum = 23;
-	textausgabe("Du gehst durch den nach Moder riechenden Gang. Als du an das ehemalige Kartoffellager deiner Großmutter kommst, mußt du feststellen, das es einfach nur leer und verdreckt ist. Seit ihrem Tod hat es wohl niemand mehr betreten. Die Kartoffeln müssen schon vor Jahren verschimmelt sein. Du wendest den Blick zur Seite. Die Klappe, durch die früher immer die Bierfässer hinabgelassen wurden, befindet sich immer noch am Ende des Ganges. Jetzt würde sie allerdings in den Wintergarten der Gaststätte führen. Da du hier nichts weiter finden kannst, beschließt du zurückzugehen.");
+	if(agartha && !schluesselgefunden) {
+		textausgabe("Du gehst durch den nach Moder riechenden Gang auf das ehemalige Kartoffellager deiner Großmutter zu. Du wendest dich nach links und stehst im Türrahmen. Da erinnerst du dich. Du siehst nach links, neben dem Rahmen war ein kurzer Nagel, an dem ein Schlüssel mit einem weißumrandeten Plastik-Schlüsselkärtchen hin. Auf dem weißen Schild war mit der krakeligen Handschrift deines Großvaters dein eigener Name niedergekritzelt.\nDer Nagel steckt zwar noch in der Hand, aber er deutet nach unten - und kein Schlüssel hängt daran. Du kniest dich nieder - und durchwühlst den mit Würmern belebten Karttoffel-Schimmel-Matsch am Boden. Der Geruch steigt dir unangenehm durch die Nase. Minutenlang durchpflügst du den Matsch. Der Verzweiflung nahe willst du schon aufgeben, als dein Finger etwas kaltes berührt. Schnell wühlst du den Gegenstand frei. Es ist der Schlüsselring - mit dem Schlüssel daran.\nZärtlich streichst du den Schmutz von dem Schlüsselkärtchen ab, doch die Handschrift deines Großvaters ist nicht mehr erkennbar. Dennoch nimmst du den Schlüssel an dich.\nDu stehst auf und verläßt den Kartoffelkeller und gehst zurück.");
+		schluesselgefunden = true;
+	}
+	else
+		textausgabe("Du gehst durch den nach Moder riechenden Gang. Als du an das ehemalige Kartoffellager deiner Großmutter kommst, mußt du feststellen, das es einfach nur leer und verdreckt ist. Seit ihrem Tod hat es wohl niemand mehr betreten. Die Kartoffeln müssen schon vor Jahren verschimmelt sein. Du wendest den Blick zur Seite. Die Klappe, durch die früher immer die Bierfässer hinabgelassen wurden, befindet sich immer noch am Ende des Ganges. Jetzt würde sie allerdings in den Wintergarten der Gaststätte führen. Da du hier nichts weiter finden kannst, beschließt du zurückzugehen.");
 	ort20();
 }
 
@@ -903,107 +909,166 @@ void ort24(void) {
 void ort25(void) {
 // Die Treppe hinaufsteigen
 	raum = 25;
-	if(schluesselgefunden) {
-		textausgabe("Die steigst die Treppen hinauf bis zum Dachgeschoss. Hinter der vorletzten Türe auf der rechten Seite, befindet sich das Spielzimmer, daß dein Großvater dir schenkte. Hier hatte er auf einer Spanplatte eine Eisenbahn mit Bergen und Tunneln für dich aufgebaut, auch wenn er es meistens war, der die Züge fahren ließ. Du steckst den Schlüssel, den du im Keller gefunden hast, ins Schloss - und schließt die Türe auf. Du öffnest sie - und vor dir schwingt sie nach innen. Die Eisenbahn ist immer noch fest montiert auf der Spanplatte, die auf dem rötlichen Boden liegt. Du trittst ein - und schließt die TÜre hinter dir, schließt sie sogar ab, um ungestört zu sein. Auf einem Holzstuhl findest du ein Buch. Als du es dir nimmst und umdrehst, ist es der fehlende Band aus der Bibliothek. Groß prangt der Name Agartha darauf. Du setzt dich auf den Stuhl und blätterst es durch. Immer wieder stößt du auf Passagen in dem Buch, die dein Großvater mit Bleistift unterstrichen hat. In den Passagen ist die Rede von einer Stadt, die sich in den Tiefen der Erde befinden soll. Es finden sich Referenzen darauf, das es Eingänge zu dieser Stadt geben soll - und das wenigstens einer dieser Eingänge in Tibet ist. Plötzlich flattert ein Blatt aus dem Buch. Es muß zwischen den Seiten gelegen haben. Du bückst dich und hebst es auf. Mit der krakeligen Schrift deines Großvaters steht darauf notiert: \"Münster   Sarg   Innenhof   Keller   Rheydt\"\nDu steckst den Zettel und das Buch in deinen Rucksack.");
+	if(!buchgefunden && schluesselgefunden) {
+		textausgabe("Du steigst die Treppen hinauf bis zum Dachgeschoss. Hinter der vorletzten Türe auf der rechten Seite, befindet sich das Spielzimmer, daß dein Großvater dir schenkte. Hier hatte er auf einer Spanplatte eine Eisenbahn mit Bergen und Tunneln für dich aufgebaut, auch wenn er es meistens war, der die Züge fahren ließ. Du steckst den Schlüssel, den du im Keller gefunden hast, ins Schloss - und schließt die Türe auf. Du öffnest sie - und vor dir schwingt sie nach innen. Die Eisenbahn ist immer noch fest montiert auf der Spanplatte, die auf dem rötlichen Boden liegt. Du trittst ein - und schließt die TÜre hinter dir, schließt sie sogar ab, um ungestört zu sein. Auf einem Holzstuhl findest du ein Buch. Als du es dir nimmst und umdrehst, ist es der fehlende Band aus der Bibliothek. Groß prangt der Name Agartha darauf. Du setzt dich auf den Stuhl und blätterst es durch. Immer wieder stößt du auf Passagen in dem Buch, die dein Großvater mit Bleistift unterstrichen hat. In den Passagen ist die Rede von einer Stadt, die sich in den Tiefen der Erde befinden soll. Es finden sich Referenzen darauf, das es Eingänge zu dieser Stadt geben soll - und das wenigstens einer dieser Eingänge in Tibet ist. Plötzlich flattert ein Blatt aus dem Buch. Es muß zwischen den Seiten gelegen haben. Du bückst dich und hebst es auf. Mit der krakeligen Schrift deines Großvaters steht darauf notiert: \"Münster   Sarg   Innenhof   Keller   Rheydt\"\nDu steckst den Zettel und das Buch in deinen Rucksack.");
 		buchgefunden = true;
 	}
+	else {
+		if(wuerfel(6) > 4)
+			textausgabe("Du steigst die Treppen bis zur dritten Etage hinauf. Von hier aus schaust du hinüber zu dem Balkon, wo früher dein Freund Guido gelebt hat. Du erinnerst dich daran, wie ihr ein primitives Blechdosentelefon gespannt hattet, dessen eines Ende ihr mit einem Holzflitzebogen ihr hinübergeschossen hattet. In Erinnerungen versunken steigst du danach die Treppe wieder hinunter ins Erdgeschoss.");
+		else
+			textausgabe("Du ersteigst die Treppenstufen bis hinauf in das Dachgeschoss. Noch einmal versuchst du, ob du eine der verschlossenen Türen aufbekommst und schaust durch die Schlüssellöcher, doch erscheinen dir alle Räume leer und verlassen. Du drehst dich um und gehst die Treppenstufen wieder hinab in das Erdgeschoss.");
+	}
+	ort21();
 }
 
 void ort26(void) {
 // Der Alte Markt
 	raum = 26;
+	auswahl("Von hier aus kannst du zur Waldhausener Straße (1), dem Kapuzinerplatz (2), dem Marktstieg (3), den Abteiberg hinunter (4), zur Hindenburgstraße (5) oder durch die Passage zur Turmstiege (6)", 6, ort43, ort28, ort27, ort35, ort34, ort44);
 }
 
 
 void ort27(void) {
+	// Der Marktstieg
+	auswahl("Möchtest du zur Hindenburgstraße (1), zum Alten Markt (2), zum Kapuzinerplatz (3), zur Wallstraße (4) oder zur Kaiserstraße (5)?", 5, ort34, ort26, ort28, ort45, ort29, NULL);
 }
 
 void ort28(void) {
+	// Der Kapuzinerplatz
+	auswahl("Von hier aus kannst du zum Alten Markt (1), zur Turmstiege (2), das Haus Zoar betreten (3), zur Kaiserstraße (4), zum Marktstieg (5)", 5, ort26, ort44, ort30, ort29, ort27, NULL);
 }
 
 void ort29(void) {
+	// Die Kaiserstraße
+	auswahl("Möchtest du die Straße hinab zur Blücherstraße (1), zur Wallstraße (2), zum Marktstieg (3) oder zum Kapuzinerplatz (4)?", 4, ort31, ort45, ort27, ort28, NULL, NULL);
 }
 
 void ort30(void) {
+	// Haus Zoar
 	raum = 30;
+	auswahl("Willst du zurück auf den Kapuzinerplatz (1) oder durch das geöffnete Fenster hinabspringen und hinüber zum Beginn der Kaiserstraße laufen (2)?", 2, ort28, ort29, NULL, NULL, NULL, NULL);
 }
 
 void ort31(void) {
+	// Blücherstraße
+	auswahl("Willst du weiter dem Berg hinauf die Kaiserstraße entlang (1), in Richtung Kleiststraße (2) oder in die Stadtbibliothek (3)?", 3, ort29, ort50, ort32, NULL, NULL, NULL);
 }
 
 void ort32(void) {
+	// Stadtbibliothek
+	ort31();
 }
 
 void ort33(void) {
+	// Im Lichthof
+	auswahl("Möchtest du die Hindenburgstraße hinab laufen (1), oder lieber bergauf (2), oder in die andere Richtung zur Kleiststraße (3)?", 3, ort51, ort34, ort50, NULL, NULL, NULL);
 }
 
 void ort34(void) {
+	// Hindenburgstraße, oberer Teil
+	auswahl("Von hier aus kannst du weiter die in Richtung Lichthof (1), in Richtung des Hauptbahnhofs (2), zur Wallstraße (3), in Richtung des Alten Markts (4) oder in Richtung Abteiberg (5). Du kannst es auch die Croonsallee entlang zur Kaiserstraße (6).", 6, ort33, ort51, ort45, ort26, ort35, ort29);
 }
 
 void ort35(void) {
+	// Abteiberg
 	raum = 35;
+	auswahl("Möchtest du zum Alten Markt (1), die Hindenburgstraße hinab (2), den Vorplatz am Münster entlang (3), das alte Rathaus betreten (4)? oder zum Park am Spatzenberg (5)?", 5, ort26, ort34, ort37, ort36, ort52, NULL);
 }
 
 void ort36(void) {
+	// Das Rathaus
 	raum = 36;
+	auswahl("Möchtest du hinaus auf den Abteiberg (1) oder den Innenhof betreten (2)?", 2, ort35, ort41, NULL, NULL, NULL, NULL);
 }
 
 void ort37(void) {
+	// Der Vorplatz des Münsters
 	raum = 37;
+	auswahl("Willst du weiter in Richtung des Abteibergs (1), die Treppen hinab zum Geroweiher (2) oder willst du in das Gladbacher Münster hinein (3)?", 3, ort35, ort46, ort38, NULL, NULL, NULL);
 }
 
 void ort38(void) {
+	// Im Hauptschiff des Münsters
+	auswahl("Du kannst das Münster verlassen (1) oder den Seitengang betreten (2).", 2, ort37, ort39, NULL, NULL, NULL, NULL);
 }
+
 void ort39(void) {
+	// Im Seitengang des Münsters
+	auswahl("Von hier aus gelangst du in das Hauptschiff des Münsters (1), eine Türe führt in den Innenhof (2) und über eine Treppe gelangst du in die Gruft unter den Altar (3).", 3, ort38, ort41, ort40, NULL, NULL, NULL);
 }
 
 void ort40(void) {
+	// Die Gruft unter dem Altar
 	raum = 40;
+	ort39();
 }
 
 void ort41(void) {
+	// Der Innenhof
+	auswahl("Durch eine Türe gelangst du in das Münster (1), ein weiterer Durchgang führt in das alte Rathaus (2).", 2, ort39, ort36, NULL, NULL, NULL, NULL);
 }
 
 void ort42(void) {
+	// Der Keller unter dem Innenhof
 	raum = 42;
+	ort41();
 }
 
 void ort43(void) {
+	// Die Waldhausener Straße
 	raum = 43;
+	auswahl("Die Straße führt hinauf zum Alten Markt (1), neben dem Dicken Turm verläuft die Turmstiege (2) und ein weiterer Weg führt durch den kleinen Grünbereich des Spatzenberges (3)", 3, ort26, ort44, ort52, NULL, NULL, NULL);
 }
 
 void ort44(void) {
+	// Die Turmstiege
+	auswahl("Von hier aus hast du die Möglichkeit zur Waldhausener Straße zu gelangen (1), durch die Passage zum Alten Markt zu gehen (2) oder zum Kapuzinerplatz(3)", 3, ort43, ort26, ort28, NULL, NULL, NULL);
 }
 
 void ort45(void) {
+	// Die Wallstraße
+	auswahl("Du kannst von hier aus zur Hindenburgstraße (1), die Kaiserstraße hinab (2), den Marktstieg entlang (3) oder am Haus Zoar vorbei zum Kapuzinerplatz (4)", 4, ort34, ort29, ort27, ort28, NULL, NULL);
 }
 
 void ort46(void) {
+	// Der Geroweiher
 	raum = 46;
+	auswahl("Du kannst den Spatzenberg hinauf (1), oder den Abteiberg (2) oder die Treppen zum Münstervorplatz nehmen (3)", 3, ort52, ort35, ort37, NULL, NULL, NULL);
 }
 
 void ort47(void) {
+	// Die Bismarkstraße
+	auswahl("Der Weg ist soweit sicher die Hindenburgstraße hinauf (1) oder weiter hinab bis zum Vorplatz des Hauptbahnhofs (2)", 2, ort51, ort48, NULL, NULL, NULL, NULL);
 }
 
 void ort48(void) {
+	// Der Bahnhofsvorplatz
 	raum = 48;
+	auswahl("Du kannst entweder die Hindenburgstraße entlang in Richtung Alter Markt (1) oder in den Hauptbahnhof hinein (2)", 2, ort47, ort49, NULL, NULL, NULL, NULL);
 }
 
 void ort49(void) {
+	// Der Hauptbahnhof
+	ort48();
 }
 
 void ort50(void) {
-// Alleine weiter, Richtung Kaiserstraße
+	// Die Kleiststraße
 	raum = 50;
+	auswahl("Du kannst am Adenauerplatz vorbei zur Blücherstraße (1) oder Richtung Hindenburgstraße in den Lichthof (2)", 2, ort31, ort33, NULL, NULL, NULL, NULL);
 }
 
 void ort51(void) {
-// Alleine weiter, Richtung Hindenburgstraße
+	// Mittelteil der Hindenburgstraße
 	raum = 51;
+	auswahl("Von hier aus kannst du der Hindenburgstraße bergauf folgen (1) oder in die Gegenrichtung auf den Hauptbahnhof zu (2), oder Richtung Kleiststraße durch den Lichthof (3)", 3, ort34, ort47, ort33, NULL, NULL, NULL);
 }
 
 void ort52(void) {
+	// Der Spatzenberg
 	raum = 52;
+	auswahl("Du kannst von hier aus zum Abteiberg hinaufgehen (1), hinab zum Geroweiher (2) oder hinüber zur Waldhausener Straße (3)", 3, ort35, ort46, ort43, NULL, NULL, NULL);
 }
 
 void ort53(void) {
