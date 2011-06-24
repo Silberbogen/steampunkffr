@@ -6,7 +6,7 @@
  *    Description:  Steampunk FFR - Der Anfang
  *    				Ein "Das-ist-dein-Abenteuer"-Roman
  *
- *        Version:  0.010
+ *        Version:  0.011
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -957,6 +957,22 @@ void ort31(void) {
 
 void ort32(void) {
 	// Stadtbibliothek
+	if(verzeichnisgelesen && agartha && !kartegefunden) {
+		textausgabe("Du erkletterst hastig den Geröllhaufen, über den du in das Innere der Stadtbibliothek gelangst. Du gehst die Reihen der Apothekerschränke ab, bis du das Fach erwischst, in der Du dir einen Hinweis auf das Wort \"Agartha\" erhoffst. Als du endlich die Karte mit dem Begriff hast, stehen darauf 3 Bücher. Du nimmst dir die Karte heraus und durchstöberst die Bibliothek. Zwanzig Minuten später, als du das dritte Buch in der Hand hältst, erkennst du unter den Ausleihern des Buches deinen Großvater in der Liste. Beim Durchblättern des Buches bemerkst du, daß darin eine Karte abgebildet ist. Du liest dir die Texte der Innenumschläge durch und staunst nicht schlecht. In dem Buch ist die Rede von einer inneren Welt. Du erinnerst dich an das Buch von Jules Verne, daß dir dein Großvater geschenkt hatte. Es liest sich unglaublich, daß auch diese Theorie Vernes wohl auf einem Körnchen Wahrheit beruht. Agartha soll einer dieser Orte sein. Das Buch verstaust du kurzerhand in deinem Rucksack, schulterst ihn und verläßt auf dem schnellsten Wege die Stadtbibliothek.");
+		kartegefunden = true;
+		raum = 32;
+		ort31();
+	}
+	if(!verzeichnisgelesen || !agartha) {
+		textausgabe("Die Stadtbibliothek erscheint von außen betrachtet menschenleer. Ein Teil der vorderen Fassade ist eingebrochen, du kletterst über den dadurch entstandenen Geröllhaufen und gelangst in das Innere der Bibliothek. Da es keinen Strom gibt, bist du dankbar für die Unmenge an Apothekerschränken in deren ausziehbaren Schubladen es nur so von Karteikartenbeschreibungen der Bücher wimmelt. Leider aber hast du keinerlei Idee, wonach du suchen könntest. Da du nichts in der Bibliothek findest, was dir momentan helfen könnte, verläßt du sie.");
+		verzeichnisgelesen = true;
+		raum = 32;
+		ort31();
+	}
+	textausgabe("Kaum daß du die Bibliothek betreten hast, glaubst du hinter den Regalen eine Gestalt wahrzunehmen.");
+	ort13();
+	textausgabe("Um nicht noch in weitere Scherereien hineinzustolpern, verlä8t du die Bibliothek.");
+	raum = 32;
 	ort31();
 }
 
@@ -1000,17 +1016,38 @@ void ort39(void) {
 
 void ort40(void) {
 	// Die Gruft unter dem Altar
+		textausgabe("Du steigst die Treppe hinunter in die Gruft, die direkt unter dem Altar des Münsters liegt. Du erinnerst dich, wie in der dritten Klasse einmal ein Klassenausflug hierhin führte und die Person, die euch das Münster zeigte, auch an diesem Ort mit euch kam. Sie erzählte eine krude Sage, von Soldaten, einem Spiel und dem Abdruck der Hand des Teufels auf dem Sarg noch einmal genauer an.");
+	if(kartegefunden && !sargverschoben)
+		if(janeinfrage("Willst du dir den Inhalt des Sarges näher ansehen (j/n)?")) {
+			textausgabe("Mit aller Kraft gelingt es dir, wenn auch nur sehr langsam, den Sargdeckel zu verschieben - allerdings nicht sehr weit. Doch was du bereits sehen kannst, reicht dir aus: der Sarg ist vollkommen leer. Du blickst dich noch kurz um, und überlegst, ob du auch die Deckel der anderen Särge verschieben sollst. Angesichts des unnützen Kraftaufwands und der Tatsache, das bereits in diesem Sarg nichts drin ist, bist du der festen Überzeugung, das es sich bei den anderen ebenso verhält. Du wendest dich ab und gehst die Treppe hinauf.");
+			sargverschoben = true;
+			raum = 40;
+			ort39();
+		}
+	if(sargverschoben) {
+		if(janeinfrage("Willst du den Sargdeckel wieder in seine ursprüngliche Position schieben (j/n)?")) {
+			textausgabe("Mit aller Kraft gelingt es dir, wenn auch nur sehr langsam, den Sargdeckel wieder zu schließen. Als du es endlich geschafft hast, könntest du schwören, ein dumpfes, leises Geräusch von irgendwoher vernommen zu haben.");
+			sargverschoben = false;
+		}
+	}
+	textausgabe("Da die Gruft ansonsten leer ist, verläßt du sie und steigst die Treppe hinauf.");
 	raum = 40;
 	ort39();
 }
 
 void ort41(void) {
 	// Der Innenhof
-	auswahl("Durch eine Türe gelangst du in das Münster (1), ein weiterer Durchgang führt in das alte Rathaus (2).", 2, ort39, ort36, NULL, NULL, NULL, NULL);
+	auswahl("Durch eine Türe gelangst du in das Münster (1), ein weiterer Durchgang führt in das alte Rathaus (2). Eine Treppe in der Mitte des Innenhofes führt zu einer Stahltüre hinab (3).", 3, ort39, ort36, ort42, NULL, NULL, NULL);
 }
 
 void ort42(void) {
 	// Der Keller unter dem Innenhof
+	if(sargverschoben) {
+		textausgabe("Du steigst die Stufen in der Mitte des Innenhofes hinab und öffnest die Stahltüre. Als du in den Raum hineinblickst, erkennst du, das sich ein Spalt in einer Wand geöffnet hat. Du gehst in den Raum hiein und bemerkst beim näherkommen, das der Spalt tatsächlich eher ein richtiger Durchgang ist - und das dahinter ein Gang liegt.");
+		raum = 42;
+		auswahl("Möchtest du den Gang betreten (1) oder willst du den Raum verlassen und die Treppe hinauf in den Innenhof gehen (2)?", 2, ort53, ort41, NULL, NULL, NULL, NULL);
+	}
+	textausgabe("Du steigst die Stufen in der Mitte des Innenhofes hinab und öffnest die Plastikklinge an der Stahltüre. Die Türe öffnet sich problemlos. Der Innenraum riecht muffig, die Wände sind alt und nicht überall eben. Der Raum wird offensichtlich für nichts mehr benutzt. Da es hier nichts weiter zu sehen gibt, drehst du dich um, verläßt den Raum und steigst die Treppe hinauf in den Innenhof.");
 	raum = 42;
 	ort41();
 }
@@ -1033,6 +1070,10 @@ void ort45(void) {
 
 void ort46(void) {
 	// Der Geroweiher
+	if(raum == 55)
+		textausgabe("Mit lange Zügen tauchst du weiter durch das eiskalte Wasser. Deine Lungenflügel leeren sich und beginnen langsam zu brennen. Du weißt, daß du den Rückweg nicht mehr schaffen würdest, also schwimmst du was das Zeug hält. Plötzlich bemerkst du über dir ein Licht - du hältst drauf zu - und durchbrichst die Wasseroberfläche. Luft strömt in deine gequälten Lungenflügel. Du ruderst mit den Armen schaffst es, nicht wieder einzutauchen und ruderst halb benommen zum Ufer, an dem du liegenbleibst. Du mußt etwas verschnaufen. Dann, als du wieder klarer denken kannst, nimmst du deine Umgebung wahr - und erkennst, das du am Ufer des Geroweihers liegst, unter den schützenden Ästen der alten Trauerweide, an denen ihr als Kind immer mit Tarzanschrei ins Wasser geschwunden seid. Du bleibst weiter einfach sitzen und schwelgst in Erinnerungen, bis du dir die aktuelle Gefahr wieder vor Augen führst und dich erhebst.");
+	else
+		textausgabe("Der Geroweiher.\nEin kleiner Ort der Ruhe, an dem ein Spielplatz in deiner Jugend für ein gewisses Training deiner Muskeln sorgte, der aber auch der Austragungsort so mancher Keilerei war. Im Zentrum steht ein Stück alter Stadtmauer und wenn man hochguckt, sieht man auf dem Hügel das Münster. Der Weiher ist vielleicht gerade einmal zwei, höchstens drei Meter weit. Wenn du dich recht entsinnst, hatte eure Grundschullehrerin euch früher erzählt, der Geroweiher würde durch den Gladbach gespeist werden. Aber egal wie weit du auch zurückdenkst, den Gladbach hast du hier noch nirgendwo fließen sehen. Vielleicht, ist er ja nur noch eine Erinnerung, an alte Zeiten.");
 	raum = 46;
 	auswahl("Du kannst den Spatzenberg hinauf (1), oder den Abteiberg (2) oder die Treppen zum Münstervorplatz nehmen (3)", 3, ort52, ort35, ort37, NULL, NULL, NULL);
 }
@@ -1072,16 +1113,54 @@ void ort52(void) {
 }
 
 void ort53(void) {
+	// Der Eingang zum Labyrinth
+	if(raum == 42)
+		textausgabe("Du betrittst den Gang. Er ist alt, die Luft riecht modrig, abgestanden. Aus deinem Rucksack hast du deine Taschenlampe und deinen alten Marschkompass aus der Bundeswehrzeit hervorgeholt. Du leuchtest die Wände ab und gehst langsam voran. Plötzlich hörst du hinter dir, wie sich der Spalt schließt. Du drehst dich noch um - aber es ist zu spät. Es scheint, als wäre dir der Rückweg versperrt. Hilflos zuckst du mit den Schultern. Wenn du richtig liegst, dann kannte dein Großvater diesen Ort - und er hätte dich niemals in eine Falle laufen lassen. So schreitest du weiter den Gang voran.");
+	else
+		textausgabe("Ganz im Westen ist der Gang eine Sackgasse. Du weißt, daß dort eine TÜre ist, aber sie ist zu perfekt eingefasst - und du findest nichts, um sie zu öffnen. So gibst du nach einer Weile des Suchens auf und folgst dem Gang nach Osten.");
+	ort54();
 }
 
 void ort54(void) {
+	// Der Raum mit der versteckten Rutschbahn
+	if(objekt[rucksack] > 0)
+		textausgabe("Du betrittst einen mehr oder weniger rechteckigen Raum. Es sind verschiedene, unleserliche Kritzeleien und Schriftzeichen an den Wänden zu sehen, jedoch nichts, was du wirklich entziffern könntest.");
+	else {
+		textausgabe("Du tastest dich durch den stockfinsteren Raum, bis du glaubst den Durchgang nach Norden gefunden zu haben und folgst diesem weiter.");
+		ort55();
+	}
 	raum = 54;
+	if(durchganggeoeffnet && (objekt[rucksack] > 0)) {
+		textausgabe("In der Südostecke des Raumes hat sich ein Stück des Bodens verschoben. Dort ist ein Loch im Boden, in dem eine Rutsche ist. Nachdem du sie dir näher angesehen und betastet hast, kommst du zu dem Ergebnis, daß das Metall zu glatt ist - um im Falle eines Falles dort wieder hochklettern zu können - hingegen wäre es wohl eine Leichtigkeit - hinunterzurutschen.");
+		auswahl("Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Du könntest einen von ihnen nehmen - oder aber eine ungewisse Rutschpartie wagen (3).", 3, ort53, ort55, ort56, NULL, NULL, NULL);
+	}
+	else
+		auswahl("Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Welchen möchtest du einschlagen?", 2, ort53, ort55, NULL, NULL, NULL, NULL);
 }
 
 void ort55(void) {
+	// Der Durchgang zum Geroweiher
+	raum = 55;
+	if(!objekt[rucksack]) {
+		textausgabe("Du tastest dich durch den Raum, bis du schließlich auf deinen Rucksack stößt.");
+		if(janeinfrage("Möchtest du dich wieder ankleiden und deinen Rucksack, deine Taschenlampe und alles andere an dich nehmen (j/n)?"))
+			objekt[rucksack] = 1;
+	}
+	else {
+		textausgabe("Der Raum, in den du gelangst, gleicht eher einer Höhle mit Natursteinen. Es gibt nur einen Weg hinaus, der im Süden, durch den du hineingekommen bist. An seiner Westwand ist ein großes, dunkles Wasserloch.");
+		if(janeinfrage("Möchtest du deine Kleidung und deinen Rucksack samt Taschenlampe ablegen und in das dunkle Wasserloch tauchen (j/n)?")) {
+			objekt[rucksack] = 0;
+			textausgabe("Vorsichtig steckst du einen Zeh in das Wasser. Es ist eiskalt. Langsam, ganz langsam steigst du immer tiefer rein. Der Boden sinkt soweit ab, das du ab einer gewissen Grenze nicht mehr stehen kannst. Es ist jetzt stockfinster im Raum. Schräg in der Tiefe glaubst du ein Licht wahrzunehmen. Du holst noch einmal tief Luft - und tauchst tief in das Wasser ein. Du tauchst durch eine Art natürlicher Tunnel, dessen Wände sich allerdings glatt anfühlen. An einer Stelle des Tunnels stößt du gegen einen Widerstand, aber der verflüchtigt sich sofort. Vermutlich war es nur ein verirrter Fisch.");
+			durchganggeoeffnet = true;
+			ort46();
+		}
+	}
+	textausgabe("Da der Raum außer dem Wasserloch nichts zu bieten hat, verläßt du ihn und gehst zurück nach Süden.");
+	ort54();
 }
 
 void ort56(void) {
+	// Die Rutschbahn
 }
 
 void ort57(void) {
