@@ -6,7 +6,7 @@
  *    Description:  Steampunk FFR - Der Anfang
  *    				Ein "Das-ist-dein-Abenteuer"-Roman
  *
- *        Version:  0.008
+ *        Version:  0.009
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -40,6 +40,7 @@
  *   - 22.05.2011 Beginn an der Arbeit des Spiels
  *   - 22.05.2011 Schusswaffen und Munition implementiert
  *   - 22.05.2011 Tripodenauftauchen eingebaut
+ *   - 24.06.2011 Eine Auswahl fehlte bei ort1()
  *
  * =====================================================================================
  */
@@ -663,7 +664,7 @@ void vorwort(void) {
 void ort1(void) {
 	raum = 1;
 	textausgabe("Die Innenstadt macht um diese Zeit noch einen gänzlich unbelebten Eindruck - und kein einiges Licht erhellt die Straße. Keine Straßenlaterne, keine Glühbirne hinter einem Fenster, nicht einmal die Werbetafeln leuchten auf. Wenn du so drüber nachdenkst, auf deinem ganzen Weg hierhin hast du bisher keinerlei eingeschaltete Lichtquellen gesehen.\nNun stehst du an der Kreuzung Stepgesstraße Ecke Hindenburgstraße. Ein Stück die große Einkaufsstraße hinauf ist das Bäckereigeschäft, an dem dir jeden Morgen ein guter Geist eine braune Papiertüte mit dampfend warmen Gebäck bereitstellt. Du schaust in die Richtung, doch diesmal steht auf dem Stromkasten neben der Türe nicht der verlockende Beutel, sondern eine Gestalt steht in der Türe und winkt dir zu.");
-	auswahl("Wirst du auf die winkende Gestalt zugehen (1) oder ziehst du es vor, dich lieber scheu und mit knurrendem Magen aus dem Staub zu machen?", 2, ort2, ort3, NULL, NULL, NULL, NULL);
+	auswahl("Wirst du auf die winkende Gestalt zugehen (1) oder ziehst du es vor, dich lieber scheu und mit knurrendem Magen aus dem Staub zu machen (2)?", 2, ort2, ort3, NULL, NULL, NULL, NULL);
 }
 
 void ort2(void) {
@@ -2499,7 +2500,7 @@ void flucht(void (*funktion1)()) {
 		exit(EXIT_SUCCESS);
 	}
 	color_set(4, 0);
-	printw("Fehler! Ich bin am Ende der Fluchtroutine angelangt.");
+	printw("Fehler! Ich bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
 	exit(EXIT_FAILURE);
 }
 
