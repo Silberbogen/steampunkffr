@@ -974,9 +974,9 @@ void ort29(void) {
 	if(wuerfel(6) > 4)
 		textausgabe("Am liebsten würdest du zu dem Haus gehen, wo früher der Kindergarten war, den du besuchtest. Du erinnerst dich an die Spielkameraden von damals, die Turnhalle im ersten Stock, den Hof hinter dem Haus und das fahruntüchtige Auto, das ihr dort hattet. An das Klettergerüst, das Laufen auf Stelzen - und auch an die Prügel, die du oft von anderen, die kräftiger waren als du, bezogen hast.");
 	if(wuerfel(6) > 5)
-		ort113;
+		ort113();
 	else
-		ort13;
+		ort13();
 	textausgabe("Es scheint so, als wäre die Kaiserstraße nicht der beste Ort, um sich dort lange aufzuhalten.");
 	auswahl("Möchtest du die Straße hinab zur Blücherstraße (1), zur Wallstraße (2), zum Marktstieg (3) oder zum Kapuzinerplatz (4)?", 4, ort31, ort45, ort27, ort28, NULL, NULL);
 }
@@ -984,9 +984,9 @@ void ort29(void) {
 void ort30(void) {
 	// Haus Zoar
 	raum = 30;
-	if(wuerfel > 4)
+	if(wuerfel(6) > 4)
 		textausgabe("Du näherst dich dem Haus in das du in deiner Jugend oftmals Billard gespielt hast, bis dieser Irre aus Hephata mit einer Pistole auf dich geschossen hatte. Vergessen hast du den Tag niemals, er war für dich wie eine Wiedergeburt. Du hast das Drumherum nie vergessen. Wenn du genau drüber nachdenkst, sah der Blödmann Chiko tatsächlich so aus, wie einer der Zeichner der MAD-Comics.");
-	if(wuerfel > 4) {
+	if(wuerfel(6) > 4) {
 		textausgabe("Die Eingangstüren hängen nur lose in den Angeln. Jemand hat sich wohl bereits heute Zutritt zu dem Haus verschafft. Du bist dir nicht sicher, ob es eine gute Idee war, sich dem Gebäude zu nähern, aber deine Erinnerungen und deine Neugierde siegt. Als du die Treppe hinuntergehst, hörst du ein Geräusch aus Richtung des Kickers. Du springst mit einem Hechtsprung von der Treppe auf das nahe Sofa.");
 		ort13();
 	}
@@ -1031,7 +1031,7 @@ void ort32(void) {
 void ort33(void) {
 	// Im Lichthof
 	textausgabe("Der Lichthof sieht aus wie ein Scherbenmeer. Hier muß es bereits zu heftigen Kämpfen gekommen sein. Die angrenzende Passage ist voller Rauch.");
-	if(verzeichnisgelesen && (wuerfel > 3))
+	if(verzeichnisgelesen && (wuerfel(6) > 3))
 		ort113();
 	if(raum == 50) {
 		raum = 33;
