@@ -624,9 +624,9 @@ void intro(void) {
 	int eingabe = 0;
 
 	color_set(0, 0);
-	textausgabe("Hinweis\nIn diesem Roman wird niemand anderes als du selbst die Person sein, die das Abenteuer durchlebt. Von daher würde ich sagen, würdest du dir selber beim Erleben der Spielatmosspähre helfen, wenn du die Spielfigur nach dir benennst, oder ihr einen Namen gibst, der dir gefällt oder den du gerne tragen würdest.\nViel Spaß beim Lesen und Spielen!\nSascha Karl");
+	textausgabe("Hinweis\nIn diesem Roman wird niemand anderes als du selbst die Person sein, die das Abenteuer durchlebt. Von daher würde ich sagen, würdest du dir selber beim Erleben der Spielatmosspähre helfen, wenn du die Spielfigur nach dir benennst, oder ihr einen Namen gibst, der dir gefällt oder den du gerne tragen würdest.\nViel Spaß beim Lesen und Spielen!\nSascha");
 	color_set(1, 0);
-	printw("Welchen Namen soll dein Held haben? ");
+	printw("Welchen Namen möchtest du deinem Abenteurer geben? ");
 	getnstr(spieler.name, 30);
 	color_set(0, 0);
 	spieler.gewandheit_start = wuerfel(6) + 6;
@@ -646,7 +646,7 @@ void intro(void) {
 			case 3: objekt[glueckstrank] += 2;
 					break;
 			default: color_set(4, 0);
-					 printw("Fehler! In der Energydrink-Auswahl,  in Funktion intro().");
+					 printw("Unerklärbarer Fehler! In der Energydrink-Auswahl,  in Funktion intro().");
 					 color_set(0, 0);
 					 break;
 		}
@@ -875,7 +875,7 @@ void ort22(void) {
 		textausgabe("Ein großteil der Kohlen liegt auf dem Boden. An der rußgeschwärtzten Wand kannst du das Wort \"Agartha\" lesen. Der Heizungskessel arbeitet derzeit nicht. Sonst befindet sich ncihts im Heizungskeller.");
 	else {
 		textausgabe(" Als du die Türe öffnest, ist es recht stickig im Raum. Der Heizkessel ist aus, obwohl in einem großen Verschlag an der Seite sich die Kohlen nur so stapeln. Als du genauer hinguckst, hast du das Gefühl, den geritzen Buchstaben \"A\" an der Wand zu sehen.");
-		if(janeinfrage("Willst du soviele der Kohlen zur Seite räumen, um zu sehen, ob das \"A\" vielleicht Teil eines Wortes ist? Eine letzte Nachricht deines Großvaters an dich?")) {
+		if(janeinfrage("Willst du soviele der Kohlen zur Seite räumen, um zu sehen, ob das \"A\" vielleicht Teil eines Wortes ist? Eine letzte Nachricht deines Großvaters an dich? (j/n)")) {
 			textausgabe("Deine Kleidung verdreckt vollständig, während du auf den Kohleberg krabbelst - und Brikett umd Brikett wegräumst. Noch dazu machst du eine Menge Krach.");
 			if(wuerfel(6) >= 4)
 				ort13();
