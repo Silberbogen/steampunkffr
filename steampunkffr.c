@@ -6,7 +6,7 @@
  *    Description:  Steampunk FFR - Der Anfang
  *    				Ein "Das-ist-dein-Abenteuer"-Roman
  *
- *        Version:  0.011
+ *        Version:  0.012
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -925,34 +925,86 @@ void ort25(void) {
 void ort26(void) {
 // Der Alte Markt
 	raum = 26;
+	if(tripodgesehen && (getoetetegegner > 0)) {
+		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser. Zu versuchen, den Kapuzinerplatz oder die Turmstiege zu erreichen, dürfte keine gute Idee sein.");
+		auswahl("Wie es aussieht, kannst es versuchen die Waldhausener Straße zu erreichen (1), der Weg den Abteiberg hinunter an der Polizeiwache vorbei sollte auch möglich sein (2). Auch der Weg den Marktstieg entlang (3) oder die Hindenburgstraße hinab (4) erscheinen dir noch sicher.", 4, ort43, ort35, ort27, ort34, NULL, NULL);
+	}
+	textausgabe("Du befindest dich auf dem Alten Markt. Regen gießt in Strömen herab, so daß du nur undeutlich die Silhouette der Kirche Mariä-Himmelfahrt ausmachen kannst, während der Brunnen mit der kleinen Statue davor vollkommen unsichtbar ist. Der Brunnen füllt sich langsam mit dem herniedergehenden Wasser, dennoch erinnert er dich, nur an ideenlos aufeinandergestapelte Zementbauklötze. Die Stühle der Eisdiele sind über den Markt und die Straße verteilt.");
+	if(wuerfel(6) > 4) {
+		textausgabe("Ein Schuß schlängt hinter dir in die Hausfassade ein.");
+		ort113();
+	}
 	auswahl("Von hier aus kannst du zur Waldhausener Straße (1), dem Kapuzinerplatz (2), dem Marktstieg (3), den Abteiberg hinunter (4), zur Hindenburgstraße (5) oder durch die Passage zur Turmstiege (6)", 6, ort43, ort28, ort27, ort35, ort34, ort44);
 }
 
 
 void ort27(void) {
 	// Der Marktstieg
-	auswahl("Möchtest du zur Hindenburgstraße (1), zum Alten Markt (2), zum Kapuzinerplatz (3), zur Wallstraße (4) oder zur Kaiserstraße (5)?", 5, ort34, ort26, ort28, ort45, ort29, NULL);
+	raum = 27;
+	if(wuerfel(6) > 4)
+		textausgabe("Der Marktstieg ist für dich mit vielen sentimentalen Erinnerungen verbunden. An den schrängen blonden Sohn des Metzgers zum Beispiel, mit dem du dich hier öfters getroffen hattest. Einmal warst du sogar in der Schlachterei hier drin. Es war wohl einer der Auslöser, warum du nie wirklich auf Fleisch standest. An der Ecke war eine Bäckerei. Du hast sie geliebt, vor allem für die Süßigkeiten und das Eis, das du dir hier stets gekauft hast. Schade, daß die nette alte Bäckerin nicht mehr da ist.");
+	textausgabe("Du bewegst dich an der Hauswand entlang bis zur Ecke.");
+	auswahl("Möchtest du von hier aus weiter zur Hindenburgstraße (1), zum Alten Markt (2), zum Kapuzinerplatz (3), zur Wallstraße (4) oder zur Kaiserstraße (5)?", 5, ort34, ort26, ort28, ort45, ort29, NULL);
 }
 
 void ort28(void) {
 	// Der Kapuzinerplatz
+	raum = 28;
+	if(tripodgesehen && (getoetetegegner > 0)) {
+		textausgabe("Der Kapuzinerplatzt ist in beißenden Qualm gehüllt, während zeitgleich Regen in Strömen herniederprasselt. An der Westseite des Platzes sieht man ab und zu grüne Flammen durch die Luft züngeln.");
+		ort113();
+		auswahl("Von hier aus kannst du zum Alten Markt (1), zur Turmstiege (2), das Haus Zoar betreten (3), zur Kaiserstraße (4), zum Marktstieg (5)", 5, ort26, ort44, ort30, ort29, ort27, NULL);
+	}
+	if(wuerfel(6) > 4)
+		ort113();
+	else
+		textausgabe("Du siehst hinauf zu dem Haus, wo Guido mit seiner Mutter gewohnt hat. Vor deinem geistigen Augen siehst du für einige Momente den Krahn, um dessen Arm herum Marios und du Frisbees in einer Art Bumerang-Technik geworfen haben. Du siehst die aufgebaute Bühne vor deinem inneren Auge, die Plakette der kölschen Rockband, der Figuren ihr ausgeschnitten habt. Du stellst dir vor, wie du Bierdeckel wie Shuriken durch die Gegend wirfst, während gleichzeitig deine Kleidung immer nasser wird vom Regen.");
+	if(wuerfel(6) > 3)
+		textausgabe("Deine Erinnerung an den Überfall auf den Juwelier kommt dir wieder in den Sinn. Wie du das Auto gesehen hast, und die Polizei riefst - und als du dann hinuntergingst, als der Polizeiwagen da war, schickten sie dich weg - weil du ein Kind warst. Nicht mal an dem Nummernschild hatten diese Idioten Interesse.");
 	auswahl("Von hier aus kannst du zum Alten Markt (1), zur Turmstiege (2), das Haus Zoar betreten (3), zur Kaiserstraße (4), zum Marktstieg (5)", 5, ort26, ort44, ort30, ort29, ort27, NULL);
 }
 
 void ort29(void) {
 	// Die Kaiserstraße
+	raum = 29;
+	if(wuerfel(6) > 4)
+		textausgabe("Vermutlich wirst du dich niemals daran gewöhnen, daß die Autos jetzt in verkehrter Richtung die Kaiserstraße und die Regentenstraße entlang fahren.");
+	if(wuerfel(6) > 4)
+		textausgabe("Für einen Moment bist du abgelenkt, und wärst fast zu dem Kinocenter hinübergegangen, um dir die Bilder zu Filmen anzugucken, wie ihr als Kinder das immer auf den Kinos am Kapuzinerplatz gemacht habt. Damals gab es das Kinocenter hier nicht. Stattdessen waren hier Häuser - und ein großer Parkplatz. Auch an die alte Marienschule erinnerst du dich noch.");
+	if(wuerfel(6) > 4)
+		textausgabe("Am liebsten würdest du zu dem Haus gehen, wo früher der Kindergarten war, den du besuchtest. Du erinnerst dich an die Spielkameraden von damals, die Turnhalle im ersten Stock, den Hof hinter dem Haus und das fahruntüchtige Auto, das ihr dort hattet. An das Klettergerüst, das Laufen auf Stelzen - und auch an die Prügel, die du oft von anderen, die kräftiger waren als du, bezogen hast.");
+	if(wuerfel(6) > 5)
+		ort113;
+	else
+		ort13;
+	textausgabe("Es scheint so, als wäre die Kaiserstraße nicht der beste Ort, um sich dort lange aufzuhalten.");
 	auswahl("Möchtest du die Straße hinab zur Blücherstraße (1), zur Wallstraße (2), zum Marktstieg (3) oder zum Kapuzinerplatz (4)?", 4, ort31, ort45, ort27, ort28, NULL, NULL);
 }
 
 void ort30(void) {
 	// Haus Zoar
 	raum = 30;
+	if(wuerfel > 4)
+		textausgabe("Du näherst dich dem Haus in das du in deiner Jugend oftmals Billard gespielt hast, bis dieser Irre aus Hephata mit einer Pistole auf dich geschossen hatte. Vergessen hast du den Tag niemals, er war für dich wie eine Wiedergeburt. Du hast das Drumherum nie vergessen. Wenn du genau drüber nachdenkst, sah der Blödmann Chiko tatsächlich so aus, wie einer der Zeichner der MAD-Comics.");
+	if(wuerfel > 4) {
+		textausgabe("Die Eingangstüren hängen nur lose in den Angeln. Jemand hat sich wohl bereits heute Zutritt zu dem Haus verschafft. Du bist dir nicht sicher, ob es eine gute Idee war, sich dem Gebäude zu nähern, aber deine Erinnerungen und deine Neugierde siegt. Als du die Treppe hinuntergehst, hörst du ein Geräusch aus Richtung des Kickers. Du springst mit einem Hechtsprung von der Treppe auf das nahe Sofa.");
+		ort13();
+	}
+	else
+		textausgabe("Die Eingangstüren hängen nur lose in den Angeln. Jemand hat sich bereits Zutritt verschafft. Vorsicht gehst du in das Innere, aber alles ist ruhig. Du schleichst die Treppe herunter. Es sieht immer noch so aus wie in deiner Jugend. Der Kicker und der Billardtisch, nichts hat sich hier verändert, selbst die beiden Sofas sind noch da. In der Turnhalle brennt eine Notlampe - und ein Fenster steht weit offen.");
 	auswahl("Willst du zurück auf den Kapuzinerplatz (1) oder durch das geöffnete Fenster hinabspringen und hinüber zum Beginn der Kaiserstraße laufen (2)?", 2, ort28, ort29, NULL, NULL, NULL, NULL);
 }
 
 void ort31(void) {
 	// Blücherstraße
-	auswahl("Willst du weiter dem Berg hinauf die Kaiserstraße entlang (1), in Richtung Kleiststraße (2) oder in die Stadtbibliothek (3)?", 3, ort29, ort50, ort32, NULL, NULL, NULL);
+	if(raum == 29)
+		textausgabe("Nachdem du die Kaiserstraße entlang gegangen bist, ist zu deiner rechten Hand der Adenauerplatz mit seinem häßlichen Sandspielplatz, während zu deiner Linken die Stadtbibliothek lockt. Rechts von dir verläuft die Kleiststraße bis hin zum Lichthof.");
+	if(raum == 50)
+		textausgabe("Du folgst der Kleiststraße entlang, passierst den Adenauerplatz und stehst schließlich an der Kreuzung Kaiserstraße. Dir gegenüber auf der anderen Straßenseite liegt die Stadtbibliothek.");
+	if(wuerfel(6) > 4)
+		textausgabe("Du erinnerst dich, das ein Stück weiter geradeaus, Nikos Mutter ihr Geschät hatte, während Niko auf der Regentenstraße wohnte. Das letzte Mal, als du etwas von ihm hörtest, war seine Stimme, aus dem Radio. Die kanntest viele Leute, die auf der Regentenstraße wohnten. Dagmar, Nicola, ihren Bruder den Nazi (den du nicht abkonntest, weil er ihr Bruder war - und weil er Nazi war) - und Thomas, der Computerfreak und Ärztehörer, Dietrich der Tänzer lebte auch dort und Dirk, der total auf Adam Ant abfuhrt. Für dich war die Regentenstraße immer der Ort, wo du deine Grundschule besuchtest, Fußball spieltest und dir ab und zu bei der Apotheke dein Junior-Heft oder eine Dose Pullmoll holtest.");
+	raum = 31;
+	auswahl("Willst du den Hügel hinauf die Kaiserstraße entlang (1), der Kleiststraße folgen (2) oder der Stadtbibliothek deine Aufwartung machen (3)?", 3, ort29, ort50, ort32, NULL, NULL, NULL);
 }
 
 void ort32(void) {
@@ -978,7 +1030,17 @@ void ort32(void) {
 
 void ort33(void) {
 	// Im Lichthof
-	auswahl("Möchtest du die Hindenburgstraße hinab laufen (1), oder lieber bergauf (2), oder in die andere Richtung zur Kleiststraße (3)?", 3, ort51, ort34, ort50, NULL, NULL, NULL);
+	textausgabe("Der Lichthof sieht aus wie ein Scherbenmeer. Hier muß es bereits zu heftigen Kämpfen gekommen sein. Die angrenzende Passage ist voller Rauch.");
+	if(verzeichnisgelesen && (wuerfel > 3))
+		ort113();
+	if(raum == 50) {
+		raum = 33;
+		auswahl("Möchtest du zur Hindenburgstraße hinab laufen (1) oder lieber zurück die Kleiststraße entlang zur Kaiserstraße (2)?", 2, ort51, ort50, NULL, NULL, NULL, NULL);
+
+	} else {
+		raum = 33;
+		auswahl("Willst du die Passage hinauf zur Kleistraße laufen (1) oder kehrst du lieber um und läufst die Hindenburgstraße hinauf (2) oder hinab (3)?", 3, ort50, ort34, ort51, NULL, NULL, NULL);
+	}
 }
 
 void ort34(void) {
@@ -1065,6 +1127,9 @@ void ort44(void) {
 
 void ort45(void) {
 	// Die Wallstraße
+	if(tripodgesehen && (getoetetegegner > 0)) {
+		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
+	}
 	auswahl("Du kannst von hier aus zur Hindenburgstraße (1), die Kaiserstraße hinab (2), den Marktstieg entlang (3) oder am Haus Zoar vorbei zum Kapuzinerplatz (4)", 4, ort34, ort29, ort27, ort28, NULL, NULL);
 }
 
@@ -1080,22 +1145,34 @@ void ort46(void) {
 
 void ort47(void) {
 	// Die Bismarkstraße
+	if(tripodgesehen && (getoetetegegner > 0)) {
+		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
+	}
 	auswahl("Der Weg ist soweit sicher die Hindenburgstraße hinauf (1) oder weiter hinab bis zum Vorplatz des Hauptbahnhofs (2)", 2, ort51, ort48, NULL, NULL, NULL, NULL);
 }
 
 void ort48(void) {
 	// Der Bahnhofsvorplatz
+	if(tripodgesehen && (getoetetegegner > 0)) {
+		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
+	}
 	raum = 48;
 	auswahl("Du kannst entweder die Hindenburgstraße entlang in Richtung Alter Markt (1) oder in den Hauptbahnhof hinein (2)", 2, ort47, ort49, NULL, NULL, NULL, NULL);
 }
 
 void ort49(void) {
 	// Der Hauptbahnhof
+	if(tripodgesehen && (getoetetegegner > 0)) {
+		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
+	}
 	ort48();
 }
 
 void ort50(void) {
 	// Die Kleiststraße
+	if(tripodgesehen && (getoetetegegner > 0)) {
+		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
+	}
 	raum = 50;
 	auswahl("Du kannst am Adenauerplatz vorbei zur Blücherstraße (1) oder Richtung Hindenburgstraße in den Lichthof (2)", 2, ort31, ort33, NULL, NULL, NULL, NULL);
 }
@@ -1108,6 +1185,9 @@ void ort51(void) {
 
 void ort52(void) {
 	// Der Spatzenberg
+	if(tripodgesehen && (getoetetegegner > 0)) {
+		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
+	}
 	raum = 52;
 	auswahl("Du kannst von hier aus zum Abteiberg hinaufgehen (1), hinab zum Geroweiher (2) oder hinüber zur Waldhausener Straße (3)", 3, ort35, ort46, ort43, NULL, NULL, NULL);
 }
@@ -1385,6 +1465,48 @@ void ort112(void) {
 }
 
 void ort113(void) {
+	// Begegnung mit einem Zufallsgegner der "Militärseite"
+	int zufallsgegner = wuerfel(6);
+	bool kampfausgang;
+	charakter_t gegner1 = { "Uniformierter", 2, 2, 3, 3 };
+	charakter_t gegner2 = { "Besatzer", 6, 6, 3, 3 };
+	charakter_t gegner3 = { "aggressiver Uniformträger", 6, 6, 4, 4 };
+	charakter_t gegner4 = { "Soldat einer fremden Armee", 5, 5, 4, 4 };
+	charakter_t gegner5 = { "gutgläubiger Mitläufer", 6, 6, 5, 5 };
+	charakter_t gegner6 = { "Heckenschütze", 8, 8, 4, 4 };
+	charakter_t gegner7 = { "gepanzerter Beserker", 6, 6, 8, 8 };
+	switch(zufallsgegner) {
+		case 1: kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
+				break;
+		case 2: kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
+				break;
+		case 3: kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
+				break;
+		case 4: kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
+				break;
+		case 5: kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
+				break;
+		case 6: kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
+				break;
+		default: kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
+				break;
+	}
+	if(!kampfausgang) {
+		textausgabe("Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
+		exit(EXIT_SUCCESS);
+	}
+	getoetetegegner += 1;
+	if(wuerfel(6) >= 4) {
+		if(objekt[pistole] <= 1)
+			if(janeinfrage("Willst du die Pistole deines Gegners an dich nehmen (j/n)?"))
+				objekt[pistole] += 1;
+	}
+	else {
+		if(objekt[gewehr] <= 0)
+			if(janeinfrage("Willst du das Gewehr deines Gegners an dich nehmen (j/n)?"))
+				objekt[gewehr] += 1;
+	}
+	objekt[patrone] += wuerfel(8);
 }
 
 void ort114(void) {
