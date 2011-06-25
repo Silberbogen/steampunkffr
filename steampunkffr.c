@@ -1420,6 +1420,7 @@ void ort56(void) {
 void ort57(void) {
 	rotation++;
 	raum = 57;
+	auswahl("Du kannst dem Tunnel nach Osten folgen (1) oder nach Süden (2)", 2, ort58, ort131, NULL, NULL, NULL, NULL);
 }
 
 void ort58(void) {
@@ -1438,20 +1439,26 @@ void ort59(void) {
 
 void ort60(void) {
 	rotation++;
+	raum = 60;
+	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2)", 2, ort59, ort61, NULL, NULL, NULL, NULL);
 }
 
 void ort61(void) {
 	rotation++;
+	raum = 61;
+	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2)", 2, ort60, ort62, NULL, NULL, NULL, NULL);
 }
 
 void ort62(void) {
 	rotation++;
 	raum = 62;
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2)", 2, ort61, ort135, NULL, NULL, NULL, NULL);
 }
 
 void ort63(void) {
 	rotation++;
 	raum = 63;
+
 }
 
 void ort64(void) {
@@ -1898,22 +1905,32 @@ void ort88(void) {
 
 void ort89(void) {
 	rotation++;
+	raum = 89;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort88, ort90, NULL, NULL, NULL, NULL);
 }
 
 void ort90(void) {
 	rotation++;
+	raum = 90;
+	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Osten (2)", 2, ort89, ort91, NULL, NULL, NULL, NULL);
 }
 
 void ort91(void) {
 	rotation++;
+	raum = 91;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort90, ort92, NULL, NULL, NULL, NULL);
 }
 
 void ort92(void) {
 	rotation++;
+	raum = 92;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort91, ort93, NULL, NULL, NULL, NULL);
 }
 
 void ort93(void) {
 	rotation++;
+	raum = 93;
+	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Westen (2)", 2, ort94, ort92, NULL, NULL, NULL, NULL);
 }
 
 void ort94(void) {
@@ -1923,19 +1940,24 @@ void ort94(void) {
 
 void ort95(void) {
 	rotation++;
+	raum = 95;
 }
 
 void ort96(void) {
 	rotation++;
+	raum = 96;
 }
 
 void ort97(void) {
 	rotation++;
 	raum = 97;
+	auswahl("Du kannst dem Weg nach Westen folgen (1) oder nach Süden (2)", 2, ort148, ort154, NULL, NULL, NULL, NULL);
 }
 
 void ort98(void) {
 	rotation++;
+	raum = 98;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort161, ort162, NULL, NULL, NULL, NULL);
 }
 
 void ort99(void) {
@@ -2118,42 +2140,62 @@ void ort130(void) {
 
 void ort131(void) {
 	rotation++;
+	raum = 131;
+	auswahl("Du kannst dem Gang nach Norden folgen (1) oder nach Osten (2)", 2, ort57, ort132, NULL, NULL, NULL, NULL);
 }
 
 void ort132(void) {
 	rotation++;
+	raum = 132;
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2)", 2, ort131, ort138, NULL, NULL, NULL, NULL);
 }
 
 void ort133(void) {
 	rotation++;
+	raum = 133;
+	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2)", 2, ort65, ort134, NULL, NULL, NULL, NULL);
 }
 
 void ort134(void) {
 	rotation++;
+	raum = 134;
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2)", 2, ort133, ort95, NULL, NULL, NULL, NULL);
 }
 
 void ort135(void) {
 	rotation++;
+	raum = 135;
+	auswahl("Du kannst dem Gang weiter nach Norden folgen (1) oder nach Osten (2)", 2, ort62, ort136, NULL, NULL, NULL, NULL);
 }
 
 void ort136(void) {
 	rotation++;
+	raum = 136;
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Norden (2)", 2, ort135, ort63, NULL, NULL, NULL, NULL);
 }
 
 void ort137(void) {
 	rotation++;
+	raum = 137;
+	auswahl("Du kannst dem Gang nach Osten folgen (1) oder nach Süden (2)", 2, ort138, ort143, NULL, NULL, NULL, NULL);
 }
 
 void ort138(void) {
 	rotation++;
+	raum = 138;
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Osten (2) oder der Abzweigung nach Norden (3)", 2, ort137, ort139, ort132, NULL, NULL, NULL);
 }
 
 void ort139(void) {
 	rotation++;
+	raum = 139;
+	auswahl("Du kannst den Weg nach Norden einschlagen (1) oder nach Westen (2)", 2, ort64, ort138, NULL, NULL, NULL, NULL);
 }
 
 void ort140(void) {
 	rotation++;
+	raum = 140;
+
 }
 
 void ort141(void) {
@@ -2162,94 +2204,136 @@ void ort141(void) {
 
 void ort142(void) {
 	rotation++;
+	raum = 142;
+	auswahl("Du kannst dem Tunnel nach Westen gehen (1) oder den nach Süden (2)", 2, ort141, ort96, NULL, NULL, NULL, NULL);
 }
 
 void ort143(void) {
 	rotation++;
+	raum = 143;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort137, ort80, NULL, NULL, NULL, NULL);
 }
 
 void ort144(void) {
 	rotation++;
+	raum = 144;
+	auswahl("Du kannst nach Osten gehen (1) oder nach Süden (2)", 2, ort145, ort149, NULL, NULL, NULL, NULL);
 }
 
 void ort145(void) {
 	rotation++;
+	raum = 145;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort144, ort88, NULL, NULL, NULL, NULL);
 }
 
 void ort146(void) {
 	rotation++;
+	raum = 146;
+	auswahl("Du kannst dem Tunnal nach Westen folgen (1) oder nach Osten (2)", 2, ort87, ort147, NULL, NULL, NULL, NULL);
 }
 
 void ort147(void) {
 	rotation++;
+	raum = 147;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort146, ort148, NULL, NULL, NULL, NULL);
 }
 
 void ort148(void) {
 	rotation++;
+	raum = 148;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort147, ort97, NULL, NULL, NULL, NULL);
 }
 
 void ort149(void) {
 	rotation++;
+	raum = 149;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder der Abzweigung nach Osten folgen (3)", 3, ort144, ort99, ort150, NULL, NULL, NULL);
 }
 
 void ort150(void) {
 	rotation++;
+	raum = 150;
+	auswahl("Du kannst nach Westen gehen (1) oder nach Süden (2)", 2, ort149, ort155, NULL, NULL, NULL, NULL);
 }
 
 void ort151(void) {
 	rotation++;
+	raum = 151;
+	auswahl("Du kannst nach Norden gehen (1) oder nach Osten (2)", 2, ort87, ort152, NULL, NULL, NULL, NULL);
 }
 
 void ort152(void) {
 	rotation++;
+	raum = 152;
 }
 
 void ort153(void) {
 	rotation++;
+	raum = 153;
+	auswahl("Du kannst nach Osten gehen (1) oder nach Süden (2)", 2, ort154, ort156, NULL, NULL, NULL, NULL);
 }
 
 void ort154(void) {
 	rotation++;
+	raum = 154;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder der Abzweigung nach Westen folgen (3)", 3, ort97, ort157, ort153, NULL, NULL, NULL);
 }
 
 void ort155(void) {
 	rotation++;
+	raum = 155;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort150, ort159, NULL, NULL, NULL, NULL);
 }
 
 void ort156(void) {
 	rotation++;
+	raum = 156;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort153, ort163, NULL, NULL, NULL, NULL);
 }
 
 void ort157(void) {
 	rotation++;
+	raum = 157;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort154, ort164, NULL, NULL, NULL, NULL);
 }
 
 void ort158(void) {
 	rotation++;
+	raum = 158;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Osten (2)", 2, ort99, ort159, NULL, NULL, NULL, NULL);
 }
 
 void ort159(void) {
 	rotation++;
+	raum = 159;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Norden nehmen (3)", 3, ort158, ort160, ort155, NULL, NULL, NULL);
 }
 
 void ort160(void) {
 	rotation++;
+	raum = 160;
 }
 
 void ort161(void) {
 	rotation++;
+	raum = 161;
 }
 
 void ort162(void) {
 	rotation++;
+	raum = 162;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort98, ort163, NULL, NULL, NULL, NULL);
 }
 
 void ort163(void) {
 	rotation++;
+	raum = 163;
+	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Westen (2)", 2, ort156, ort162, NULL, NULL, NULL, NULL);
 }
 
 void ort164(void) {
 	rotation++;
+	raum = 164;
 }
 
 void ort165(void) {
