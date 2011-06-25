@@ -1420,13 +1420,13 @@ void ort56(void) {
 void ort57(void) {
 	rotation++;
 	raum = 57;
-	auswahl("Du kannst dem Tunnel nach Osten folgen (1) oder nach Süden (2)", 2, ort58, ort131, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Osten folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort58, ort131, ort63, NULL, NULL, NULL);
 }
 
 void ort58(void) {
 	rotation++;
 	raum = 58;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Süden nehmen (3)", 3, ort57, ort59, ort64, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2), die Abzweigung nach Süden nehmen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort57, ort59, ort64, ort212, NULL, NULL);
 }
 
 void ort59(void) {
@@ -1434,41 +1434,44 @@ void ort59(void) {
 	if(raum == 56) {
 		textausgabe("Du folgst dem Weg. Er wird nach kurzer Zeit zu einem behauenen Gang, der in einen Tunnel münded.");
 	}
-	auswahl("Du kannst dem Weg nach Norden nehmen (1), den Tunnel nach Westen folgen (2) oder nach Osten (3)", 3, ort56, ort58, ort60, NULL, NULL, NULL);
+	raum = 59;
+	auswahl("Du kannst dem Weg nach Norden nehmen (1), den Tunnel nach Westen folgen (2) oder nach Osten (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort56, ort58, ort60, ort212, NULL, NULL);
 }
 
 void ort60(void) {
 	rotation++;
 	raum = 60;
-	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2)", 2, ort59, ort61, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort59, ort61, ort212, NULL, NULL, NULL);
 }
 
 void ort61(void) {
 	rotation++;
 	raum = 61;
-	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2)", 2, ort60, ort62, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen", 3, ort60, ort62, ort212, NULL, NULL, NULL);
 }
 
 void ort62(void) {
 	rotation++;
 	raum = 62;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2)", 2, ort61, ort135, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen", 3, ort61, ort135, ort212, NULL, NULL, NULL);
 }
 
 void ort63(void) {
 	rotation++;
 	raum = 63;
-
+	auswahl("Du kannst den Tunnel zurückgehen (1) oder die Wänder nach Geheimgängen absuchen (2)", 2, ort135, ort57, NULL, NULL, NULL, NULL);
 }
 
 void ort64(void) {
 	rotation++;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder nimmst die Abzweigung nach Osten (3)", 3, ort58, ort139, ort65, NULL, NULL, NULL);
+	raum = 64;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder nimmst die Abzweigung nach Osten (3), natürlich kannst du aber auch die Wände nach Geheimgängen absuchen (4)", 4, ort58, ort139, ort65, ort212, NULL, NULL);
 }
 
 void ort65(void) {
 	rotation++;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Süden nehmen (3)", 3, ort64, ort133, ort66, NULL, NULL, NULL);
+	raum = 65;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Süden nehmen (3), oder natürlich die Wände nach Geheimgängen absuchen (4)", 4, ort64, ort133, ort66, ort212, NULL, NULL);
 }
 
 void ort66(void) {
@@ -1687,7 +1690,7 @@ void ort74(void) {
 				 break;
 		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort73, ort67, ort80, ort74, NULL, NULL);
 				 break;
-		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort73, ort67, ort74, NULL, NULL, NULL);
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem orange erleuchteten Ausgang oder stehenbleiben und warten (4)", 3, ort73, ort67, ort95, ort74, NULL, NULL);
 				 break;
 		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort73, ort67, ort66, ort74, NULL, NULL);
 				 break;
@@ -1758,13 +1761,13 @@ void ort79(void) {
 	rotation++;
 	raum = 79;
 	switch(rotation % 4) {
-		case 1: auswahl("Du den Raum nach Norden verlassen (1), oder lieber warten (2)?", 2, ort78, ort79, NULL, NULL, NULL, NULL);
+		case 1: auswahl("Du den Raum nach Norden verlassen (1), den Boden nach Geheimtüren absuchen(2) oder lieber warten (2)?", 2, ort78, ort152, ort79, NULL, NULL, NULL);
 				break;
-		case 2: auswahl("Du den Raum nach Norden verlassen (1), oder lieber warten (2)?", 2, ort77, ort79, NULL, NULL, NULL, NULL);
+		case 2: auswahl("Du den Raum nach Norden verlassen (1), den Boden nach Geheimtüren absuchen (2) oder lieber warten (2)?", 2, ort77, ort152, ort79, NULL, NULL, NULL);
 				break;
-		case 3: auswahl("Du den Raum nach Norden verlassen (1), oder lieber warten (2)?", 2, ort76, ort79, NULL, NULL, NULL, NULL);
+		case 3: auswahl("Du den Raum nach Norden verlassen (1), den Boden nach Geheimtüren absuchen (2) oder lieber warten (2)?", 2, ort76, ort152, ort79, NULL, NULL, NULL);
 				break;
-		default: auswahl("Du den Raum nach Norden verlassen (1), oder lieber warten (2)?", 2, ort75, ort79, NULL, NULL, NULL, NULL);
+		default: auswahl("Du den Raum nach Norden verlassen (1), den Boden nach Geheimtüren absuchen (2) oder lieber warten (3)?", 2, ort75, ort152, ort79, NULL, NULL, NULL);
 				break;
 	}
 }
@@ -1818,42 +1821,49 @@ void ort81(void) {
 void ort82(void) {
 	rotation++;
 	raum = 82;
+	textausgabe("Der Raum in dem du stehst ist ungewöhnlich. Die Wände schimmern in einer Art dunklen Purpurs und der Raum selber stellt ein symetrisches Sechseck dar, so als wäre er eine überdimensionale Bienenwabe. In jeder seiner sechs Wände befundet sich eine Tunnelöffnung. Jetzt bleibt nur die Frage, welchen dieser sechs Tunnel du nehmen möchtest.");
 	switch(rotation % 8) {
-		case 1: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort68, ort81, ort83, ort84, ort85, ort86);
+		case 1: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort68, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 2: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort67, ort81, ort83, ort84, ort85, ort86);
+		case 2: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort67, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 3: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort74, ort81, ort83, ort84, ort85, ort86);
+		case 3: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort74, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 4: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort73, ort81, ort83, ort84, ort85, ort86);
+		case 4: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort73, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 5: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort72, ort81, ort83, ort84, ort85, ort86);
+		case 5: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort72, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 6: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort71, ort81, ort83, ort84, ort85, ort86);
+		case 6: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort71, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 7: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort70, ort81, ort83, ort84, ort85, ort86);
+		case 7: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort70, ort81, ort83, ort84, ort85, ort86);
 				break;
-		default: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort69, ort81, ort83, ort84, ort85, ort86);
+		default: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort69, ort81, ort83, ort84, ort85, ort86);
 				break;
-
 	}
 }
 
 void ort83(void) {
 	rotation++;
+	raum = 83;
+	auswahl("Du kannst den Weg zurück nach Südwesten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212, NULL, NULL, NULL, NULL);
 }
 
 void ort84(void) {
 	rotation++;
+	raum = 84;
+	auswahl("Du kannst den Weg zurück nach Westen gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212, NULL, NULL, NULL, NULL);
 }
 
 void ort85(void) {
 	rotation++;
 	raum = 85;
+	auswahl("Du kannst den Weg zurück nach Nordwesten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212, NULL, NULL, NULL, NULL);
 }
 
 void ort86(void) {
 	rotation++;
+	raum = 86;
+	auswahl("Du kannst den Weg zurück nach Nordosten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212, NULL, NULL, NULL, NULL);
 }
 
 void ort87(void) {
@@ -1906,62 +1916,67 @@ void ort88(void) {
 void ort89(void) {
 	rotation++;
 	raum = 89;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort88, ort90, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort88, ort90, ort212, NULL, NULL, NULL);
 }
 
 void ort90(void) {
 	rotation++;
 	raum = 90;
-	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Osten (2)", 2, ort89, ort91, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort89, ort91, ort212, NULL, NULL, NULL);
 }
 
 void ort91(void) {
 	rotation++;
 	raum = 91;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort90, ort92, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort90, ort92, ort212, NULL, NULL, NULL);
 }
 
 void ort92(void) {
 	rotation++;
 	raum = 92;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort91, ort93, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort91, ort93, ort212, NULL, NULL, NULL);
 }
 
 void ort93(void) {
 	rotation++;
 	raum = 93;
-	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Westen (2)", 2, ort94, ort92, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Westen (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort94, ort92, ort212, NULL, NULL, NULL);
 }
 
 void ort94(void) {
 	rotation++;
 	raum = 94;
+	auswahl("Du kansnt den Weg zurück nach Süden gehen (1) oder die Wänche nach Geheimgängen absuchen (2)", 2, ort93, ort142, NULL, NULL, NULL, NULL);
 }
 
 void ort95(void) {
 	rotation++;
 	raum = 95;
+	auswahl("Du kannst entweder den Weg zurück nach Norden gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort134, ort74, NULL, NULL, NULL, NULL);
 }
 
 void ort96(void) {
 	rotation++;
 	raum = 96;
+	auswahl("Du kannst den Weg entweder zurück nach Norden gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort142, ort97, NULL, NULL, NULL, NULL);
 }
 
 void ort97(void) {
 	rotation++;
 	raum = 97;
-	auswahl("Du kannst dem Weg nach Westen folgen (1) oder nach Süden (2)", 2, ort148, ort154, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Weg nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort148, ort154, ort96, NULL, NULL, NULL);
 }
 
 void ort98(void) {
 	rotation++;
 	raum = 98;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort161, ort162, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort161, ort162, ort99, NULL, NULL, NULL);
 }
 
 void ort99(void) {
 	rotation++;
+	raum = 99;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort149, ort158, ort98, NULL, NULL, NULL);
 }
 
 // -----------
@@ -2141,199 +2156,206 @@ void ort130(void) {
 void ort131(void) {
 	rotation++;
 	raum = 131;
-	auswahl("Du kannst dem Gang nach Norden folgen (1) oder nach Osten (2)", 2, ort57, ort132, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang nach Norden folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort57, ort132, ort212, NULL, NULL, NULL);
 }
 
 void ort132(void) {
 	rotation++;
 	raum = 132;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2)", 2, ort131, ort138, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort131, ort138, ort212, NULL, NULL, NULL);
 }
 
 void ort133(void) {
 	rotation++;
 	raum = 133;
-	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2)", 2, ort65, ort134, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort65, ort134, ort212, NULL, NULL, NULL);
 }
 
 void ort134(void) {
 	rotation++;
 	raum = 134;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2)", 2, ort133, ort95, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort133, ort95, ort212, NULL, NULL, NULL);
 }
 
 void ort135(void) {
 	rotation++;
 	raum = 135;
-	auswahl("Du kannst dem Gang weiter nach Norden folgen (1) oder nach Osten (2)", 2, ort62, ort136, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang weiter nach Norden folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort62, ort136, ort212, NULL, NULL, NULL);
 }
 
 void ort136(void) {
 	rotation++;
 	raum = 136;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Norden (2)", 2, ort135, ort63, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Norden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort135, ort63, ort212, NULL, NULL, NULL);
 }
 
 void ort137(void) {
 	rotation++;
 	raum = 137;
-	auswahl("Du kannst dem Gang nach Osten folgen (1) oder nach Süden (2)", 2, ort138, ort143, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang nach Osten folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort138, ort143, ort212, NULL, NULL, NULL);
 }
 
 void ort138(void) {
 	rotation++;
 	raum = 138;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Osten (2) oder der Abzweigung nach Norden (3)", 2, ort137, ort139, ort132, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Osten (2) oder der Abzweigung nach Norden (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort137, ort139, ort132, ort212, NULL, NULL);
 }
 
 void ort139(void) {
 	rotation++;
 	raum = 139;
-	auswahl("Du kannst den Weg nach Norden einschlagen (1) oder nach Westen (2)", 2, ort64, ort138, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst den Weg nach Norden einschlagen (1) oder nach Westen (2) oder die Wände nach Geheimgängen absuchen (4)", 3, ort64, ort138, ort212, NULL, NULL, NULL);
 }
 
 void ort140(void) {
 	rotation++;
 	raum = 140;
+	auswahl("Du kannst den Weg zurück nach Westen gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort66, ort212, NULL, NULL, NULL, NULL);
 
 }
 
 void ort141(void) {
 	rotation++;
+	raum = 141;
+	auswahl("Du kannst den Weg zurück nach Osten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort142, ort212, NULL, NULL, NULL, NULL);
 }
 
 void ort142(void) {
 	rotation++;
 	raum = 142;
-	auswahl("Du kannst dem Tunnel nach Westen gehen (1) oder den nach Süden (2)", 2, ort141, ort96, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen gehen (1) oder den nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort141, ort96, ort94, NULL, NULL, NULL);
 }
 
 void ort143(void) {
 	rotation++;
 	raum = 143;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort137, ort80, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort137, ort80, ort212, NULL, NULL, NULL);
 }
 
 void ort144(void) {
 	rotation++;
 	raum = 144;
-	auswahl("Du kannst nach Osten gehen (1) oder nach Süden (2)", 2, ort145, ort149, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst nach Osten gehen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort145, ort149, ort212, NULL, NULL, NULL);
 }
 
 void ort145(void) {
 	rotation++;
 	raum = 145;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort144, ort88, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort144, ort88, ort212, NULL, NULL, NULL);
 }
 
 void ort146(void) {
 	rotation++;
 	raum = 146;
-	auswahl("Du kannst dem Tunnal nach Westen folgen (1) oder nach Osten (2)", 2, ort87, ort147, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnal nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort87, ort147, ort212, NULL, NULL, NULL);
 }
 
 void ort147(void) {
 	rotation++;
 	raum = 147;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort146, ort148, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort146, ort148, ort212, NULL, NULL, NULL);
 }
 
 void ort148(void) {
 	rotation++;
 	raum = 148;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort147, ort97, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort147, ort97, ort212, NULL, NULL, NULL);
 }
 
 void ort149(void) {
 	rotation++;
 	raum = 149;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder der Abzweigung nach Osten folgen (3)", 3, ort144, ort99, ort150, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder der Abzweigung nach Osten folgen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort144, ort99, ort150, ort212, NULL, NULL);
 }
 
 void ort150(void) {
 	rotation++;
 	raum = 150;
-	auswahl("Du kannst nach Westen gehen (1) oder nach Süden (2)", 2, ort149, ort155, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst nach Westen gehen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort149, ort155, ort212, NULL, NULL, NULL);
 }
 
 void ort151(void) {
 	rotation++;
 	raum = 151;
-	auswahl("Du kannst nach Norden gehen (1) oder nach Osten (2)", 2, ort87, ort152, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst nach Norden gehen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 2, ort87, ort152, ort212, NULL, NULL, NULL);
 }
 
 void ort152(void) {
 	rotation++;
 	raum = 152;
+	auswahl("Du kannst den Weg zurück nach Westen gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort151, ort79, NULL, NULL, NULL, NULL);
 }
 
 void ort153(void) {
 	rotation++;
 	raum = 153;
-	auswahl("Du kannst nach Osten gehen (1) oder nach Süden (2)", 2, ort154, ort156, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst nach Osten gehen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort154, ort156, ort212, NULL, NULL, NULL);
 }
 
 void ort154(void) {
 	rotation++;
 	raum = 154;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder der Abzweigung nach Westen folgen (3)", 3, ort97, ort157, ort153, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder der Abzweigung nach Westen folgen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort97, ort157, ort153, ort212, NULL, NULL);
 }
 
 void ort155(void) {
 	rotation++;
 	raum = 155;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort150, ort159, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort150, ort159, ort212, NULL, NULL, NULL);
 }
 
 void ort156(void) {
 	rotation++;
 	raum = 156;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort153, ort163, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort153, ort163, ort212, NULL, NULL, NULL);
 }
 
 void ort157(void) {
 	rotation++;
 	raum = 157;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2)", 2, ort154, ort164, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort154, ort164, ort212, NULL, NULL, NULL);
 }
 
 void ort158(void) {
 	rotation++;
 	raum = 158;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Osten (2)", 2, ort99, ort159, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort99, ort159, ort212, NULL, NULL, NULL);
 }
 
 void ort159(void) {
 	rotation++;
 	raum = 159;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Norden nehmen (3)", 3, ort158, ort160, ort155, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Norden nehmen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort158, ort160, ort155, ort212, NULL, NULL);
 }
 
 void ort160(void) {
 	rotation++;
 	raum = 160;
+	auswahl("Du kannst den Tunnel zurück nach Westen gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort159, ort212, NULL, NULL, NULL, NULL);
 }
 
 void ort161(void) {
 	rotation++;
 	raum = 161;
+	auswahl("Du kannst den Weg zurück nach Osten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort98, ort212, NULL, NULL, NULL, NULL);
 }
 
 void ort162(void) {
 	rotation++;
 	raum = 162;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2)", 2, ort98, ort163, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort98, ort163, ort212, NULL, NULL, NULL);
 }
 
 void ort163(void) {
 	rotation++;
 	raum = 163;
-	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Westen (2)", 2, ort156, ort162, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Westen (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort156, ort162, ort212, NULL, NULL, NULL);
 }
 
 void ort164(void) {
 	rotation++;
 	raum = 164;
+	auswahl("Du kannst den Weg zurück nach Norden nehmen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort157, ort212, NULL, NULL, NULL, NULL);
 }
 
 void ort165(void) {
@@ -2482,6 +2504,36 @@ void ort211(void) {
 }
 
 void ort212(void) {
+	// Die Suche nach Geheimgängen im ersten Level der Hohlwelt ruft diese Funktion auf.
+	switch(wuerfel(6)) {
+		case 1: textausgabe("Du hämmerst die Felsen ab, aber von Hohlräumen ist nichts zu hören.");
+				break;
+		case 2: textausgabe("Die Wand fühlt sich warm an, während du mit deiner Hand darüber gehst.");
+				break;
+		case 3: textausgabe("Du könntest schwören, hinter der Wand das Geräusch fließenden Wassers hören zu können.");
+				break;
+		case 4: textausgabe("Während du die Wände abtastest, hast du das Gefühl, beobachtet zu werden.");
+				break;
+		case 5: textausgabe("Es kommt dir so vor, als würdest sich dein Klopfen etwas hohl anhören. Vielleicht befindet sich ja ein Hohlraum hinter der Wand?");
+				break;
+		default: textausgabe("Du kannst absolut nichts ungewöhnliches wahrnehmen.");
+				 break;
+	}
+	switch(wuerfel(4)) {
+		case 1: textausgabe("Vielleicht ist es nur Einbildung, aber du glaubst gerade ganz deutlich, einen Luftzug gespürt zu haben.");
+				break;
+		case 2: textausgabe("Für einen Moment glaubtest du, ein Geräusch gehört zu haben.");
+				break;
+		case 3: textausgabe("Es kommt dir so vor, als wäre es unnatürlich still hier unten.");
+				break;
+		case 4: textausgabe("Ein ungutes Gefühl breitet sich in deinem Magen aus.");
+				break;
+	}
+	// 20% Wahrscheinlichkeit einer Zufallsbegegnung.
+	if(wuerfel(10) > 8)
+		ort213();
+	else
+		raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 }
 
 void ort213(void) {
