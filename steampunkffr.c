@@ -6,7 +6,7 @@
  *    Description:  Steampunk FFR - Der Anfang
  *    				Ein "Das-ist-dein-Abenteuer"-Roman
  *
- *        Version:  0.013
+ *        Version:  0.014
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -43,6 +43,7 @@
  *   - 24.06.2011 Eine Auswahl fehlte bei ort1()
  *   - 24.06.2011 Beginne damit, eine erweiterten Stadtplan einzusetzen
  *   - 25.06.2011 Mehr Action und das Auftauchen der Dreistelzer wird eingearbeitet
+ *   - 25.06.2011 Der Storyabschnitt für Mönchengladbach ist soweit beendet.
  *
  * =====================================================================================
  */
@@ -742,6 +743,10 @@ void ort8(void) {
 void ort9(void) {
 // Zum Haus deines Großvaters
 	raum = 9;
+	if(dreistelzer) {
+		textausgabe("Der Kampf ist nicht spurlos am Haus deines Großvaters vorbeigezogen. Die Fenster sind zersplittert, die Haustüre liegt am Boden, die Wände rußgeschwärzt.");
+		auswahl("Willst du in das Haus deines Großvaters hinein (1) oder versuchen, um die Ecke zu laufen und den Kapuzinerplatz zu erreichen (2)?", 2, ort21, ort28, NULL, NULL, NULL, NULL);
+	}
 	if(tripodgesehen == true) {
 		textausgabe("Du läufst auf das Haus deines Großvaters zu und in den Eingang zwischen Gaststätte und Kleidungsgeschäft. Für einen Moment mußt du vor der alten Holztüre mit der Glasscheibe halten. Mit Hilfe deines Taschenmessers daudert es nur ein paar Sekunden, dann ist die Türe öffnet und du schlüpfst hinein.");
 		ort21();
@@ -850,11 +855,15 @@ void ort17(void) {
 void ort18(void) {
 // Du bekommst die Türe auf
 	raum = 18;
+	textausgabe("Du betrittst den Laden, hast aber sofort das Gefühl, alleine zu sein. Du durchstöberst jedes Zimmer, jeden Raum, jeden Winkel, aber Elke ist nicht mehr da. Sie hat wohl nicht geglaubt, daß du wieder kommst. Dir bleibt nichts anderes übrig, als den Laden zu verlassen.");
+	ort34();
 }
 
 void ort19(void) {
 // Die Türe geht nicht auf
 	raum = 19;
+	textausgabe("Du bekommst es einfach nicht hin, die Türe geht nicht auf. Du denkst, daß sie wohl nicht mehr da sein wird und wendest dich ab.");
+	ort34();
 }
 
 void ort20(void) {
@@ -867,6 +876,10 @@ void ort20(void) {
 void ort21(void) {
 // Treppenflur
 	raum = 21;
+	if(dreistelzer) {
+		textausgabe("Der Hausflur sieht mitgenommen aus, doch die Steintreppe ist immer noch intakt. Der Zählerkasten hängt von der Wand herunter und die Treppe zur Kneipe wurde eingetreten. Dahinter siehst du das Spiel von Flammen an der Wand. Du gehst durch die Türe. Die Kneipe sieht verwüstet aus. Du gehst durch den Gang in die Küche, durchquerst sie und stehst in der ehemaligen Garage deines Großvaters, wo bequem vier Autos Platz hätten. Du erinnerst dich, wie vor vielen Jahren hier der Vogelschuß des Schützenfestes stattgefunden hatte - und schaust hinauf zu den Glasbausteinen, die einen Teil des Bodens vom Dachgarten ausgemacht haben. Der Ort, wo deine Schaukel stand, wo du Schnittlauch von dem gepflanzten Gemüse gegessen hattest, wo Clarence und Judy manchmal Auslauf haben durften. Von innen kannst du die Türe öffnen und zum Kapuzinerplatz hinaushuschen.");
+		auswahl("Willst du es riskieren, die Treppe hochzusteigen (1), der Steintreppe in den Keller folgen (2) oder das Haus in Richtung Kapuzinerplatz verlassen (3)?", 3, ort25, ort20, ort28, NULL, NULL, NULL);
+	}
 	textausgabe("Du stehst in einem großen Treppenflur. An der Seite befindet sich der Hängeschrank mit den ganzen Ablesegeräten für Elektrizität und Wasser. Rechts an der Wand für eine Steintreppe hinauf in das erste Stockwerk. Geradeaus ist eine Holztüre, durch die man in den Kellerbereich der Gaststätte kommt, allerdings ist sie dauerhaft abgeschlossen. Rechts neben der Holztüre, unterhalb der Steintreppe, befindet sich eine Eisentüre, hinter der sich der Abstieg in den Keller befindet.");
 	auswahl("Willst du die Treppe hinaufsteigen (1), in den Keller hinuntergehen (2), oder das Haus verlassen und zurück auf den Alten Markt (3)?", 3, ort25, ort20, ort26, NULL, NULL, NULL);
 }
@@ -927,6 +940,10 @@ void ort25(void) {
 void ort26(void) {
 // Der Alte Markt
 	raum = 26;
+	if(dreistelzer) {
+		textausgabe("Die Fassaden der Häuser am Alten Markt brennen knisternd, einige drohen einzustürzen. Tote Leiber bedecken den Ort, den ein ein Dreistelzer entweiht hat, der nun an damit beschäftigt ist, aus dem Polizeirevier einen Aschehaufen zu produzieren. Eine Art Panzerwagen steht unter ihm - und du könntest schwören, das gerade zwei Gestalten in die Bank gelaufen sind. Hoffentlich bist du bisher niemandem aufgefallen.");
+		auswahl("Wenn du Glück hast, kannst du ungesehen in das Haus deines Großvaters huschen (1), du kannst aber auch versuchen, die Turmstiege ungesehen zu erreichen (2) oder versuchen, die unbemerkt an den Häusernwänden des Kapuzinerplatzes entlang zu bewegen (3)", 3, ort9, ort44, ort28, NULL, NULL, NULL);
+	}
 	if(tripodgesehen && (getoetetegegner > 0)) {
 		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser. Zu versuchen, den Kapuzinerplatz oder die Turmstiege zu erreichen, dürfte keine gute Idee sein.");
 		auswahl("Wie es aussieht, kannst es versuchen die Waldhausener Straße zu erreichen (1), der Weg den Abteiberg hinunter an der Polizeiwache vorbei sollte auch möglich sein (2). Auch der Weg den Marktstieg entlang (3) oder die Hindenburgstraße hinab (4) erscheinen dir noch sicher.", 4, ort43, ort35, ort27, ort34, NULL, NULL);
@@ -1005,6 +1022,10 @@ void ort30(void) {
 
 void ort31(void) {
 	// Blücherstraße
+	if(raum == 51) {
+		textausgabe("Du siehst dich um, aber im Moment ist alles still und du fühlst dich sicher.");
+		mahlzeit();
+	}
 	if(raum == 29)
 		textausgabe("Nachdem du die Kaiserstraße entlang gegangen bist, ist zu deiner rechten Hand der Adenauerplatz mit seinem häßlichen Sandspielplatz, während zu deiner Linken die Stadtbibliothek lockt. Rechts von dir verläuft die Kleiststraße bis hin zum Lichthof.");
 	if(raum == 50)
@@ -1039,6 +1060,11 @@ void ort32(void) {
 void ort33(void) {
 	// Im Lichthof
 	textausgabe("Der Lichthof sieht aus wie ein Scherbenmeer. Hier muß es bereits zu heftigen Kämpfen gekommen sein. Die angrenzende Passage ist voller Rauch.");
+	if(dreistelzer) {
+		textausgabe("Vor dem unteren Ausgang des Lichthofs steht der Metallfuß eines Dreistelzers. Das hier ist eine Falle, eine Sackgasse. Du drehst dich um und rennst so schnell du kannst Richtung der Stadtbibliothek davon.");
+		raum = 33;
+		ort50();
+	}
 	if(verzeichnisgelesen && (wuerfel(6) > 3))
 		ort113();
 	if(raum == 50) {
@@ -1053,6 +1079,11 @@ void ort33(void) {
 
 void ort34(void) {
 	// Hindenburgstraße, oberer Teil
+	if(dreistelzer) {
+		textausgabe("Von hier aus kannst du sehen, das sich am unteren Teil der Hindenburgstraße, hinter dem Knick beim Kaffeehausröster, sich ein weiterer Dreistelzer befindet. Du kannst nicht ihn selber sehen, aber ab und an sieht man den Schimmer seiner Flammenwaffe auf den Häuserfassaden und in den Fenstern wiederspiegeln. Es wäre nicht gerade klug, sich in die Richtung zu wagen. Ähnlich sieht es auch an der Stepgesstraße aus, auch von dort kommen die grauenvollen mechanischen Geräusche der Dreistelzer. Der dritte im Bunde steht immer noch neben dem Polizeirevier und verunstaltet das Gebäude.");
+		raum = 34;
+		auswahl("Du kannst von hier aus versuchen, die Krichelstraße zu erreichen - und es von dort aus zum Münsterplatz zu versuchen (1) oder du versuchst in die Wallstraße zu huschen (2), wenn du schnell genug bist, kannst du auch an der Stadtmauer entlang zum Marktstieg (3)", 3, ort37, ort45, ort27, NULL, NULL, NULL);
+	}
 	if(wuerfel(6) > 4)
 		textausgabe("Für einen Moment siehst du vor deinem geistigen Auge, wie aus dem klotzigen Modegeschäft wieder das Kaufhaus wurde, in dessen Verkaufsräumen du viele Stunden deiner Kindheit verbracht hast, mit dem Betrachten von Spielzeugen, dem hineinschnuppern in Büchern und dem herumtippen auf 8-Bit Computern. Du erinnerst dich sogar wieder daran, wie an deinem Geburtstag Ephraim Kishon hier war und Autogramme in seine Bücher schrieb.");
 	textausgabe("Während du die Hindenburgstraße entlang läufst, kannst du in der Ferne außer dem Nebelschleier auch einen gewissen Rauchschleier ausmachen.");
@@ -1104,6 +1135,18 @@ void ort36(void) {
 
 void ort37(void) {
 	// Der Vorplatz des Münsters
+	if(raum == 52) {
+		textausgabe("So schnell dich deine Beine tragen, rennst du am Waffengeschäft vorbei, vorbei an den Häusern, in denen Stefan und Dirk lebten (der diesen geilen TI 99/4a hatte) - und die Straße hinunter. Du greifst das Schild und schleuderst um die Ecke der Weiherstraße. Das \"Alte Zeug Haus\" läßt du rechts liegen, der \"Alte Ulan\" ist auch nicht dein Ziel, sondern die Treppenstufen, die zum Münsterplatz hochführen. Du nimmst sie so schnell wie möglich und fällst fast noch über die letzte Stufe, dann bist du wieder oben. Und vollkommen außer Atem. Du ringst nach Luft und betrachtest das stets geschlossene Portal des Münsters auf dieser Seite.");
+		raum = 37;
+		auswahl("Du kannst vo hier aus jetzt nach links und zum Rathaus gehen - wobei da natürlich die Gefahr ist, vom Dreistelzer an der Polizeiwache bemerkt zu werden (1), du kannst auch das Münster betreten (2), sinnloserweise die Treppen zum Geroweiher hinunterspurten (3) oder den Abteiberg entlang zum oberen Teil der Hindenburgstraße spurten (4)", 4, ort36, ort38, ort46, ort34, NULL, NULL);
+	}
+	if(raum == 34) {
+		textausgabe("Du spurtest das kurze Stück \"An der Stadtmauer\" entlang und biegst in die Krichelstraße ab, wo du direkt in einen Soldaten rennst.");
+		ort113();
+		textausgabe("Kaum daß du den Kampf gewonnen hast, läuft du weiter. Kurz bevor du den Kirchplatz erreichst, läufst du nach links, den Weg entlang, das kurze Stück über die Brücke hinüber zum Museum, dort die Treppe hinunter und um die Probstei herum, bis du schließlich vor dem Haupteingang des Münsters stehst.");
+		raum = 37;
+		auswahl("Willst du in das Münster hinein (1), oder an ihm vorbei zum Rathaus laufen, in der Gefahr, auf den Dreistelzer zu stoßen (2), oder willst du die Treppenstufen hinab zum Park am Geroweiher (3)?", 3, ort38, ort36, ort46, NULL, NULL, NULL);
+	}
 	if(raum == 51) {
 		textausgabe("Als du an oben am Hügel ankommst, rennst du am Elektronikladen links herum. Du nimmst die Treppe, hinauf zum Museum und rennst dort über die Steinplatten, auf denen du in deiner Kindheit mit deinen Freunden Skateboard gefahren und Roller Skater gelaufen bist, aber diesmal heißt der Sport nicht Bremstest (wobei ab und an das Skateboard unter dem Gitter hindurchschoß), sondern überleben, einfach nur überleben. Du rennst über das Museum und dann die Treppe hinab, ein kurzes Stück durch den Park und dann hinüber, um das Münster herum. Etwas erschöpft stehst du nun vor dem Haupteingang. Dein Blick schweift über den Geroweiher. Bis jetzt siehst du dort unten keine Dreistelzer, allerdings machen der Wind und der Regen es nicht leicht, viel zu erkennen.");
 		raum = 37;
@@ -1120,17 +1163,34 @@ void ort37(void) {
 
 void ort38(void) {
 	// Im Hauptschiff des Münsters
+	if(dreistelzer) {
+		textausgabe("Jetzt wo die Dreistelzer da draußen lauern, bist du dir nicht sicher, ob dieser uralte Bau dich noch lange schützen wird. Doch für einen Augenblick nimmst du dir Zeit. Die Zeit darüber nachzudenken, warum zum Teufel diese Typen da draußen sind - und deine Geburtsstadt in Schutt und Asche legen. Zu einer Erklärung gelangst du aber leider nicht.");
+		mahlzeit();
+		auswahl("Willst du das Münster verlassen (1) oder willst du in den Seitengang (2)?", 2, ort37, ort39, NULL, NULL, NULL, NULL);
+	}
+	else
+		textausgabe("Das Hauptschiff der Kirche ist erst vor kurzem neu restauriert worden und erstrahlt in hellstem weiß. Die Kirche wird trotz ihrer Größe weniger bedrückend als so manch alter Göttertempel. Der Duft des Weihwassers erfüllt die Luft. Ein Ständer beherbergt Bücher und Pamphlete, während an anderer Stelle, Kerzen aller Größe brennen. Es ist ein seltsamer Ritus in fast allen Religionen, sinnlose Brandrituale durchzuführen, die der Umwelt nicht wirklich helfen - dafür aber die Ressourcen dieses einzigen Planeten, auf dem wir leben angreifen. Du könntest dich auf einer der Bänke niederlassen, dennoch fühlst du dich hier nicht wohl. Seitlich an der Wand steht eine Türe offen. In deiner Kindheit war eine der Mieterinnen deines Großvaters verantwortlich für die Schatzkammer, sie war öfters mit dir in diesem Gang, der unter anderem zu jener Kammer führte.");
+	mahlzeit();
 	auswahl("Du kannst das Münster verlassen (1) oder den Seitengang betreten (2).", 2, ort37, ort39, NULL, NULL, NULL, NULL);
 }
 
 void ort39(void) {
 	// Im Seitengang des Münsters
-	auswahl("Von hier aus gelangst du in das Hauptschiff des Münsters (1), eine Türe führt in den Innenhof (2) und über eine Treppe gelangst du in die Gruft unter den Altar (3).", 3, ort38, ort41, ort40, NULL, NULL, NULL);
+	textausgabe("Der Gang spannt sich um den Innenhof des Münsters. Glas gibt an jeder Stelle den Blick darauf frei, ebenso wie auf die Steinumtafelte Treppe, die in der Mitte des Rasenhofs nach unten führt. Auf der rechten Seite führt eine kurze Treppe hinab in die Gruft unter dem Hauptschiff.");
+	auswahl("Möchtest du in das Hauptschiff des Münsters (1), den Innenhof betreten (2) oder die Treppe zur Gruft hinuntersteigen (3)?", 3, ort38, ort41, ort40, NULL, NULL, NULL);
 }
 
 void ort40(void) {
 	// Die Gruft unter dem Altar
-		textausgabe("Du steigst die Treppe hinunter in die Gruft, die direkt unter dem Altar des Münsters liegt. Du erinnerst dich, wie in der dritten Klasse einmal ein Klassenausflug hierhin führte und die Person, die euch das Münster zeigte, auch an diesem Ort mit euch kam. Sie erzählte eine krude Sage, von Soldaten, einem Spiel und dem Abdruck der Hand des Teufels auf dem Sarg noch einmal genauer an.");
+	textausgabe("Du steigst die Treppe hinunter in die Gruft, die direkt unter dem Altar des Münsters liegt. Du erinnerst dich, wie in der dritten Klasse einmal ein Klassenausflug hierhin führte und die Person, die euch das Münster zeigte, auch an diesem Ort mit euch kam. Sie erzählte eine krude Sage, von Soldaten, einem Spiel und dem Abdruck der Hand des Teufels auf dem Sarg noch einmal genauer an.");
+	if(durchganggeoeffnet && !sargverschoben) {
+		textausgabe("Eigentlich hattest du erwartet, den Sargdeckel geöffnet vorzufinden, aber alle drei Särge sind geschlossen.");
+		if(janeinfrage("Möchtest du den Sargdeckel erneut verschieben (j/n)?"))
+			sargverschoben = true;
+		textausgabe("Du wendest dich ab und gehst die Treppe hinauf.");
+		raum = 40;
+		ort39();
+	}
 	if(kartegefunden && !sargverschoben)
 		if(janeinfrage("Willst du dir den Inhalt des Sarges näher ansehen (j/n)?")) {
 			textausgabe("Mit aller Kraft gelingt es dir, wenn auch nur sehr langsam, den Sargdeckel zu verschieben - allerdings nicht sehr weit. Doch was du bereits sehen kannst, reicht dir aus: der Sarg ist vollkommen leer. Du blickst dich noch kurz um, und überlegst, ob du auch die Deckel der anderen Särge verschieben sollst. Angesichts des unnützen Kraftaufwands und der Tatsache, das bereits in diesem Sarg nichts drin ist, bist du der festen Überzeugung, das es sich bei den anderen ebenso verhält. Du wendest dich ab und gehst die Treppe hinauf.");
@@ -1169,19 +1229,30 @@ void ort42(void) {
 void ort43(void) {
 	// Die Waldhausener Straße
 	raum = 43;
-	auswahl("Die Straße führt hinauf zum Alten Markt (1), neben dem Dicken Turm verläuft die Turmstiege (2) und ein weiterer Weg führt durch den kleinen Grünbereich des Spatzenberges (3)", 3, ort26, ort44, ort52, NULL, NULL, NULL);
+	textausgabe("Die Waldhausener Straße war früher das Herzstück der Mönchengladbacher Altstadt. Hier reihten sich die Kneipen und Diskotheken nur so aneinander, doch in den Anfangszeit der 1990er Jahre, hatten die christdemokratischen Hohlbirnen der Stadt dem ein Ende bereitet - und damit nachhaltig dem Flair der Stadt geschadet. Vor deinem geistigen Auge stellst du dir das ehemalige Blumengeschäfft der Schallenburgers vor. Du erinnerst dich daran, wie deine Mutter und ihr Mann oftmals in den Herbstmonaten dort Kränze gebunden hatten. Und daran, wie sie von den Schallenburgers die alte Nähmaschine bekamen, in der 10.000 Mark versteckt waren. Glücklicherweise waren sie so ehrlich, Micky und seine Mutter das Geld zurückzugeben. Trotzdem wurde Micky nicht alt, und die Schallenburgers und die Geschichte ihres Blumen- und Friedhofsgeschäftes endeten.");
+	if(dreistelzer) {
+		textausgabe("Zurück in der Gegenwart jedoch mußt du erkennen, das in weiter Entfernung, die Waldhausener Straße entlang in Richtung Hardt, wenigstens 2 Dreistelzer sich an den Häusern und Menschen der Stadt vergehen - während ein weiteres dieser Ungetüme nicht weit bergauf steht.");
+		auswahl("Am sichersten wäre es wohl, den Fliescherberg hinabzulaufen (1), eventuell wäre auch der Schleichweg die Turmstiege entlang eine Alternative (2)", 2, ort52, ort44, NULL, NULL, NULL, NULL);
+	}
+	auswahl("Die Straße führt hinauf zum Alten Markt (1), neben dem Dicken Turm verläuft die Turmstiege (2) und ein weiterer Weg führt durch den kleinen Grünbereich des Fliescherberges (3)", 3, ort26, ort44, ort52, NULL, NULL, NULL);
 }
 
 void ort44(void) {
 	// Die Turmstiege
+	textausgabe("Die Turmstiege ist herrlich geschützt. An ihrem Ende zur Waldhausener Straße hin führt eine Treppe neben dem Dicken Turm hinab, von ihr selber eine Stiege den Turm hinauf und die lange Mauer ermöglicht es, dank der hervorragenden Steine an ihr hinaufzuklettern. Das taten deine Freunde und du schon als Kinder - und das tust du auch jetzt noch manchmal, den oben in der kleinen Zinne sieht einen Niemand.");
+	mahlzeit();
 	auswahl("Von hier aus hast du die Möglichkeit zur Waldhausener Straße zu gelangen (1), durch die Passage zum Alten Markt zu gehen (2) oder zum Kapuzinerplatz(3), wenn du schnell genug spurtest schaffst du es vielleicht sogar bis zum Haus deines Großvaters (4)", 4, ort43, ort26, ort28, ort9, NULL, NULL);
 }
 
 void ort45(void) {
 	// Die Wallstraße
-	if(tripodgesehen && (getoetetegegner > 0)) {
-		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
+	raum = 45;
+	if(dreistelzer) {
+		textausgabe("Von hier aus kann man sehen, das aus Richtung des Wasserturms sich ein wenigstens 30 Meter hoher Dreibeiner dem Krankenhaus nähert.");
 	}
+	if(wuerfel(6) > 4)
+		textausgabe("Deine Gedanken schweifen ab zu Marios, der früher über dem Cafe wohnte. Oben in seiner Wohnung hattet ihr Commodore Basiclistings in den PC eingehämmert und stundenlang dann mit den Ergebnissen gespielt. Von hier aus seid ihr auch oft mit Dimmi zum Fußballspielen aufgebrochen. In der Bäckerei wohnte Michaela mit ihren Eltern, die die Backstube betrieben. Du hast leider nie erfahren, warum sie nach Ende der dritten Klasse nicht in die Schule zurückkehrte - oder wieso plötzlich die Bäckerei weg war.");
+	textausgabe("Du hast die Wallstraße immer gerne als Abkürzung benutzt, um zur Hindenburgstraße zu gelangen, nicht zuletzt wegen des Bücherladens, an dem du dir täglich am Schaufenster die Nase platt gedrückt hast, wo du dir das erste mal Michael Moorcocks \"Elric von Melnibone - Die Sage vom Ende der Zeit\" holtest, jenes Buch, das du dir sechs Mal kaufen mußtest, weil niemand es zurückgab, wenn man es ihm auch nur einmal auslieh. Und immer nach seinem Neuerwerb, hast du es nochmal gelesen. Du erinnerst dich auch noch an deine schräge Klassenkameradin, die einerseits total schüchtern her war vom Wesen - und die dennoch wie Boy George herumlief - und auch die Musik die ganze Zeit über hörte.");
 	auswahl("Du kannst von hier aus zur Hindenburgstraße (1), die Kaiserstraße hinab (2), den Marktstieg entlang (3) oder am Haus Zoar vorbei zum Kapuzinerplatz (4)", 4, ort34, ort29, ort27, ort28, NULL, NULL);
 }
 
@@ -1203,35 +1274,50 @@ void ort46(void) {
 
 void ort47(void) {
 	// Die Bismarkstraße
-	if(tripodgesehen && (getoetetegegner > 0)) {
-		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
+	raum = 47;
+	if(dreistelzer) {
+		textausgabe("Von der Ecke der Hindenburgstraße aus kannst du sehen, das zwei Dreistelzer sich an den Bankgebäuden zu schaffen machen. Soldaten bringen aus der Bank heraus Säcke zu einem Panzerwagen. Für deinen Geschmack ist das etwas zu nah, um auch nur im Entferntesten daran zu denken, die Kreuzung zu überqueren. So drehst du dich lieber um und suchst dein Heil in der Flucht, die Hindenburg straße hinauf.");
+		ort51();
 	}
+	else
+		textausgabe("Ein Dreibeiner steht neben der Kaiser-Friedrich-Halle und bedeckt ihr dach mit einem blau-grünlichen Flamme. Glücklicherweise ist er damit soweit weg, daß wohl kaum die Gefahr besteht, bemerkt zu werden.");
 	auswahl("Der Weg ist soweit sicher die Hindenburgstraße hinauf (1) oder weiter hinab bis zum Vorplatz des Hauptbahnhofs (2)", 2, ort51, ort48, NULL, NULL, NULL, NULL);
 }
 
 void ort48(void) {
 	// Der Bahnhofsvorplatz
-	if(tripodgesehen && (getoetetegegner > 0)) {
-		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
-	}
 	raum = 48;
-	auswahl("Du kannst entweder die Hindenburgstraße entlang in Richtung Alter Markt (1) oder in den Hauptbahnhof hinein (2)", 2, ort47, ort49, NULL, NULL, NULL, NULL);
+	if(dreistelzer) {
+		textausgabe("Von überall her, dringen die scheusslichen, mechanischen Geräusche der Dreistelzer auf dich ein, trotzdem ist hier auf dem Europaplatz noch keines dieser haushohen Metallmonster aufgetaucht.");
+	}
+	if(wuerfel(6) > 3)
+		textausgabe("Für die meisten Gladbacher ist das hier einfach der Platz vor dem Hauptbahnhof, für andere der Busbahnhof aber kaum jemand kennt den Namen des Platzes. Früher war da mal die Bank, wo der Mann deiner Mutter arbeitete. Amüsiert mußt du daran denken, wie er fassungslos nach Hause kam und davon erzählte, das die nette Frau aus dem Haus, die manchmal den Bankern etwas zu essen brachte, die Frau war, die ihren Mann zerstückelt und in Dosen im Bunten Garten verstreut hatte.");
+	textausgabe("Es stehen keinerlei Busse im Busbahnhof herum, auch sind kaum Menschen hier auszumachen. Betrachtet man nur den Platz, so wirkt alles so, wie es sein soll.");
+	auswahl("Du kannst von hier aus entweder die Hindenburgstraße entlang in Richtung Alter Markt gehen (1) oder das Innere des Hauptbahnhofs betreten (2)", 2, ort47, ort49, NULL, NULL, NULL, NULL);
 }
 
 void ort49(void) {
 	// Der Hauptbahnhof
-	if(tripodgesehen && (getoetetegegner > 0)) {
-		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
-	}
+	raum = 49;
+	if(!tripodgesehen)
+		tripodgesehen = true;
+	if(wuerfel(6) > 3)
+		textausgabe("Während du auf die Doppeltüren des Bahnhofs zuschreitest kommt dir ein Bild aus deiner Erinnerung. Du wolltest dir das neueste Lustige Taschenbuch holen - und es war Sonntag. Normalerweise kam es erst Montags heraus, so wie auch das Yps-Heft, aber am Kiosk des Hauptbahnhofs gab es alles einen Tag früher. Und so fragtest du damals im Kiosk nach, aber dort sagte man, daß die Hefte noch nicht geliefert wurden - das es aber in der nächsten Stunde geschehen würde. Und so ging ich an die Modelleisenbahn, die dort stand - und spielte damit für die nächste Stunde. Und als ich mich schließlich wieder erinnerte warum ich gekommen war, holte mir die Verkäuferin das frisch gedruckte Taschenbuch aus dem Karton heraus. Ich pflückte mir noch das neue Yps mit seinem Gimmick aus dem Verkaufsständer, bezahlte und machte mich freudig auf den Nachhauseweg. Herr Jansen der Wirt war bei meinen Eltern, daran erinnerte ich mich, er hatte mir das Geld für das Taschenbuch gegeben.");
+	textausgabe("Beim Öffnen der Türe entfaltet sich ein grauenhafter Anblick for mir, die Bahnhofshalle gleicht eher einem Schlachthaus und riecht strenger als eine Leichenhalle. Und am Ende des Bahnhofs sehe ich die metallenen Beine eines Dreistelzers. Mir bleibt nichts anderes übrig, als mich umzudrehen und das Weite zu suchen.");
 	ort48();
 }
 
 void ort50(void) {
 	// Die Kleiststraße
-	if(tripodgesehen && (getoetetegegner > 0)) {
-		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
-	}
+	if(raum == 33)
+		textausgabe("Nervös siehst du hinter dich, aber es scheint nicht, als wäre dir jemand gefolgt.");
+	else
+		textausgabe("Die Kleiststraße ist jene kurze Straße zwischen dem Lichthof und dem Adenauerplatz, an dem sich das von allen Gladbachern gehasste Finanzamt befindet. Wenn man sich die Fassade des Gebäudes genauer betrachtet, so hat sie noch so etwas widerliches an sich, eine Ausstrahlung, als wäre sie ein verirrtes Stück 1940.");
 	raum = 50;
+	if(dreistelzer) {
+		textausgabe("Ein Schuß erklingt!");
+		ort113();
+	}
 	auswahl("Du kannst am Adenauerplatz vorbei zur Blücherstraße (1) oder Richtung Hindenburgstraße in den Lichthof (2)", 2, ort31, ort33, NULL, NULL, NULL, NULL);
 }
 
@@ -1242,15 +1328,25 @@ void ort51(void) {
 		raum = 51;
 		ort37();
 	}
+	if((raum == 47) && dreistelzer) {
+		textausgabe("Mit Mühe und Not gelingt es dir, die Bismarkstraße unbemerkt zu überqueren. Du hältst dich dicht an die Häuserfassade gedrückt, damit dich der andere Dreibeiner nicht bemerkt, der am Lichthof gegenüber der Friedrichstraße sein Zerstörungswerk fortsetzt. Belustigt denkst du an die Kuh Martina zurück. Zurück in der Realität rennst du so schnell dich deine Beine tragen in die Albertusstraße hinein, vorbei an dem Gebäude früher der Buchclub war, in dem deine Mutter sich seit einem halben Jahrhundert Mitgliedschaft durchgequält hat, vorbei an der Bank... Uff, das hätte auch schlecht ausgehen können. Auch hier ist eine Bank, aber noch kein Dreistelzer. Du läuftst weiter bis zum Adenauerplatz und rennst quer über diesen, bis du an die Ecke zur Blücherstraße kommst.");
+		raum = 51;
+		ort31();
+	}
 	raum = 51;
 	auswahl("Von hier aus kannst du der Hindenburgstraße bergauf folgen (1) oder in die Gegenrichtung auf den Hauptbahnhof zu (2), oder Richtung Kleiststraße durch den Lichthof (3)", 3, ort34, ort47, ort33, NULL, NULL, NULL);
 }
 
 void ort52(void) {
-	// Der Spatzenberg
-	if(tripodgesehen && (getoetetegegner > 0)) {
-		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während Zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser.");
+	// Der Fliescherberg
+	if(dreistelzer) {
+		textausgabe("Oben von der Annastiege aus, kannst du den Dreibeiner sehen - und auch die Männer, die allem Anschein nach die Bank leer räumen.");
+		raum = 52;
+		auswahl("Von hier aus kannst du versuchen die Neustraße langzuhuschen, ein kurzes Stück die Weiherstraße hinab zulaufen und dann die Treppen hinauf zum Münsterplatz (1), oder du rennst hinüber zur Waldhausener Straße, zum Dicken Turm (2) oder jagst wie in deiner Jugend die gesamte Anna-Schiller-Stiege bis zum Geroweiher hinab (3)", 3, ort37, ort43, ort46, NULL, NULL, NULL);
 	}
+	if(wuerfel(6) > 4)
+		textausgabe("Der Fliescherberg ist ein ganz sentimentaler Ort für dich. Oben auf der kleine Plattform naher der Ecke Neustraße habt ihr immer Detektiv gespielt - und die Bank beobachtet. Hier wuchsen auch die Knallerbsen mit denen ihr die Leute erschreckt habt. An den Ästen der beiden Bäume neben der Plattofrm seid ihr immer hinaufgeklettert - und wenn ihr Glück hattet, dann konnte man im Winter an ein oder zwei Tagen auch mit dem Schlitten den ganzen Fliescherberg hinuntersausen.");
+	textausgabe("An der Seite des Fliescherberges führt die lange Anna-Schiller-Stiege hinab, neben der ihr als Kinder immer in den Büschen Cowboys und Indianer oder Ritter gespielt hattet. Hier waren immer eure selbst gemachten Pfeilbögen und Schwerter versteckt. Ein lang gewundener Weg führt von der Waldhausener Straße hinüber und ein weiterer von der Ecke Neustraße hinunter. Du weißt gar nicht mehr, wie oft ihr als Kinder wagemutig auf euren Skateboards hier heruntergerast seid, ja, gerast trifft es, denn der Berg ist so steil, das die Endgeschwindigkeit einfach nur verboten schnell war.");
 	raum = 52;
 	auswahl("Du kannst von hier aus zum Abteiberg hinaufgehen (1), hinab zum Geroweiher (2) oder hinüber zur Waldhausener Straße (3)", 3, ort35, ort46, ort43, NULL, NULL, NULL);
 }
@@ -1261,6 +1357,7 @@ void ort53(void) {
 		textausgabe("Du betrittst den Gang. Er ist alt, die Luft riecht modrig, abgestanden. Aus deinem Rucksack hast du deine Taschenlampe und deinen alten Marschkompass aus der Bundeswehrzeit hervorgeholt. Du leuchtest die Wände ab und gehst langsam voran. Plötzlich hörst du hinter dir, wie sich der Spalt schließt. Du drehst dich noch um - aber es ist zu spät. Es scheint, als wäre dir der Rückweg versperrt. Hilflos zuckst du mit den Schultern. Wenn du richtig liegst, dann kannte dein Großvater diesen Ort - und er hätte dich niemals in eine Falle laufen lassen. So schreitest du weiter den Gang voran.");
 	else
 		textausgabe("Ganz im Westen ist der Gang eine Sackgasse. Du weißt, daß dort eine TÜre ist, aber sie ist zu perfekt eingefasst - und du findest nichts, um sie zu öffnen. So gibst du nach einer Weile des Suchens auf und folgst dem Gang nach Osten.");
+	sargverschoben = false;
 	ort54();
 }
 
