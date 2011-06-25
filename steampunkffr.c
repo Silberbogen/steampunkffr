@@ -6,7 +6,7 @@
  *    Description:  Steampunk FFR - Der Anfang
  *    				Ein "Das-ist-dein-Abenteuer"-Roman
  *
- *        Version:  0.014
+ *        Version:  0.015
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -43,7 +43,8 @@
  *   - 24.06.2011 Eine Auswahl fehlte bei ort1()
  *   - 24.06.2011 Beginne damit, eine erweiterten Stadtplan einzusetzen
  *   - 25.06.2011 Mehr Action und das Auftauchen der Dreistelzer wird eingearbeitet
- *   - 25.06.2011 Der Storyabschnitt für Mönchengladbach ist soweit beendet.
+ *   - 25.06.2011 Der Storyabschnitt für Mönchengladbach ist soweit beendet
+ *   - 25.06.2011 Hohlwelt Eingangseben - Beginn am Labyrinth zu arbeiten
  *
  * =====================================================================================
  */
@@ -112,6 +113,7 @@ static bool sargverschoben = false;
 static bool durchganggeoeffnet = false;
 static bool schluesselgefunden = false;
 static bool dreistelzer = false;
+static unsigned int rotation = 0; // Rotation ist eine Besonderheit. Hierüber werden die beiden Drehraumsegmente gesteuert. ^.^
 
 // -------------
 // Raum Variable
@@ -1401,149 +1403,543 @@ void ort55(void) {
 
 void ort56(void) {
 	// Die Rutschbahn
+	if(raum == 54) {
+		textausgabe("Du nimmst deinen Rucksack vom Rücken und ziehst ihn verkehrt herum an, so daß er jetzt vor deinem Bauch ist. Das Seil an deiner Taschenlampe schlingst du fest um deine Hand, damit du sie auf keinen Fall verlieren kannst. Du hast dir die Richtung gemerkt, in der die Rutschaprtie beginnen wird. Schließlich setzt du dich auf den Rand und läßt deine Beine in diese seltsam glatte Metallröhre baumeln. Du atmest tief durch und denkst an Karl Kochs, deinen Großvater. Er hätte dich doch bestimmt niemals dazu verlockt, dich in eine Gefahr zu begeben, oder? Andererseits, wenn du an das Draußen denkst, an diese Überfall fremder Truppen auf Mönchengladbach, an die Greuel, die sich deinen Augen heute bereits geboten haben, so kannst du froh sein, überhaupt noch am Leben zu sein. Dein Leben war so lange nur ein Kampf, auch noch den nächsten Tag erleben zu dürfen, was sollte dich von einem echten Abenteuer abhalten? Im schlimmsten Fall, wird das jetzt eine ungewöhnliche Todesart, eine Rutschpartie in den Tod.\nNoch einmal holst du Luft, gerade so, als müßtest du tauchen, dann stößt du dich ab. Du rutschst, langsam nur. Vermutlich könntest du jetzt noch mit deinen Sohlen abbremsen. Aber schon jetzt stürst du, mit hinaufklettern, wir das nichts. Und dann plötzlich, wird es steiler, abschüssiger. Du breitest die Arme aus, bildest mit deinem langgezogenen Körper und deinen Elbogen eine halbwegs stabile Haltung. Du wagst es gar nicht mehr, zu versuchen mit Händen oder Schuhsohlen die Röhre zu berühren. Ja, die Röhre, denn es ist eine Röhre, eine Röhre, die vollkommen glatt ist - und dann spürst du, das du dich in einer langen Spirale bewegst, während es immer tiefer geht - und du wirst schneller in der Spirale, sie wird weiter.\nDachtest du vor Beginn deiner Rutschpartie noch, es wäre nach 2, 3, 4 Sekunden vorbei, so weißt du jetzt, daß du besser in Minuten hättest rechnen sollen. Und dann kommt es zu einer Art Korkenziehereffekt, du verlierst die Übersicht, wo oben und unten ist, dann wird es Spiralförmig - und die Spirale flacht immer weiter ab - es kommt zu einem letzten auf und ab - und dann plötzlich trittst du aus einer Röhre aus und fliegst in einem weiten Bogen - und landest in einem relativ flachen Winkel mitten im Wasser. Jetzt bemerkst du, daß das mit dem Rucksack nicht die wirklich tolle Idee war. Du ruderst - und schaffst es, seichteres Gewässer zu erreichen - und als du mit den Knien den Boden fühlst, hörst du auf zu paddeln und stellst dich auf, dann watest du die letzten Schritte an das Ufer und setzt dich hin.\nEs war nicht wirklich schwierig, diese ganze Rutschpartie durchzustehen, aber noch dreht sich dir die Umgebung ein wenig. Du legst dich zurück und schließt die Augen.");
+		// Durch den Schlaf erholt sich der Spieler vollständig
+		gewandheitssteigerung(12,0);
+		staerkesteigerung(24,0);
+		glueckssteigerung(12,0);
+		textausgabe("Du weißt nicht, wieviel Zeit vergangen ist, aber als du endlich wach wirst, fühlst du dich direkt viel wohler und auch viel ausgeruhter. Deine Kleidung ist nicht mehr nass. Und dein Rucksack liegt neben dir auf dem Boden. Langsam steigt es dir ins Bewußtsein, daß du sehen kannst. Du blickst dich um uns bemerkst, das die seltsamen Wurzeln - oder sind es Pflanzen - die sich an den Wänden langziehen, eine Art Lumineszenz ausstrahlen, in einem Spektrum, die die Höhle in eine Art angenehmes gelbliches Licht tauchen.");
+	}
+	raum = 56;
+	rotation++;
+	textausgabe("Du befindest dich in einer Art Naturhöhle mit einem großen Teich. Das Wasser ist kristallklar. Die weit entfernte Nordwand ist spiegelglatt - nicht jene natürliche Glätte eines gebrochenen Felsens, sondern künstliche Glätte die Rückschlüsse auf eine Bearbeitung läßt. Mitten in dieser befindet sich ein beinahe mannsgroßes Loch. Das ist der Ausgang der Röhre, durch die du hierhin gerutscht bist. Die Höhle ist bewachsen mit einer seltsamen Pflanze oder Wurzel, die luminiszierend ist und ein angenehmes gelbliches Licht ausstrahlt. Das Ufer ist nicht sandig, wie du es von Stränden kennst, dafür liegen dort viele Kieselsteine. Soweit du sonst erkennen kannst, ist die Höhle leer. Im Süden führt ein Weg aus ihr hinaus. Da es hier nichts gibt, was dich hält, drehst du dich um und folgst dem Weg hinaus aus der Höhle.");
+	ort59();
 }
 
 void ort57(void) {
+	rotation++;
 	raum = 57;
 }
 
 void ort58(void) {
+	rotation++;
 	raum = 58;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Süden nehmen (3)", 3, ort57, ort59, ort64, NULL, NULL, NULL);
 }
 
 void ort59(void) {
+	rotation++;
+	if(raum == 56) {
+		textausgabe("Du folgst dem Weg. Er wird nach kurzer Zeit zu einem behauenen Gang, der in einen Tunnel münded.");
+	}
+	auswahl("Du kannst dem Weg nach Norden nehmen (1), den Tunnel nach Westen folgen (2) oder nach Osten (3)", 3, ort56, ort58, ort60, NULL, NULL, NULL);
 }
 
 void ort60(void) {
+	rotation++;
 }
 
 void ort61(void) {
+	rotation++;
 }
 
 void ort62(void) {
+	rotation++;
 	raum = 62;
 }
 
 void ort63(void) {
+	rotation++;
 	raum = 63;
 }
 
 void ort64(void) {
+	rotation++;
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder nimmst die Abzweigung nach Osten (3)", 3, ort58, ort139, ort65, NULL, NULL, NULL);
 }
 
 void ort65(void) {
+	rotation++;
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Süden nehmen (3)", 3, ort64, ort133, ort66, NULL, NULL, NULL);
 }
 
 void ort66(void) {
+	rotation++;
 	raum = 66;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort74, ort140, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort73, ort140, NULL, NULL, NULL);
+				break;
+		case 3: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort72, ort140, NULL, NULL, NULL);
+				break;
+		case 4: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort71, ort140, NULL, NULL, NULL);
+				break;
+		case 5: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort70, ort140, NULL, NULL, NULL);
+				break;
+		case 6: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort69, ort140, NULL, NULL, NULL);
+				break;
+		case 7: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort68, ort140, NULL, NULL, NULL);
+				break;
+		default: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort67, ort140, NULL, NULL, NULL);
+				break;
+	}
 }
 
 void ort67(void) {
+	rotation++;
+	if(raum == 67)
+		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
 	raum = 67;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort74, ort68, ort81, ort67, NULL, NULL);
+				 break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort74, ort68, ort82, ort67, NULL, NULL);
+				 break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort74, ort68, ort67, NULL, NULL, NULL);
+				 break;
+		case 4: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)", 5, ort74, ort68, ort87, ort77, ort67, NULL);
+				 break;
+		case 5: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort74, ort68, ort88, ort67, NULL, NULL);
+				 break;
+		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort74, ort68, ort80, ort67, NULL, NULL);
+				 break;
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort74, ort68, ort67, NULL, NULL, NULL);
+				 break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort74, ort68, ort66, ort67, NULL, NULL);
+				 break;
+	}
 }
 
 void ort68(void) {
+	rotation++;
+	if(raum == 68)
+		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
+	raum = 68;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort67, ort69, ort81, ort68, NULL, NULL);
+				 break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort67, ort69, ort82, ort68, NULL, NULL);
+				 break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort67, ort69, ort68, NULL, NULL, NULL);
+				 break;
+		case 4: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)", 5, ort67, ort69, ort87, ort77, ort68, NULL);
+				 break;
+		case 5: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort67, ort69, ort88, ort68, NULL, NULL);
+				 break;
+		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort67, ort69, ort80, ort68, NULL, NULL);
+				 break;
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort67, ort69, ort68, NULL, NULL, NULL);
+				 break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort67, ort69, ort66, ort68, NULL, NULL);
+				 break;
+	}
 }
 
 void ort69(void) {
+	rotation++;
+	if(raum == 69)
+		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
+	raum = 69;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort68, ort70, ort81, ort69, NULL, NULL);
+				 break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort68, ort70, ort82, ort69, NULL, NULL);
+				 break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort68, ort70, ort69, NULL, NULL, NULL);
+				 break;
+		case 4: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)", 5, ort68, ort70, ort87, ort77, ort69, NULL);
+				 break;
+		case 5: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort68, ort70, ort88, ort69, NULL, NULL);
+				 break;
+		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort68, ort70, ort80, ort69, NULL, NULL);
+				 break;
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort68, ort70, ort69, NULL, NULL, NULL);
+				 break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort68, ort70, ort66, ort69, NULL, NULL);
+				 break;
+	}
 }
 
 void ort70(void) {
+	rotation++;
+	if(raum == 70)
+		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
+	raum = 70;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort69, ort71, ort81, ort70, NULL, NULL);
+				 break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort69, ort71, ort82, ort70, NULL, NULL);
+				 break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort69, ort71, ort70, NULL, NULL, NULL);
+				 break;
+		case 4: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)", 5, ort69, ort71, ort87, ort77, ort70, NULL);
+				 break;
+		case 5: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort69, ort71, ort88, ort70, NULL, NULL);
+				 break;
+		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort69, ort71, ort80, ort70, NULL, NULL);
+				 break;
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort69, ort71, ort70, NULL, NULL, NULL);
+				 break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort69, ort71, ort66, ort70, NULL, NULL);
+				 break;
+	}
 }
 
 void ort71(void) {
+	rotation++;
+	if(raum == 71)
+		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
+	raum = 71;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort70, ort72, ort81, ort71, NULL, NULL);
+				 break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort70, ort72, ort82, ort71, NULL, NULL);
+				 break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort70, ort72, ort71, NULL, NULL, NULL);
+				 break;
+		case 4: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)", 5, ort70, ort72, ort87, ort77, ort71, NULL);
+				 break;
+		case 5: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort70, ort72, ort88, ort71, NULL, NULL);
+				 break;
+		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort70, ort72, ort80, ort71, NULL, NULL);
+				 break;
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort70, ort72, ort71, NULL, NULL, NULL);
+				 break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort70, ort72, ort66, ort71, NULL, NULL);
+				 break;
+	}
 }
 
 void ort72(void) {
+	rotation++;
+	if(raum == 72)
+		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
+	raum = 72;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort71, ort73, ort81, ort72, NULL, NULL);
+				 break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort71, ort73, ort82, ort72, NULL, NULL);
+				 break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort71, ort73, ort72, NULL, NULL, NULL);
+				 break;
+		case 4: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)", 5, ort71, ort73, ort87, ort77, ort72, NULL);
+				 break;
+		case 5: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort71, ort73, ort88, ort72, NULL, NULL);
+				 break;
+		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort71, ort73, ort80, ort72, NULL, NULL);
+				 break;
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort71, ort73, ort72, NULL, NULL, NULL);
+				 break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort71, ort73, ort66, ort72, NULL, NULL);
+				 break;
+	}
 }
 
 void ort73(void) {
+	rotation++;
+	if(raum == 73)
+		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
+	raum = 73;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort72, ort74, ort81, ort73, NULL, NULL);
+				 break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort72, ort74, ort82, ort73, NULL, NULL);
+				 break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort72, ort74, ort73, NULL, NULL, NULL);
+				 break;
+		case 4: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)", 5, ort72, ort74, ort87, ort77, ort73, NULL);
+				 break;
+		case 5: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort72, ort74, ort88, ort73, NULL, NULL);
+				 break;
+		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort72, ort74, ort80, ort73, NULL, NULL);
+				 break;
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort72, ort74, ort73, NULL, NULL, NULL);
+				 break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort72, ort74, ort66, ort73, NULL, NULL);
+				 break;
+	}
 }
 
 void ort74(void) {
+	rotation++;
+	if(raum == 74)
+		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
+	raum = 74;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort73, ort67, ort81, ort74, NULL, NULL);
+				 break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort73, ort67, ort82, ort74, NULL, NULL);
+				 break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort73, ort67, ort74, NULL, NULL, NULL);
+				 break;
+		case 4: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3), den bläulich erleuchteten Ausgang (4) oder stehenbleiben und warten (5)", 5, ort73, ort67, ort87, ort77, ort74, NULL);
+				 break;
+		case 5: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort73, ort67, ort88, ort74, NULL, NULL);
+				 break;
+		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort73, ort67, ort80, ort74, NULL, NULL);
+				 break;
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort73, ort67, ort74, NULL, NULL, NULL);
+				 break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort73, ort67, ort66, ort74, NULL, NULL);
+				 break;
+	}
 }
 
 void ort75(void) {
+	rotation++;
+	raum = 75;
+	switch(rotation % 4) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort76, ort78, ort75, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort76, ort78, ort75, NULL, NULL, NULL);
+				break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort76, ort78, ort75, NULL, NULL, NULL);
+				break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder dem gelblich erleuchteten Ausgang (3)", 3, ort76, ort78, ort79, NULL, NULL, NULL);
+				break;
+	}
 }
 
 void ort76(void) {
+	rotation++;
+	raum = 76;
+	switch(rotation % 4) {
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort75, ort77, ort76, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort75, ort77, ort76, NULL, NULL, NULL);
+				break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort75, ort77, ort76, NULL, NULL, NULL);
+				break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder dem gelblich erleuchteten Ausgang (3)", 3, ort75, ort77, ort79, NULL, NULL, NULL);
+				break;
+	}
 }
 
 void ort77(void) {
+	rotation++;
 	raum = 77;
+	switch(rotation % 4) {
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort78, ort76, ort77, NULL, NULL, NULL);
+				break;
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort78, ort76, ort77, NULL, NULL,NULL);
+				break;
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort78, ort76, ort77, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder dem gelblich erleuchteten Ausgang (3)", 3, ort78, ort76, ort79, NULL, NULL, NULL);
+				break;
+	}
 }
 
 void ort78(void) {
+	rotation++;
 	raum = 78;
+	switch(rotation % 4) {
+		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort77, ort75, ort78, NULL, NULL, NULL);
+				break;
+		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort77, ort75, ort78, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort77, ort75, ort78, NULL, NULL, NULL);
+				break;
+		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder dem gelblich erleuchteten Ausgang (3)", 3, ort77, ort75, ort79, NULL, NULL, NULL);
+				break;
+	}
 }
 
 void ort79(void) {
+	rotation++;
 	raum = 79;
+	switch(rotation % 4) {
+		case 1: auswahl("Du den Raum nach Norden verlassen (1), oder lieber warten (2)?", 2, ort78, ort79, NULL, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du den Raum nach Norden verlassen (1), oder lieber warten (2)?", 2, ort77, ort79, NULL, NULL, NULL, NULL);
+				break;
+		case 3: auswahl("Du den Raum nach Norden verlassen (1), oder lieber warten (2)?", 2, ort76, ort79, NULL, NULL, NULL, NULL);
+				break;
+		default: auswahl("Du den Raum nach Norden verlassen (1), oder lieber warten (2)?", 2, ort75, ort79, NULL, NULL, NULL, NULL);
+				break;
+	}
 }
 
 void ort80(void) {
+	rotation++;
 	raum = 80;
+	switch(rotation % 8) {
+		case 1: auswahl("Du den Tunnel nach Norden gehen (1), oder nach Osten nehmen (2)", 2, ort143, ort72, NULL, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du den Tunnel nach Norden gehen (1), oder nach Osten nehmen (2)", 2, ort143, ort71, NULL, NULL, NULL, NULL);
+				break;
+		case 3: auswahl("Du den Tunnel nach Norden gehen (1), oder nach Osten nehmen (2)", 2, ort143, ort70, NULL, NULL, NULL, NULL);
+				break;
+		case 4: auswahl("Du den Tunnel nach Norden gehen (1), oder nach Osten nehmen (2)", 2, ort143, ort69, NULL, NULL, NULL, NULL);
+				break;
+		case 5: auswahl("Du den Tunnel nach Norden gehen (1), oder nach Osten nehmen (2)", 2, ort143, ort68, NULL, NULL, NULL, NULL);
+				break;
+		case 6: auswahl("Du den Tunnel nach Norden gehen (1), oder nach Osten nehmen (2)", 2, ort143, ort67, NULL, NULL, NULL, NULL);
+				break;
+		case 7: auswahl("Du den Tunnel nach Norden gehen (1), oder nach Osten nehmen (2)", 2, ort143, ort74, NULL, NULL, NULL, NULL);
+				break;
+		default: auswahl("Du den Tunnel nach Norden gehen (1), oder nach Osten nehmen (2)", 2, ort143, ort73, NULL, NULL, NULL, NULL);
+				break;
+	}
 }
 
 void ort81(void) {
+	rotation++;
+	raum = 81;
+	switch(rotation % 8) {
+		case 1: auswahl("Du den Tunnel nach Westen gehen (1), oder den nach Südosten gehen (2)", 2, ort67, ort82, NULL, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du den Tunnel nach Westen gehen (1), oder den nach Südosten gehen (2)", 2, ort74, ort82, NULL, NULL, NULL, NULL);
+				break;
+		case 3: auswahl("Du den Tunnel nach Westen gehen (1), oder den nach Südosten gehen (2)", 2, ort73, ort82, NULL, NULL, NULL, NULL);
+				break;
+		case 4: auswahl("Du den Tunnel nach Westen gehen (1), oder den nach Südosten gehen (2)", 2, ort72, ort82, NULL, NULL, NULL, NULL);
+				break;
+		case 5: auswahl("Du den Tunnel nach Westen gehen (1), oder den nach Südosten gehen (2)", 2, ort71, ort82, NULL, NULL, NULL, NULL);
+				break;
+		case 6: auswahl("Du den Tunnel nach Westen gehen (1), oder den nach Südosten gehen (2)", 2, ort70, ort82, NULL, NULL, NULL, NULL);
+				break;
+		case 7: auswahl("Du den Tunnel nach Westen gehen (1), oder den nach Südosten gehen (2)", 2, ort69, ort82, NULL, NULL, NULL, NULL);
+				break;
+		default: auswahl("Du den Tunnel nach Westen gehen (1), oder den nach Südosten gehen (2)", 2, ort68, ort82, NULL, NULL, NULL, NULL);
+				break;
+	}
 }
 
 void ort82(void) {
+	rotation++;
+	raum = 82;
+	switch(rotation % 8) {
+		case 1: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort68, ort81, ort83, ort84, ort85, ort86);
+				break;
+		case 2: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort67, ort81, ort83, ort84, ort85, ort86);
+				break;
+		case 3: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort74, ort81, ort83, ort84, ort85, ort86);
+				break;
+		case 4: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort73, ort81, ort83, ort84, ort85, ort86);
+				break;
+		case 5: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort72, ort81, ort83, ort84, ort85, ort86);
+				break;
+		case 6: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort71, ort81, ort83, ort84, ort85, ort86);
+				break;
+		case 7: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort70, ort81, ort83, ort84, ort85, ort86);
+				break;
+		default: auswahl("Du den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort69, ort81, ort83, ort84, ort85, ort86);
+				break;
+
+	}
 }
 
 void ort83(void) {
+	rotation++;
 }
 
 void ort84(void) {
+	rotation++;
 }
 
 void ort85(void) {
+	rotation++;
 	raum = 85;
 }
 
 void ort86(void) {
+	rotation++;
 }
 
 void ort87(void) {
+	rotation++;
+	raum = 87;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Osten (3) nehmen", 3, ort70, ort151, ort146, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Osten (3) nehmen", 3, ort69, ort151, ort146, NULL, NULL, NULL);
+				break;
+		case 3: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Osten (3) nehmen", 3, ort68, ort151, ort146, NULL, NULL, NULL);
+				break;
+		case 4: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Osten (3) nehmen", 3, ort67, ort151, ort146, NULL, NULL, NULL);
+				break;
+		case 5: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Osten (3) nehmen", 3, ort74, ort151, ort146, NULL, NULL, NULL);
+				break;
+		case 6: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Osten (3) nehmen", 3, ort73, ort151, ort146, NULL, NULL, NULL);
+				break;
+		case 7: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Osten (3) nehmen", 3, ort72, ort151, ort146, NULL, NULL, NULL);
+				break;
+		default: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Osten (3) nehmen", 3, ort71, ort151, ort146, NULL, NULL, NULL);
+				break;
+	}
 }
 
 void ort88(void) {
+	rotation++;
 	raum = 88;
+	switch(rotation % 8) {
+		case 1: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Westen (3) nehmen", 3, ort71, ort89, ort145, NULL, NULL, NULL);
+				break;
+		case 2: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Westen (3) nehmen", 3, ort70, ort89, ort145, NULL, NULL, NULL);
+				break;
+		case 3: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Westen (3) nehmen", 3, ort69, ort89, ort145, NULL, NULL, NULL);
+				break;
+		case 4: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Westen (3) nehmen", 3, ort68, ort89, ort145, NULL, NULL, NULL);
+				break;
+		case 5: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Westen (3) nehmen", 3, ort67, ort89, ort145, NULL, NULL, NULL);
+				break;
+		case 6: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Westen (3) nehmen", 3, ort74, ort89, ort145, NULL, NULL, NULL);
+				break;
+		case 7: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Westen (3) nehmen", 3, ort73, ort89, ort145, NULL, NULL, NULL);
+				break;
+		default: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Westen (3) nehmen", 3, ort72, ort89, ort145, NULL, NULL, NULL);
+				break;
+
+	}
 }
 
 void ort89(void) {
+	rotation++;
 }
 
 void ort90(void) {
+	rotation++;
 }
 
 void ort91(void) {
+	rotation++;
 }
 
 void ort92(void) {
+	rotation++;
 }
 
 void ort93(void) {
+	rotation++;
 }
 
 void ort94(void) {
+	rotation++;
 	raum = 94;
 }
 
 void ort95(void) {
+	rotation++;
 }
 
 void ort96(void) {
+	rotation++;
 }
 
 void ort97(void) {
+	rotation++;
 	raum = 97;
 }
 
 void ort98(void) {
+	rotation++;
 }
 
 void ort99(void) {
+	rotation++;
 }
 
 // -----------
@@ -1721,105 +2117,139 @@ void ort130(void) {
 }
 
 void ort131(void) {
+	rotation++;
 }
 
 void ort132(void) {
+	rotation++;
 }
 
 void ort133(void) {
+	rotation++;
 }
 
 void ort134(void) {
+	rotation++;
 }
 
 void ort135(void) {
+	rotation++;
 }
 
 void ort136(void) {
+	rotation++;
 }
 
 void ort137(void) {
+	rotation++;
 }
 
 void ort138(void) {
+	rotation++;
 }
 
 void ort139(void) {
+	rotation++;
 }
 
 void ort140(void) {
+	rotation++;
 }
 
 void ort141(void) {
+	rotation++;
 }
 
 void ort142(void) {
+	rotation++;
 }
 
 void ort143(void) {
+	rotation++;
 }
 
 void ort144(void) {
+	rotation++;
 }
 
 void ort145(void) {
+	rotation++;
 }
 
 void ort146(void) {
+	rotation++;
 }
 
 void ort147(void) {
+	rotation++;
 }
 
 void ort148(void) {
+	rotation++;
 }
 
 void ort149(void) {
+	rotation++;
 }
 
 void ort150(void) {
+	rotation++;
 }
 
 void ort151(void) {
+	rotation++;
 }
 
 void ort152(void) {
+	rotation++;
 }
 
 void ort153(void) {
+	rotation++;
 }
 
 void ort154(void) {
+	rotation++;
 }
 
 void ort155(void) {
+	rotation++;
 }
 
 void ort156(void) {
+	rotation++;
 }
 
 void ort157(void) {
+	rotation++;
 }
 
 void ort158(void) {
+	rotation++;
 }
 
 void ort159(void) {
+	rotation++;
 }
 
 void ort160(void) {
+	rotation++;
 }
 
 void ort161(void) {
+	rotation++;
 }
 
 void ort162(void) {
+	rotation++;
 }
 
 void ort163(void) {
+	rotation++;
 }
 
 void ort164(void) {
+	rotation++;
 }
 
 void ort165(void) {
@@ -3086,6 +3516,7 @@ int speichern(void) {
 	fprintf(datei, "%d\n", (int) durchganggeoeffnet);
 	fprintf(datei, "%d\n", (int) schluesselgefunden);
 	fprintf(datei, "%d\n", (int) dreistelzer);
+	fprintf(datei, "%d\n", rotation);
 	fclose(datei);
 
 	color_set(3, 0);
@@ -3187,6 +3618,8 @@ int laden(void) {
 	schluesselgefunden = (bool) atoi(eingabe);
 	fgets(eingabe, 100, datei);
 	dreistelzer = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	rotation = (unsigned int) atoi(eingabe);
 	fclose(datei);
 
 	color_set(3, 0);
