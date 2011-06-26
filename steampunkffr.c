@@ -6,7 +6,7 @@
  *    Description:  Steampunk FFR - Der Anfang
  *    				Ein "Das-ist-dein-Abenteuer"-Roman
  *
- *        Version:  0.015
+ *        Version:  0.017
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -45,6 +45,8 @@
  *   - 25.06.2011 Mehr Action und das Auftauchen der Dreistelzer wird eingearbeitet
  *   - 25.06.2011 Der Storyabschnitt für Mönchengladbach ist soweit beendet
  *   - 25.06.2011 Hohlwelt Eingangseben - Beginn am Labyrinth zu arbeiten
+ *   - 26.06.2011 Labyrinth und Geheimgänge der Eingangsebene Hohlwelt vollständig
+ *   - 26.06.2011 Der Drache ist jetzt im Spiel ^.^
  *
  * =====================================================================================
  */
@@ -81,10 +83,10 @@ static charakter_t spieler;
 // Variablen des Spielers
 // ----------------------
 
-enum objektsynonyme { nichts, astgabel, bogensilberpfeil, buch, drachenfeuerzauber, gewandheitstrank, gewehr, glueckstrank, goldstuecke, handschuh, helm, holzhammer, holzpflock, holzschild, juwelenauge, kaese, kerze, laterne, lederruestung, lederruestung2, ohrringe, patrone, pergament, pistole, proviant, rucksack, schild, schwert, schwert2, silberkreuz, silbersichel, staerketrank, taschenlampe, taschenmesser, unsichtbarkeitstrank, verbandskasten, verwuenschterhelm, warndreieck, wunderwasser, zombiegold ,maximalobjekt };
+enum objektsynonyme { nichts, adamantpickel, bogensilberpfeil, buch, drachenfeuerzauber, gewandheitstrank, gewehr, glueckstrank, goldstuecke, handschuh, helm, holzhammer, holzpflock, holzschild, juwelenauge, kaese, kerze, laterne, lederruestung, lederruestung2, ohrringe, patrone, pergament, pistole, proviant, rucksack, schild, schwert, schwert2, silberkreuz, silbersichel, staerketrank, taschenlampe, taschenmesser, unsichtbarkeitstrank, verbandskasten, verwuenschterhelm, warndreieck, wunderwasser, zombiegold ,maximalobjekt };
 
 static int objekt[maximalobjekt] = { [laterne] = 1, [lederruestung] = 1, [proviant] = 10, [rucksack] = 1, [schwert] = 1 };
-static char *objektname[maximalobjekt] = { "Nichts", "Astgabel", "Bogen und Silberpfeil", "Buch", "Drachenfeuerzauber", "Gewandheitstrank", "Gewehr", "Glückstrank", "Goldstücke", "Handschuh", "Helm", "Holzhammer", "Holzpflock", "Holzschild", "Juwelenauge", "Käse", "blaue Kerze", "Laterne", "Lederrüstung", "Lederrüstung", "Ohrringe", "Patronen", "Pergament", "Pistole", "Proviant", "Rucksack", "Schild", "Schwert", "Zauberschwert +2", "Silberkreuz", "Silbersichel", "Stärketrank", "Pumptaschenlampe", "Taschenmesser", "Unsichtbarkeitstrank", "Verbandskasten", "Verwuenschter Helm", "Warndreieck",  "Wunderwasser", "Zombiegold" };
+static char *objektname[maximalobjekt] = { "Nichts", "Adamantpickel", "Bogen und Silberpfeil", "Buch", "Drachenfeuerzauber", "Gewandheitstrank", "Gewehr", "Glückstrank", "Goldstücke", "Handschuh", "Helm", "Holzhammer", "Holzpflock", "Holzschild", "Juwelenauge", "Käse", "blaue Kerze", "Laterne", "Lederrüstung", "Lederrüstung", "Ohrringe", "Patronen", "Pergament", "Pistole", "Proviant", "Rucksack", "Schild", "Schwert", "Zauberschwert +2", "Silberkreuz", "Silbersichel", "Stärketrank", "Pumptaschenlampe", "Taschenmesser", "Unsichtbarkeitstrank", "Verbandskasten", "Verwuenschter Helm", "Warndreieck",  "Wunderwasser", "Zombiegold" };
 
 static int angriffsbonus = 0;
 static int fuenfwahl = 0;
@@ -113,6 +115,9 @@ static bool sargverschoben = false;
 static bool durchganggeoeffnet = false;
 static bool schluesselgefunden = false;
 static bool dreistelzer = false;
+static bool dracheverletzt = false;
+static bool drachetot = false;
+
 static unsigned int rotation = 0; // Rotation ist eine Besonderheit. Hierüber werden die beiden Drehraumsegmente gesteuert. ^.^
 
 // -------------
@@ -1891,7 +1896,10 @@ void ort87(void) {
 
 void ort88(void) {
 	rotation++;
+	if(!(raum == 88) && !(raum = 145) && !(raum == 89))
+		textausgabe("Nach einiger Zeit verändert sich der Tunnel und wird zu einem Stollen. Der Ort wo du jetzt erinnert mit seinen Balkenkonstruktionen sehr an ein Bergwerk. Die Beleuchtung ist jetzt viel spärlicher.");
 	raum = 88;
+	textausgabe("Du befindest dich an einer Kreuzung. Ein Tunnel führt von Norden nach Westen, während ein weiterer Stollen in Richtung Westen führt. Das Wurzelwerk in den Wänden schimmert weniger intensiv, als du es bisher gewohnt bist. Ein Schienenstrang führt an der Wand des nach Westen laufenden Gangs entlang.");
 	switch(rotation % 8) {
 		case 1: auswahl("Du kannst dem Tunnel nach Norden (1) oder nach Süden (2) folgen, oder den Weg nach Westen (3) nehmen", 3, ort71, ort89, ort145, NULL, NULL, NULL);
 				break;
@@ -1968,14 +1976,72 @@ void ort97(void) {
 }
 
 void ort98(void) {
+	static charakter_t drache = { "Drache", 20, 20, 20, 20 };
 	rotation++;
+	if(raum == 99)
+		textausgabe("Du findest eine Spalte im Schatten der Wand. Sie ist äußerst schmal, aber es gelingt dir, dich hineinzuquetschen. So kriechst du auf Händen und Füßen weiter - und plötzlich wird dir klar, das nach all den kleinen Windungen, du dich ja gar nicht umdrehen kannst. Zeitweise mußt du sogar flach auf den Boden gepreßt, die Arme vorausgestreckt, weiterkriechen um nicht steckenzubleiben. Die Minuten werden für dich zu kleinen Ewigkeiten, die Sekunden dehnen sich zu Stunden aus. Und endlich - sind deine Arme frei, du kriechst schneller, kletterst aus dem beengenden Gang heraus und richtest dich auf, wobei deine Glieder heftig maulend über die vorhergehende Position reagieren. Du reckst und streckst dich, so gut es eben geht. Es ist immer noch so dunkel wie in dem endlosen Gang um dich herum, aber du spürst trotzdem eine Veränderung. Es fühlt sich an, als wäre die Luft wärmer geworden. Aber vermutlich ist daß nur Einbildung. Tatsächlich war der Kriechgang anstrengend und du bist ganz schön ins Schwitzen gekommen.");
+	if(raum == 162)
+		textausgabe("Während du dich weiter durch den stockdunklen Gang nach Westen tastest, spürst du eine Veränderung in der der Umgebung. Die Luft fühlt sich wärmer an. Sie riecht anders, verbrauchter. Und die Klänge der Hall deiner Schritte, alles klingt, als wäre jetzt mehr Raum da.");
 	raum = 98;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort161, ort162, ort99, NULL, NULL, NULL);
+	if(drachetot)
+		textausgabe("Der Leichnam des Drachen glüht von innen heraus und läßt die Wände um dich herum erstrahlen.");
+	else if (dracheverletzt)
+		textausgabe("Eine Atemflamme des Drachens erfaßt die Decke. Phosphoriszierende Steine in den Wänden reagieren auf den blendenden Feuerstrahl, während deine Augen wieder tränen. Der Drache steht da. Sein Gesichtsausdruck hat sich nicht verändert, aber dort, wo dein Pickel sein Auge trag, ist jetzt nur eine blutige Höhle. Du stehst so günstig, das er dich noch nicht gesehen hat. Allerdings bläht er seine Nüstern auf. Er scheint dich riechen zu können.");
+	else
+		textausgabe("In der Dunkelheit erscheint plötzlich ein Auge, dessen pupille geschlitzt ist. Die Iris erscheint in rötlichem Feuer zu strahlen. Das Auge ist groß, sehr groß - größe als deine Handfläche. Und als es sich zur Seite wendet, erscheint ein zweites. Und das ungute Gefühl überkommt dich, das es mit den beiden Augen in der Dunkelheit nichts Gutes hat. Dann erheben sich die Augen, scheinen immer weiter nach oben zu schweben. Du hörst ein Geräusch, als würde ein Elefant sich auf einen heftigen Niesser vorbereiten - und plötzlich schießt eine Lichtsäule gegen die Decke. Es riecht verbrannt. Du mußt deine Augen schützen, fühlst dich geblendet. Tränen laufen aus ihnen heraus. Du glaubst ein Schnauben wahrzunehmen.");
+	textausgabe("Die Wände leuchten in einem fahlen rot, das von den phosphoriszierenden Adern darin hervorgeht.");
+	// Ich will ja nicht den Spieler absichtlich töten
+	if(!dracheverletzt && (objekt[adamantpickel] < 1)) {
+		if(objekt[patrone] > 0)
+			textausgabe("Du schießt einmal beherzt auf den Drachen, bist dir allerdings nicht sicher, das er es wahrgenommen hat. Vermutlich hatte die Patrone noch etwas weniger Wirkung, als ein Watteball, der gegen einen Baum stößt.");
+		textausgabe("Du nutzt die Gelegenheit, als der Drache erneut Luft holt, um die Beine in die Hand zu nehmen und wie von der Tarantel gestochen in den dunklen Gang hineinzulaufen. Mit ein wenig Glück, überlebst du so vielleicht.");
+		ort162();
+	}
+	if(objekt[adamantpickel] > 0) {
+		if(tdg(&spieler))
+			textausgabe("Als der Kopf des Drachens nah genug an dich herangekommen ist, holst du mit deiner Spitzhacke aus und rammst sie ihm mit voller Wucht ins Auge. Es spritzt - und sein Kopf ruckt sofort weg von dir. Die scheußlichen Töne, die er jetzt von sich gibt, sind vermutlich sein Wehklagen.");
+		else
+			textausgabe("Als der Koopf des Drachens nah genug an dich herangekommen ist, holst du mit deiner Spitzhacke aus und haust ins Leere. Der Drache hat blitzschnell reagiert und den Kopf zurückgezogen.");
+	}
+	if(!drachetot && janeinfrage("Willst du den günstigen Moment nutzen, die Beine in die Hand nehmen - und so schnell du nur kannst von hier fliehen (j/n)?"))
+		ort162();
+	if(!drachetot && !dracheverletzt) {
+		textausgabe("Der Drache dreht sich blitzschnell um die eigene Achse. Du siehst noch, wie sein Schwanz heranrast, dann wirst du auch schon von ihm getroffen. Der Schmerz ist fürchterlich. Im weiten Bogen fliegst du rücklinks in die Dunkelheit hinein.");
+		// schwerer Treffer, eventuell tödlich
+		staerkesteigerung(-5,0);
+		if(spieler.staerke <= 0) {
+			textausgabe("Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
+			exit(EXIT_SUCCESS);
+		}
+	}
+	if(dracheverletzt && !drachetot) {
+		drache.gewandheit = 16;
+		drache.staerke = 15;
+	}
+	if(!drachetot) {
+		if(!kampf(&spieler, &drache, 1, false, ort162)) {
+			textausgabe("Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
+			exit(EXIT_SUCCESS);
+		}
+		textausgabe("Ein Ruck geht durch den Körper des Drachen, ein letztes Aufbäumen, dann sinkt er tot zusammen. Sein Körper sieht aus, als würde er glühen. Vielleicht verbrennt er ja innerlich, du weißt es nicht. Das hier war der erste Drache, den du in deinem Leben gesehen hast. Und du dachtest immer, Drachen würden in das Reich der Märchen gehören. Die Legende von der Unverwundbarkeit durch Drachenblut jedenfalls hast du wiederlegt. Dein linker Arm ist nur so besudelt von Drachenblut, trotzdem hast du lange Schnittwunden darauf.");
+		// Ich denke, an der Legende ist doch ein Körnchen Wahrheit
+		staerkesteigerung(0,1);
+	}
+	auswahl("Du kannst jetzt dem Tunnel weiter nach Westen folgen (1) oder nach Osten gehen (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort161, ort162, ort99, NULL, NULL, NULL);
 }
 
 void ort99(void) {
 	rotation++;
+	if(raum == 98)
+		textausgabe("Du findest eine Spalte in der Wand und nutzt die Gunst des Augenblicks, so schnell du kannst auf Händen und Knien hineinzurobben. Von Panik und Angst getrieben kriechst du weiter durch einen endlos lang erscheinenden Stollen. Manchmal musst du dich sogar auf den Boden pressen und dich liegend voranschieben. Deine Angst ist groß, stecken zu bleiben. Dein Herz ist immer noch wie wild am Pochen, als der Kriechgang, durch den du dich seit Minuten gequetscht hast, sein Ende findet. Glücklich darüber, endlich wieder mehr Platz um dich herum zu haben, krabbelst du aus dem Loch heraus und richtest dich auf.");
 	raum = 99;
+	textausgabe("Der Stollen fällt hier stärker von Norden nach Süden ab. Ein paar Schienen laufen an der Ostwand entlang. Das Wurzelwerk breitet sich nur sehr spärlich an der Decke aus und entsprechend schlecht ist die natürliche Sicht hier unten. Die Struktur der Wände an der Westwand ist sehr zerklüftet, scharfkantige Strukturen stehen hervor und der Schattenwurf ist großflächig.");
+	if(wuerfel(6) > 3)
+		textausgabe("Dir kommt es so vor, als würdest du Klopfgeräusche aus dem Stollen kommen hören.");
+	if(wuerfel(6) > 3)
+		textausgabe("Es kommt dir so vor, als hätte sich das Gestein des Felsens leicht verändert.");
+	if(wuerfel(6) > 4)
+		textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
 	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort149, ort158, ort98, NULL, NULL, NULL);
 }
 
@@ -2235,12 +2301,22 @@ void ort143(void) {
 void ort144(void) {
 	rotation++;
 	raum = 144;
+	textausgabe("Der Stollen fällt langsam von Osten nach Westen ab, er macht an dieser Stelle einen Knick von Osten nach Süden. Ein paar Schienen laufen an der Südwand entlang und biegen dann schließlich ganz nach Süden ab, wo sie an der Ostwand weiterführen. Das Wurzelwerk breitet sich nur sehr spärlich an der Decke aus und entsprechend schlecht ist die natürliche Sicht hier unten.");
+	if(wuerfel(6) > 4)
+		textausgabe("Dir kommt es so vor, als würdest du Klopfgeräusche aus dem Stollen kommen hören.");
+	if(wuerfel(6) > 4)
+		textausgabe("Es kommt dir so vor, als hätte sich das Gestein des Felsens leicht verändert.");
+	if(wuerfel(6) > 5)
+		textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
 	auswahl("Du kannst nach Osten gehen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort145, ort149, ort212, NULL, NULL, NULL);
 }
 
 void ort145(void) {
 	rotation++;
 	raum = 145;
+	textausgabe("Der Stollen fällt langsam von Osten nach Westen ab. Ein paar Schienen laufen an der Südwand entlang. Das Wurzelwerk breitet sich nur sehr spärlich an der Decke aus und entsprechend schlecht ist die natürliche Sicht hier unten.");
+	if(wuerfel(6) > 5)
+		textausgabe("Dir kommt es so vor, als würdest du Klopfgeräusche aus dem Stollen kommen hören.");
 	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort144, ort88, ort212, NULL, NULL, NULL);
 }
 
@@ -2264,8 +2340,28 @@ void ort148(void) {
 
 void ort149(void) {
 	rotation++;
+	if(raum == 149)
+		if(schluessel9 || schluessel66 || schluessel99 || schluessel125 || schluesselbootshaus)
+			textausgabe("Nach mehreren Versuchen gibst du auf. Es sieht nicht danach aus, das du den richtigen Schlüssel bei dir hast.");
+		else
+			textausgabe("Die Türe ist verschlossen und äußerst massiv. Ohne Schlüssel wirst du hier nicht weiterkommen.");
+	else
+		textausgabe("Der Stollen fällt langsam von Norden nach Süden ab. An dieser Stelle befindet sich ein etwa mannsgroße Türe mit schweren Eisenbeschlägen in der Ostwand. Ein paar Schienen laufen an der Ostwand entlang. Das Wurzelwerk breitet sich nur sehr spärlich an der Decke aus und entsprechend schlecht ist die natürliche Sicht hier unten.");
 	raum = 149;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder der Abzweigung nach Osten folgen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort144, ort99, ort150, ort212, NULL, NULL);
+	if(wuerfel(6) > 3)
+		textausgabe("Dir kommt es so vor, als würdest du Klopfgeräusche aus dem Stollen kommen hören.");
+	if(wuerfel(6) > 5)
+		textausgabe("Es kommt dir so vor, als hätte sich das Gestein des Felsens leicht verändert.");
+	if(wuerfel(6) > 5)
+		textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
+	if(wuerfel(6) > 4)
+		textausgabe("Für einen kurzen Moment hattest du das Gefühl, ein Stöhnen von hinter der Türe gehört zu haben.");
+	if(schluessel111_1 || schluessel111_2)
+		auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob einer deiner Schlüssel die Türe im Osten öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort150, ort212, NULL, NULL);
+	else if(schluessel9 || schluessel66 || schluessel99 || schluessel125 || schluesselbootshaus)
+		auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob einer deiner Schlüssel die Türe im Osten öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort149, ort212, NULL, NULL);
+	else
+		auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob du die Türe im Osten öffnen kannst (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort149, ort212, NULL, NULL);
 }
 
 void ort150(void) {
@@ -3701,6 +3797,8 @@ int speichern(void) {
 	fprintf(datei, "%d\n", (int) schluesselgefunden);
 	fprintf(datei, "%d\n", (int) dreistelzer);
 	fprintf(datei, "%d\n", rotation);
+	fprintf(datei, "%d\n", (int) dracheverletzt);
+	fprintf(datei, "%d\n", (int) drachetot);
 	fclose(datei);
 
 	color_set(3, 0);
@@ -3804,6 +3902,10 @@ int laden(void) {
 	dreistelzer = (bool) atoi(eingabe);
 	fgets(eingabe, 100, datei);
 	rotation = (unsigned int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	dracheverletzt = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	drachetot = (bool) atoi(eingabe);
 	fclose(datei);
 
 	color_set(3, 0);
