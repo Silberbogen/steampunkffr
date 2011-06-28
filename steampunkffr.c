@@ -5,8 +5,10 @@
  *
  *    Description:  Steampunk FFR - Der Anfang
  *    				Ein "Das-ist-dein-Abenteuer"-Roman
+ *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
+ *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.017
+ *        Version:  0.018
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -47,6 +49,8 @@
  *   - 25.06.2011 Hohlwelt Eingangseben - Beginn am Labyrinth zu arbeiten
  *   - 26.06.2011 Labyrinth und Geheimgänge der Eingangsebene Hohlwelt vollständig
  *   - 26.06.2011 Der Drache ist jetzt im Spiel ^.^
+ *   - 28.06.2011 Die Funktion auswahl() wurde von 6 möglichen Auswahlen auf eine
+ *                VA-Liste umgestellt. Somit stehen viel mehr Möglichkeiten offen.
  *
  * =====================================================================================
  */
@@ -54,10 +58,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <time.h>
+#include <time.h> // Zufallsgenerator
 #include <string.h>
-#include <ncurses.h>
+#include <ncurses.h> // Farbige Grafische Ausgabe
 #include <locale.h>
+#include <stdarg.h> // Für die VA-Liste
 
 #define DATEINAME ".steampunkffrsicherung.txt"
 
@@ -117,6 +122,7 @@ static bool schluesselgefunden = false;
 static bool dreistelzer = false;
 static bool dracheverletzt = false;
 static bool drachetot = false;
+static int minenzwerge = 158;
 
 static unsigned int rotation = 0; // Rotation ist eine Besonderheit. Hierüber werden die beiden Drehraumsegmente gesteuert. ^.^
 
@@ -167,7 +173,7 @@ void textausgabe(char *);
 void weiter(void);
 
 // Funktion: Auswahl
-void auswahl(char *, int, void (*)(), void (*)(), void (*)(), void (*)(), void (*)(), void (*)());
+void auswahl(char *, int, ...);
 
 // Funktion: VersucheDeinGlueck
 void versuchedeinglueck(void (*)(), void (*)());
@@ -675,13 +681,13 @@ void vorwort(void) {
 void ort1(void) {
 	raum = 1;
 	textausgabe("Die Innenstadt macht um diese Zeit noch einen gänzlich unbelebten Eindruck - und kein einiges Licht erhellt die Straße. Keine Straßenlaterne, keine Glühbirne hinter einem Fenster, nicht einmal die Werbetafeln leuchten auf. Wenn du so drüber nachdenkst, auf deinem ganzen Weg hierhin hast du bisher keinerlei eingeschaltete Lichtquellen gesehen.\nNun stehst du an der Kreuzung Stepgesstraße Ecke Hindenburgstraße. Ein Stück die große Einkaufsstraße hinauf ist das Bäckereigeschäft, an dem dir jeden Morgen ein guter Geist eine braune Papiertüte mit dampfend warmen Gebäck bereitstellt. Du schaust in die Richtung, doch diesmal steht auf dem Stromkasten neben der Türe nicht der verlockende Beutel, sondern eine Gestalt steht in der Türe und winkt dir zu.");
-	auswahl("Wirst du auf die winkende Gestalt zugehen (1) oder ziehst du es vor, dich lieber scheu und mit knurrendem Magen aus dem Staub zu machen (2)?", 2, ort2, ort3, NULL, NULL, NULL, NULL);
+	auswahl("Wirst du auf die winkende Gestalt zugehen (1) oder ziehst du es vor, dich lieber scheu und mit knurrendem Magen aus dem Staub zu machen (2)?", 2, ort2, ort3);
 }
 
 void ort2(void) {
 	raum = 2;
 	textausgabe("Vorsichtig und etwas nervös näherst du dich der offenstehenden Ladentüre, als ein Regelrechter Platzregen losbricht, dann hört man es auch donnern. Jetzt läufst du auf die Türe zu. Eine Frau im weißen Kitel geht hinein und hält sie dir offen. Du gleitest hinein und bleibst neben einem Stehtisch stehen, während sie hinter dir die Türe zumacht und abschließt.\n\"Ist das nicht ein unheimlicher Morgen? Die ganze Stadt ist ohne Strom. Momentan habe ich ein Feuer im alten Backofen gemacht - gleich wird es hier ein paar frische Brötchen geben.\" sagt sie und geht an der Theke vorbei auf eine Tür die nach hinten führt zu. \"Na kommen sie!\" lädt sie dich ein, ihr zu folgen. Du gehst unsicher hinterher. Im Hinterzimmer steht ein Tisch, auf dem eine Thermoskanne und zwei Tassen bereitstehen. \"Ich wollte sie schon längst einmal angesprochen haben. Daß das an einem so schlechten Tag passiert, tut mir leid!\" Sie kommt mit einem Tablet voller dampfender Brötchen aus einem Nebenraum, während du unschlüssig neben dem Tisch stehst.\n\"Bitte setzen sie sich doch! Ich dachte, wir könnten zusammen frühstücken!\" sagt sie und stellt das Tablett auf dem Tisch ab. Dann setzt sie sich hin. \"Ich bin Elke.\" stellt sie sich vor.\nAls du ihr gerade mit deinem Namen antworten willst, geschieht das unfassbare: die Sirenen fangen an zu heulen, mitten in dieser Kackophonie des Gewitters - und das um Fünf Uhr, Morgens in der Frühe.\n\"Was geht da vor sich?\" fragt Elke, während du dir das Sirenensignal genauer anhörst. \"Haben sie ein Radio hier, oder einen Fernsehe?\" fragst du Elke, aber die zuckt nur mit den Schultern.\n\"Kein Batteriebetriebenes, der Strom ist ausgefallen, da tut's der Fernseher nicht.\" Sie deutete mit der Hand neben deinem Ohr entlang hinter dich. Du drehst dich auf der Sitzfläche des Stuhls um und erblickst das Gerät. Die Sirenen heulen jetzt bereits seit mehr als einer Minute.\n\"Das ist keine Übung, das ist eine echte Warnung, aber vor was?\" sagst du laut zu dir. Du sprichst sehr oft mit dir selbst, vermutlich, um nicht vor Einsamkeit den Verstand zu verlieren. Wieder erklingt das Donnern und Grollen.");
-	auswahl("Willst du erst einmal in Ruhe Frühstücken (1) oder Elke fragen, ob sie dich rauslassen kann, damit du nachsiehst, was eigentlich los ist (2) oder sie fragen, ob sie über einen weiteren Empfänger verfügt, der nicht ans Stromnetz angeschlossen ist (3)?", 3, ort4, ort5, ort6, NULL, NULL, NULL);
+	auswahl("Willst du erst einmal in Ruhe Frühstücken (1) oder Elke fragen, ob sie dich rauslassen kann, damit du nachsiehst, was eigentlich los ist (2) oder sie fragen, ob sie über einen weiteren Empfänger verfügt, der nicht ans Stromnetz angeschlossen ist (3)?", 3, ort4, ort5, ort6);
 }
 
 void ort3(void) {
@@ -693,7 +699,7 @@ void ort3(void) {
 	if(janeinfrage("Möchtest du die Pistole einstecken (j/n)?"))
 		objekt[pistole] += 1;
 	textausgabe("Es war zwar Notwehr, dennoch hockst du jetzt hier neben einer Leiche. Dein Gefühl sagt dir, daß es wohl das beste wäre, dich so schnell wie möglich aus dem Staub zu machen, Unwetter hin oder her.");
-	auswahl("Möchtest du den Lichthof nach Norden verlassen in Richtung Kaisterstraße (1), oder nach Süden in Richtung Hindernburgstraße (2)?", 2, ort50, ort51, NULL, NULL, NULL, NULL);
+	auswahl("Möchtest du den Lichthof nach Norden verlassen in Richtung Kaisterstraße (1), oder nach Süden in Richtung Hindernburgstraße (2)?", 2, ort50, ort51);
 }
 
 void ort4(void) {
@@ -707,14 +713,14 @@ void ort5(void) {
 // Raus auf die Straße
 	raum = 5;
 	textausgabe("Du schlägst vor, daß du dich draußen umsiehst und zurückkommst, sobald du weißt, was los ist. Elke begleitet dich zur Ladentüre und läßt dich raus. Der Regen prasselt von oben herab und immer wieder donnert es. Du winkst ihr kurz zu und rennst so gut es geht an den Hauswänden entlang die Hindenburgstraße hinauf, trotzdem bist du nach weniger als einer Minute bis auf die Unterhose durchnäßt. Als du am ehemaligen Heinemann vorbeikommst und durch die kurze Passage läuftst, bemerkst du an der Straßenecke zum Sankt Vith hinunter einen brennenden Polizeiwagen. Ein mulmiges Gefühl geht dir durch den Magen. Eigentlich wolltest du ja in das Haus, das früher deinem Großvater gehört hat - und von dem aus man eine Übersicht über die ganze Stadt hat. Trotzdem ergreift dich gerade die Angst.");
-	auswahl("Vielleicht wäre es ja besser, die Straße wieder hinunter zulaufen - und sich im Geschäft bei Elke zu verstecken (1)? Du könntest auch auf den Polizeiwagen zulaufen, vielleicht kannst du jemandem helfen, der im Wagen eingeklemmt ist (2)? Oder du folgst deinem ursprünglichen Plan, das Haus deines Großvaters zu erreichen (3)?", 3, ort7, ort8, ort9, NULL, NULL, NULL);
+	auswahl("Vielleicht wäre es ja besser, die Straße wieder hinunter zulaufen - und sich im Geschäft bei Elke zu verstecken (1)? Du könntest auch auf den Polizeiwagen zulaufen, vielleicht kannst du jemandem helfen, der im Wagen eingeklemmt ist (2)? Oder du folgst deinem ursprünglichen Plan, das Haus deines Großvaters zu erreichen (3)?", 3, ort7, ort8, ort9);
 }
 
 void ort6(void) {
 // Nach einem Empfänger fragen
 	raum = 6;
 	textausgabe("Elke schüttelt den Kopf, und verneint deine Frage. \"Tut mir leid, so etwas ist nicht hier im Geschäft. Das einzige Radio, das mir einfallen würde, wäre mein Autoradio.\" entgegnet sie, nimmt sich ein warmes Brötchen vom Tablett und kaut daran herum.");
-	auswahl("Willst du sie wirklich überreden, mit dir zu ihrem Auto zu gehen (1), oder würdest du jetzt nicht viel lieber frühstücken (2)? Wenn du unbedingt draußen nachsehen willst, was los ist, könntest du Elke auch bitten, dich rauszulassen (3).", 3, ort17, ort4, ort5, NULL, NULL, NULL);
+	auswahl("Willst du sie wirklich überreden, mit dir zu ihrem Auto zu gehen (1), oder würdest du jetzt nicht viel lieber frühstücken (2)? Wenn du unbedingt draußen nachsehen willst, was los ist, könntest du Elke auch bitten, dich rauszulassen (3).", 3, ort17, ort4, ort5);
 }
 
 void ort7(void) {
@@ -729,7 +735,7 @@ void ort8(void) {
 	raum = 8;
 	if(objekt[gewehr] > 0) {
 		textausgabe("Du läufst erneut über den Platz um dir den Polizeiwagen noch einmal anzusehen. Das Feuer ist erloschen. Du überlegst dir gerade, ob du eine noch gründlichere Durchsuchung des Wagens vornehmen sollst, als du ein Geräusch aus der Richtung der Kirche hören kannst. Ein Geschoss schlägt in die Karosserie des Wagens ein.");
-		auswahl("Willst du dich dem Kampf stellen (1) oder versuchen zu fliehen (2)?", 2, ort10, ort11, NULL, NULL, NULL, NULL);
+		auswahl("Willst du dich dem Kampf stellen (1) oder versuchen zu fliehen (2)?", 2, ort10, ort11);
 	}
 	else {
 		textausgabe("Der Polizeiwagen raucht eigentlich nur noch. Fahrer- und Beifahrertüre stehen weit offen. Vorsichtig umrundest du den Wagen. Kein Mensch ist darin, aber auch kein Anzeichen der beiden Polizisten, die sich darin hätte befinden müssen. Im offenen Seitenfach der Beifahrertüre ist ein Gewehr, die Verriegelung der Waffe ist offen. Du könntest sie an dich nehmen. Du durchsuchst den Kofferraum. In diesem befindet sich ein Munitionspäckchen mit 100 Patronen, ein Verbandskasten und ein Warndreieck.");
@@ -743,7 +749,7 @@ void ort8(void) {
 			if(janeinfrage("Willst du das Warndreieck mitnehmen (j/n)?"))
 				objekt[warndreieck] += 1;
 		}
-		auswahl("Willst du jetzt weiter zum Haus deines Großvaters (1) oder zurück zum Geschäft (2)?", 2, ort9, ort7, NULL, NULL, NULL, NULL);
+		auswahl("Willst du jetzt weiter zum Haus deines Großvaters (1) oder zurück zum Geschäft (2)?", 2, ort9, ort7);
 	}
 }
 
@@ -752,7 +758,7 @@ void ort9(void) {
 	raum = 9;
 	if(dreistelzer) {
 		textausgabe("Der Kampf ist nicht spurlos am Haus deines Großvaters vorbeigezogen. Die Fenster sind zersplittert, die Haustüre liegt am Boden, die Wände rußgeschwärzt.");
-		auswahl("Willst du in das Haus deines Großvaters hinein (1) oder versuchen, um die Ecke zu laufen und den Kapuzinerplatz zu erreichen (2)?", 2, ort21, ort28, NULL, NULL, NULL, NULL);
+		auswahl("Willst du in das Haus deines Großvaters hinein (1) oder versuchen, um die Ecke zu laufen und den Kapuzinerplatz zu erreichen (2)?", 2, ort21, ort28);
 	}
 	if(tripodgesehen == true) {
 		textausgabe("Du läufst auf das Haus deines Großvaters zu und in den Eingang zwischen Gaststätte und Kleidungsgeschäft. Für einen Moment mußt du vor der alten Holztüre mit der Glasscheibe halten. Mit Hilfe deines Taschenmessers daudert es nur ein paar Sekunden, dann ist die Türe öffnet und du schlüpfst hinein.");
@@ -760,7 +766,7 @@ void ort9(void) {
 	}
 	textausgabe("Du läufst an der Häuserwand des Alten Marktes entlang und gelangst schließlich zum Haus deines Großvaters. Du machst dich mit Hilfe deines Taschenmessers kurz am Schloß der alten Holztüre zu schaffen, sie geht fast sofort aus. Den Trick hast du schon als Kind gemacht, wenn du mal wieder deinen Schlüssel zu Hause vergessen hattest - und er klappt immer noch wunderbar. Du hastest die Türe hinauf. Immer noch donnert es draußen, so laut, wie du es schon lange bei keinem Gewitter mehr gehört hast. Auf jeder Etage drückst du den Lichtschalter, aber keiner schaltet das Licht an. Auch hier ist vollkommener Stromausfall. Kurz bevor du die oberste Etage erreichst, hören die Sirenen auf zu heulen, was für dich nur zum Vorteil sein kann, steht doch noch eine alte motorbetriebene E57. Du obersten Treppen sind am kürzesten und am verwinkelsten. Links die Waschküche läßt du liegen, da kannst du nichs sehen. Du stürmst nach rechts, den kurzen Gang entgang und reißt die hintereste Türe auf der rechten Seite auf. Du stürmst auf das Dachfenster an der Südseite zu. Überall siehst du dunkelgraue Wolkenberge sich auftürmen. Statt bis nach Düsseldorf kannst du nicht einmal bis an die Westgrenze Mönchengladbachs sehen. Du wendest den Blick ab und läufst zu einem der Fenster an der Nordseite. Hier bietet sich die ein gleiches Bild. Die Wolken sind so dicht, daß du nicht einmal den Gladbacher Wasserturm in dieser Brühe sehen kannst. Bleiben noch die Fenster an der Südseite. Bereits als du dich ihnen näherst, erkennst du, daß du hier ein weiteres Sichtfeld haben wirst. Du reißt das Fenster auf um besser sehen zu können. Von oben peitschen dicke Regentropen herab, aber das aufgeklappte Fenster schützt dich weitestgehend. Die Wolkenwand ist hier einige Kilometer entfernt. Da plötzlich wird es hell in der Wolkenwand. Wie gebannt starrst du dahin. War das ein Blitz? Da wieder. Wieder ein Blitz. Wieder in der Wolkenwand. Das ist jetzt aber sehr ungewöhnlich. Minutenlang starrst du auf die Wolkenwand - und auch an zwei oder drei anderen Stellen erblickst du immer wieder kurze Blitze - mitten in der Wolkenwand, aber fast auf Bodenhöhe. Ein mulmiges Gefühl breitet sich in deinem Magen aus. Gerade, als du das Fenster schließen willst, kommt etwas aus der Wolke. Etwas riesiges. Ein Objekt, wie ein Turm, aber es bewegt sich, wie ein Stelzenläufer. Und ein Lichtbogen, wie ein Blitz spannt sich von ihm aus, dann brennt etwas zu seinen - Beinen? - während es sich weiter in Richtung der Gladbacher Innenstadt voranschiebt.\n Deine Nackenhärchen haben sich aufgerichtet. Du weißt zwar nicht genau, was das ist, aber es bringt Zerstörung, soviel ist sicher. Hastig schließt du das Fenster. Du rennst aus dem Dachstuhl heraus zurück in den Flur und eilst die Treppen hinab, bis du unten an den der Haustüre ankommst. Was wirst du tun?");
 	tripodgesehen = true;
-	auswahl("Du läufst hinaus und zu dem Polizeiwagen (1), du läufst die Kellertreppe hinab und suchst dort Schutz vor dem was kommt (2) oder du läufst zurück zu Elke, der Frau, die dich täglich mit Backwaren versorgt hat und erzählst ihr, was du gesehen hast (3)?", 3, ort8, ort20, ort7, NULL, NULL, NULL);
+	auswahl("Du läufst hinaus und zu dem Polizeiwagen (1), du läufst die Kellertreppe hinab und suchst dort Schutz vor dem was kommt (2) oder du läufst zurück zu Elke, der Frau, die dich täglich mit Backwaren versorgt hat und erzählst ihr, was du gesehen hast (3)?", 3, ort8, ort20, ort7);
 }
 
 void ort10(void) {
@@ -768,7 +774,7 @@ void ort10(void) {
 	raum = 10;
 	ort13();
 	textausgabe("Du bist nicht stolz darauf, einen anderen Menschen getötet zu haben, aber du warst ja nicht der Angreifer. Trotzdem fühlst du dich schäbig. Etwas in dir hat sich verändert, das kannst du spüren. Noch immer prasselt der Regen auf dich, so als wäre nichts gewesen. Und hinter den Wolkenbergen, da bist du dir sicher, scheint immer noch die Sonne.");
-	auswahl("Willst du jetzt weiter zum Haus deines Großvaters (1) oder zurück zum Geschäft (2)?", 2, ort9, ort7, NULL, NULL, NULL, NULL);
+	auswahl("Willst du jetzt weiter zum Haus deines Großvaters (1) oder zurück zum Geschäft (2)?", 2, ort9, ort7);
 }
 
 void ort11(void) {
@@ -838,7 +844,7 @@ void ort14(void) {
 		ort13();
 	}
 	else textausgabe("Bisher scheinen deine Bemühungen nicht zu fruchten. Drinnen reagiert Nichts und niemand auf dein Klopfen.");
-	auswahl("Willst du es weiter mit klopfen und rufen probieren (1), oder willst du versuchen, ob du die Türe öffnen kannst (2), oder willst du dir einen anderen Weg suchen (3)?", 3, ort14, ort15, ort16, NULL, NULL, NULL);
+	auswahl("Willst du es weiter mit klopfen und rufen probieren (1), oder willst du versuchen, ob du die Türe öffnen kannst (2), oder willst du dir einen anderen Weg suchen (3)?", 3, ort14, ort15, ort16);
 }
 
 void ort15(void) {
@@ -856,7 +862,7 @@ void ort17(void) {
 // Auf dem Weg zu Elkes Auto
 	raum = 17;
 	textausgabe("Du schulterst dir deinen Rucksack, während Elke ein paar Papiertüten mit Backwaren füllt. Danach siehst du ihr zu, wie sie ein paar Flaschen aus dem Kühlschrank holt und in eine weitere Tüte stopft. Als sie alles gepackt hat, verschwindet sie kurz im Nebenzimmer und kommt, jetzt einen Mantel tragend, eine Damenhandtusche um die Schulter hängend zurück. Ihr nennt die ganzen Taschen und verlasst das Geschäft. Elke schließt den Laden hinter sich ab, macht sogar die Bewegung zum Scharfschalten der Alarmanlage, dann sagt sie: \"Komm!\" und geht dir voraus, die Stepgesstraße hinunter.\nMißtrauisch wirfst du einen Blick zum Jugendheim hinüber. Oft genug, haben dir da schon junge Kerle aufgelauert. Diesmal aber bleibt alles ruhig. Elke führt dich ein kurzes Stück weiter und hält vor einer Parkhaustüre. Sie holt einen Schlüssel heraus und schließt auf. Gemeinsam geht ihr in das Innere des Parkhauses. Das Treppenhaus stinkt nicht so muffig und nach Urin, wie es oft der Fall ist, wenn Betrunkene sich eine Stelle für ihre Notdurft suchen. Ihr steigt hinab bis zum dritten Untergeschoß.\nSchließlich erreicht ihr Elkes Auto, einen schon etwas älteren Kombi. Sie entriegelt das Auto per Knopf. Ihr verladet eure Taschen und deinen Rucksack im Kofferraum und setzt euch in das Auto, wobei du auf dem Beifahrersitz Platz nimmst. Das kleine Licht der Mittelkonsole ist im Moment die einzige aktive Lichtquelle im ganzen Parkhaus.\nElke fummelt am Autoradio herum, aber das Digitalradio findet keinen Sender den es darstellen kann. Schließlich gibt sie die Suche auf. \"Hier drinnen haben wir keinen Empfang, ich müßte schon aus dem Parkhaus herausfahren, damit wir etwas hören könnten.\"");
-	auswahl("Stimmst du Elke zu - und ihr fahrt mit dem Auto aus dem Parkhaus heraus in den Regen (1) oder hast du ein mulmiges Gefühl und glaubst nicht, daß das eine gute Idee ist (2)?", 2, ort100, ort101, NULL, NULL, NULL, NULL);
+	auswahl("Stimmst du Elke zu - und ihr fahrt mit dem Auto aus dem Parkhaus heraus in den Regen (1) oder hast du ein mulmiges Gefühl und glaubst nicht, daß das eine gute Idee ist (2)?", 2, ort100, ort101);
 }
 
 void ort18(void) {
@@ -877,7 +883,7 @@ void ort20(void) {
 // Im Keller des Großvaters
 	raum = 20;
 	textausgabe("Du öffnest die eiserne Treppe und gehst die Kellertreppe hinunter. Als du am Fuße der Treppe ankommst, siehst du vor dir die eiserne Doppeltüre, die in den Heizungskeller führt. Nach rechts führt ein weiterer Weg zum Lagerraum, wo deine Großmutter ihre Kartoffeln lagerte. Neben der Treppe führt ein Weg nach hinten, wo die Mieter des Hauses ihre Kellerabteile haben.");
-	auswahl("Wenn du zurück nach oben gehen willst (1). Möchtest du in den Heizungskeller (2). Willst du in den Gang, der zum Kartoffellager deiner Großmutter führt (3). Würdest du gerne in den rückwärtigen Bereich gehen (4).", 4, ort21, ort22, ort23, ort24, NULL, NULL);
+	auswahl("Wenn du zurück nach oben gehen willst (1). Möchtest du in den Heizungskeller (2). Willst du in den Gang, der zum Kartoffellager deiner Großmutter führt (3). Würdest du gerne in den rückwärtigen Bereich gehen (4).", 4, ort21, ort22, ort23, ort24);
 }
 
 void ort21(void) {
@@ -885,10 +891,10 @@ void ort21(void) {
 	raum = 21;
 	if(dreistelzer) {
 		textausgabe("Der Hausflur sieht mitgenommen aus, doch die Steintreppe ist immer noch intakt. Der Zählerkasten hängt von der Wand herunter und die Treppe zur Kneipe wurde eingetreten. Dahinter siehst du das Spiel von Flammen an der Wand. Du gehst durch die Türe. Die Kneipe sieht verwüstet aus. Du gehst durch den Gang in die Küche, durchquerst sie und stehst in der ehemaligen Garage deines Großvaters, wo bequem vier Autos Platz hätten. Du erinnerst dich, wie vor vielen Jahren hier der Vogelschuß des Schützenfestes stattgefunden hatte - und schaust hinauf zu den Glasbausteinen, die einen Teil des Bodens vom Dachgarten ausgemacht haben. Der Ort, wo deine Schaukel stand, wo du Schnittlauch von dem gepflanzten Gemüse gegessen hattest, wo Clarence und Judy manchmal Auslauf haben durften. Von innen kannst du die Türe öffnen und zum Kapuzinerplatz hinaushuschen.");
-		auswahl("Willst du es riskieren, die Treppe hochzusteigen (1), der Steintreppe in den Keller folgen (2) oder das Haus in Richtung Kapuzinerplatz verlassen (3)?", 3, ort25, ort20, ort28, NULL, NULL, NULL);
+		auswahl("Willst du es riskieren, die Treppe hochzusteigen (1), der Steintreppe in den Keller folgen (2) oder das Haus in Richtung Kapuzinerplatz verlassen (3)?", 3, ort25, ort20, ort28);
 	}
 	textausgabe("Du stehst in einem großen Treppenflur. An der Seite befindet sich der Hängeschrank mit den ganzen Ablesegeräten für Elektrizität und Wasser. Rechts an der Wand für eine Steintreppe hinauf in das erste Stockwerk. Geradeaus ist eine Holztüre, durch die man in den Kellerbereich der Gaststätte kommt, allerdings ist sie dauerhaft abgeschlossen. Rechts neben der Holztüre, unterhalb der Steintreppe, befindet sich eine Eisentüre, hinter der sich der Abstieg in den Keller befindet.");
-	auswahl("Willst du die Treppe hinaufsteigen (1), in den Keller hinuntergehen (2), oder das Haus verlassen und zurück auf den Alten Markt (3)?", 3, ort25, ort20, ort26, NULL, NULL, NULL);
+	auswahl("Willst du die Treppe hinaufsteigen (1), in den Keller hinuntergehen (2), oder das Haus verlassen und zurück auf den Alten Markt (3)?", 3, ort25, ort20, ort26);
 }
 
 void ort22(void) {
@@ -906,7 +912,7 @@ void ort22(void) {
 			agartha = true;
 		}
 	}
-	auswahl("Willst du in in den Gang zum Kartoffelkeller (1), oder willst du zu den rückwärtigen Kellen (2) oder möchtest du zurück nach oben in den Treppenflur (3)?", 3, ort23, ort24, ort21, NULL, NULL, NULL);
+	auswahl("Willst du in in den Gang zum Kartoffelkeller (1), oder willst du zu den rückwärtigen Kellen (2) oder möchtest du zurück nach oben in den Treppenflur (3)?", 3, ort23, ort24, ort21);
 }
 
 void ort23(void) {
@@ -949,11 +955,11 @@ void ort26(void) {
 	raum = 26;
 	if(dreistelzer) {
 		textausgabe("Die Fassaden der Häuser am Alten Markt brennen knisternd, einige drohen einzustürzen. Tote Leiber bedecken den Ort, den ein ein Dreistelzer entweiht hat, der nun an damit beschäftigt ist, aus dem Polizeirevier einen Aschehaufen zu produzieren. Eine Art Panzerwagen steht unter ihm - und du könntest schwören, das gerade zwei Gestalten in die Bank gelaufen sind. Hoffentlich bist du bisher niemandem aufgefallen.");
-		auswahl("Wenn du Glück hast, kannst du ungesehen in das Haus deines Großvaters huschen (1), du kannst aber auch versuchen, die Turmstiege ungesehen zu erreichen (2) oder versuchen, die unbemerkt an den Häusernwänden des Kapuzinerplatzes entlang zu bewegen (3)", 3, ort9, ort44, ort28, NULL, NULL, NULL);
+		auswahl("Wenn du Glück hast, kannst du ungesehen in das Haus deines Großvaters huschen (1), du kannst aber auch versuchen, die Turmstiege ungesehen zu erreichen (2) oder versuchen, die unbemerkt an den Häusernwänden des Kapuzinerplatzes entlang zu bewegen (3)", 3, ort9, ort44, ort28);
 	}
 	if(tripodgesehen && (getoetetegegner > 0)) {
 		textausgabe("Der Alte Markt ist in beißenden Qualm gehüllt, während zeitgleich Regen in Strömen herniederprasselt. Ein riesiger Dreistelzer steht auf der Kreuzung zur Aachener Straße und aus einer Öffnung leckt züngelt eine lange blaugrüne Flamme gegen die Fassade der naheliegenden Häuser. Zu versuchen, den Kapuzinerplatz oder die Turmstiege zu erreichen, dürfte keine gute Idee sein.");
-		auswahl("Wie es aussieht, kannst es versuchen die Waldhausener Straße zu erreichen (1), der Weg den Abteiberg hinunter an der Polizeiwache vorbei sollte auch möglich sein (2). Auch der Weg den Marktstieg entlang (3) oder die Hindenburgstraße hinab (4) erscheinen dir noch sicher.", 4, ort43, ort35, ort27, ort34, NULL, NULL);
+		auswahl("Wie es aussieht, kannst es versuchen die Waldhausener Straße zu erreichen (1), der Weg den Abteiberg hinunter an der Polizeiwache vorbei sollte auch möglich sein (2). Auch der Weg den Marktstieg entlang (3) oder die Hindenburgstraße hinab (4) erscheinen dir noch sicher.", 4, ort43, ort35, ort27, ort34);
 	}
 	textausgabe("Du befindest dich auf dem Alten Markt. Regen gießt in Strömen herab, so daß du nur undeutlich die Silhouette der Kirche Mariä-Himmelfahrt ausmachen kannst, während der Brunnen mit der kleinen Statue davor vollkommen unsichtbar ist. Der Brunnen füllt sich langsam mit dem herniedergehenden Wasser, dennoch erinnert er dich, nur an ideenlos aufeinandergestapelte Zementbauklötze. Die Stühle der Eisdiele sind über den Markt und die Straße verteilt.");
 	if(wuerfel(6) > 4) {
@@ -972,9 +978,9 @@ void ort27(void) {
 		textausgabe("Der Marktstieg ist für dich mit vielen sentimentalen Erinnerungen verbunden. An den schrängen blonden Sohn des Metzgers zum Beispiel, mit dem du dich hier öfters getroffen hattest. Einmal warst du sogar in der Schlachterei hier drin. Es war wohl einer der Auslöser, warum du nie wirklich auf Fleisch standest. An der Ecke war eine Bäckerei. Du hast sie geliebt, vor allem für die Süßigkeiten und das Eis, das du dir hier stets gekauft hast. Schade, daß die nette alte Bäckerin nicht mehr da ist.");
 	raum = 27;
 	if(dreistelzer)
-		auswahl("Von hier aus könntest du weiter zum Kapuzinerplatz (1) oder aber, wenn du mutig genug bist, die Kaiserstraße hinab (2). Auch die Wallstraße (3) dürfte noch sicher sein.", 3, ort28, ort29, ort45, NULL, NULL, NULL);
+		auswahl("Von hier aus könntest du weiter zum Kapuzinerplatz (1) oder aber, wenn du mutig genug bist, die Kaiserstraße hinab (2). Auch die Wallstraße (3) dürfte noch sicher sein.", 3, ort28, ort29, ort45);
 	textausgabe("Du bewegst dich an der Hauswand entlang bis zur Ecke.");
-	auswahl("Möchtest du von hier aus weiter zur Hindenburgstraße (1), zum Alten Markt (2), zum Kapuzinerplatz (3), zur Wallstraße (4) oder zur Kaiserstraße (5)?", 5, ort34, ort26, ort28, ort45, ort29, NULL);
+	auswahl("Möchtest du von hier aus weiter zur Hindenburgstraße (1), zum Alten Markt (2), zum Kapuzinerplatz (3), zur Wallstraße (4) oder zur Kaiserstraße (5)?", 5, ort34, ort26, ort28, ort45, ort29);
 }
 
 void ort28(void) {
@@ -1010,7 +1016,7 @@ void ort29(void) {
 	else
 		ort13();
 	textausgabe("Es scheint so, als wäre die Kaiserstraße nicht der beste Ort, um sich dort lange aufzuhalten.");
-	auswahl("Möchtest du die Straße hinab zur Blücherstraße (1), zur Wallstraße (2), zum Marktstieg (3) oder zum Kapuzinerplatz (4)?", 4, ort31, ort45, ort27, ort28, NULL, NULL);
+	auswahl("Möchtest du die Straße hinab zur Blücherstraße (1), zur Wallstraße (2), zum Marktstieg (3) oder zum Kapuzinerplatz (4)?", 4, ort31, ort45, ort27, ort28);
 }
 
 void ort30(void) {
@@ -1024,7 +1030,7 @@ void ort30(void) {
 	}
 	else
 		textausgabe("Die Eingangstüren hängen nur lose in den Angeln. Jemand hat sich bereits Zutritt verschafft. Vorsicht gehst du in das Innere, aber alles ist ruhig. Du schleichst die Treppe herunter. Es sieht immer noch so aus wie in deiner Jugend. Der Kicker und der Billardtisch, nichts hat sich hier verändert, selbst die beiden Sofas sind noch da. In der Turnhalle brennt eine Notlampe - und ein Fenster steht weit offen.");
-	auswahl("Willst du zurück auf den Kapuzinerplatz (1) oder durch das geöffnete Fenster hinabspringen und hinüber zum Beginn der Kaiserstraße laufen (2)?", 2, ort28, ort29, NULL, NULL, NULL, NULL);
+	auswahl("Willst du zurück auf den Kapuzinerplatz (1) oder durch das geöffnete Fenster hinabspringen und hinüber zum Beginn der Kaiserstraße laufen (2)?", 2, ort28, ort29);
 }
 
 void ort31(void) {
@@ -1040,7 +1046,7 @@ void ort31(void) {
 	if(wuerfel(6) > 4)
 		textausgabe("Du erinnerst dich, das ein Stück weiter geradeaus, Nikos Mutter ihr Geschät hatte, während Niko auf der Regentenstraße wohnte. Das letzte Mal, als du etwas von ihm hörtest, war seine Stimme, aus dem Radio. Die kanntest viele Leute, die auf der Regentenstraße wohnten. Dagmar, Nicola, ihren Bruder den Nazi (den du nicht abkonntest, weil er ihr Bruder war - und weil er Nazi war) - und Thomas, der Computerfreak und Ärztehörer, Dietrich der Tänzer lebte auch dort und Dirk, der total auf Adam Ant abfuhrt. Für dich war die Regentenstraße immer der Ort, wo du deine Grundschule besuchtest, Fußball spieltest und dir ab und zu bei der Apotheke dein Junior-Heft oder eine Dose Pullmoll holtest.");
 	raum = 31;
-	auswahl("Willst du den Hügel hinauf die Kaiserstraße entlang (1), der Kleiststraße folgen (2) oder der Stadtbibliothek deine Aufwartung machen (3)?", 3, ort29, ort50, ort32, NULL, NULL, NULL);
+	auswahl("Willst du den Hügel hinauf die Kaiserstraße entlang (1), der Kleiststraße folgen (2) oder der Stadtbibliothek deine Aufwartung machen (3)?", 3, ort29, ort50, ort32);
 }
 
 void ort32(void) {
@@ -1076,11 +1082,11 @@ void ort33(void) {
 		ort113();
 	if(raum == 50) {
 		raum = 33;
-		auswahl("Möchtest du zur Hindenburgstraße hinab laufen (1) oder lieber zurück die Kleiststraße entlang zur Kaiserstraße (2)?", 2, ort51, ort50, NULL, NULL, NULL, NULL);
+		auswahl("Möchtest du zur Hindenburgstraße hinab laufen (1) oder lieber zurück die Kleiststraße entlang zur Kaiserstraße (2)?", 2, ort51, ort50);
 
 	} else {
 		raum = 33;
-		auswahl("Willst du die Passage hinauf zur Kleistraße laufen (1) oder kehrst du lieber um und läufst die Hindenburgstraße hinauf (2) oder hinab (3)?", 3, ort50, ort34, ort51, NULL, NULL, NULL);
+		auswahl("Willst du die Passage hinauf zur Kleistraße laufen (1) oder kehrst du lieber um und läufst die Hindenburgstraße hinauf (2) oder hinab (3)?", 3, ort50, ort34, ort51);
 	}
 }
 
@@ -1089,7 +1095,7 @@ void ort34(void) {
 	if(dreistelzer) {
 		textausgabe("Von hier aus kannst du sehen, das sich am unteren Teil der Hindenburgstraße, hinter dem Knick beim Kaffeehausröster, sich ein weiterer Dreistelzer befindet. Du kannst nicht ihn selber sehen, aber ab und an sieht man den Schimmer seiner Flammenwaffe auf den Häuserfassaden und in den Fenstern wiederspiegeln. Es wäre nicht gerade klug, sich in die Richtung zu wagen. Ähnlich sieht es auch an der Stepgesstraße aus, auch von dort kommen die grauenvollen mechanischen Geräusche der Dreistelzer. Der dritte im Bunde steht immer noch neben dem Polizeirevier und verunstaltet das Gebäude.");
 		raum = 34;
-		auswahl("Du kannst von hier aus versuchen, die Krichelstraße zu erreichen - und es von dort aus zum Münsterplatz zu versuchen (1) oder du versuchst in die Wallstraße zu huschen (2), wenn du schnell genug bist, kannst du auch an der Stadtmauer entlang zum Marktstieg (3)", 3, ort37, ort45, ort27, NULL, NULL, NULL);
+		auswahl("Du kannst von hier aus versuchen, die Krichelstraße zu erreichen - und es von dort aus zum Münsterplatz zu versuchen (1) oder du versuchst in die Wallstraße zu huschen (2), wenn du schnell genug bist, kannst du auch an der Stadtmauer entlang zum Marktstieg (3)", 3, ort37, ort45, ort27);
 	}
 	if(wuerfel(6) > 4)
 		textausgabe("Für einen Moment siehst du vor deinem geistigen Auge, wie aus dem klotzigen Modegeschäft wieder das Kaufhaus wurde, in dessen Verkaufsräumen du viele Stunden deiner Kindheit verbracht hast, mit dem Betrachten von Spielzeugen, dem hineinschnuppern in Büchern und dem herumtippen auf 8-Bit Computern. Du erinnerst dich sogar wieder daran, wie an deinem Geburtstag Ephraim Kishon hier war und Autogramme in seine Bücher schrieb.");
@@ -1117,7 +1123,7 @@ void ort35(void) {
 	textausgabe("Der Abteiberg führt hinab zum Geroweiher, gleichzeitig aber auch zum Rathaus und dem Münster. Man sieht die Wand aus dem Boden ragen - und fühlt sich ein wenig an eine mittelalterliche Burg erinnert, auch wenn niemals eine hier stand.");
 	if(wuerfel(6) > 4)
 		textausgabe("Wer hatte dir bloß die Geschichte erzählt, das früher der Urin, der Kot, und das Wasser der Waschzuber den Abteiberg hinunterlief, während unten die Leprakranken ihr krankes Dasein fristeten?");
-	auswahl("Möchtest du von hier aus zum Alten Markt (1), die Hindenburgstraße hinab (2), den Vorplatz am Münster entlang (3), das alte Rathaus betreten (4)? oder zum Park am Spatzenberg (5)?", 5, ort26, ort34, ort37, ort36, ort52, NULL);
+	auswahl("Möchtest du von hier aus zum Alten Markt (1), die Hindenburgstraße hinab (2), den Vorplatz am Münster entlang (3), das alte Rathaus betreten (4)? oder zum Park am Spatzenberg (5)?", 5, ort26, ort34, ort37, ort36, ort52);
 }
 
 void ort36(void) {
@@ -1134,10 +1140,10 @@ void ort36(void) {
 			exit(EXIT_SUCCESS);
 		}
 		raum = 36;
-		auswahl("Du bist dir nicht sicher, ob es eine gute Idee ist, zum Alten Markt zu laufen. Immerhin bleibt dir noch der Rückzug in den Innenhof des Münsters (1), du könntest auch den Abteiberg hinunterlaufen, der Hügel sieht zu steil für den Dreistelzer aus (2), oder den Vorplatz des Münsters entlanglaufen (3) in der Hoffnung, es vielleicht zum Geroweiher zu schaffen. Zu guter letzt bleibt dir noch die Flucht durch die Gasse, in der Hoffnung, die Hindenburgstraße zu erreichen (4)", 4, ort41, ort35, ort37, ort51, NULL, NULL);
+		auswahl("Du bist dir nicht sicher, ob es eine gute Idee ist, zum Alten Markt zu laufen. Immerhin bleibt dir noch der Rückzug in den Innenhof des Münsters (1), du könntest auch den Abteiberg hinunterlaufen, der Hügel sieht zu steil für den Dreistelzer aus (2), oder den Vorplatz des Münsters entlanglaufen (3) in der Hoffnung, es vielleicht zum Geroweiher zu schaffen. Zu guter letzt bleibt dir noch die Flucht durch die Gasse, in der Hoffnung, die Hindenburgstraße zu erreichen (4)", 4, ort41, ort35, ort37, ort51);
 	}
 	raum = 36;
-	auswahl("Möchtest du hinaus auf den Abteiberg (1) oder den Innenhof betreten (2)?", 2, ort35, ort41, NULL, NULL, NULL, NULL);
+	auswahl("Möchtest du hinaus auf den Abteiberg (1) oder den Innenhof betreten (2)?", 2, ort35, ort41);
 }
 
 void ort37(void) {
@@ -1145,27 +1151,27 @@ void ort37(void) {
 	if(raum == 52) {
 		textausgabe("So schnell dich deine Beine tragen, rennst du am Waffengeschäft vorbei, vorbei an den Häusern, in denen Stefan und Dirk lebten (der diesen geilen TI 99/4a hatte) - und die Straße hinunter. Du greifst das Schild und schleuderst um die Ecke der Weiherstraße. Das \"Alte Zeug Haus\" läßt du rechts liegen, der \"Alte Ulan\" ist auch nicht dein Ziel, sondern die Treppenstufen, die zum Münsterplatz hochführen. Du nimmst sie so schnell wie möglich und fällst fast noch über die letzte Stufe, dann bist du wieder oben. Und vollkommen außer Atem. Du ringst nach Luft und betrachtest das stets geschlossene Portal des Münsters auf dieser Seite.");
 		raum = 37;
-		auswahl("Du kannst vo hier aus jetzt nach links und zum Rathaus gehen - wobei da natürlich die Gefahr ist, vom Dreistelzer an der Polizeiwache bemerkt zu werden (1), du kannst auch das Münster betreten (2), sinnloserweise die Treppen zum Geroweiher hinunterspurten (3) oder den Abteiberg entlang zum oberen Teil der Hindenburgstraße spurten (4)", 4, ort36, ort38, ort46, ort34, NULL, NULL);
+		auswahl("Du kannst vo hier aus jetzt nach links und zum Rathaus gehen - wobei da natürlich die Gefahr ist, vom Dreistelzer an der Polizeiwache bemerkt zu werden (1), du kannst auch das Münster betreten (2), sinnloserweise die Treppen zum Geroweiher hinunterspurten (3) oder den Abteiberg entlang zum oberen Teil der Hindenburgstraße spurten (4)", 4, ort36, ort38, ort46, ort34);
 	}
 	if(raum == 34) {
 		textausgabe("Du spurtest das kurze Stück \"An der Stadtmauer\" entlang und biegst in die Krichelstraße ab, wo du direkt in einen Soldaten rennst.");
 		ort113();
 		textausgabe("Kaum daß du den Kampf gewonnen hast, läuft du weiter. Kurz bevor du den Kirchplatz erreichst, läufst du nach links, den Weg entlang, das kurze Stück über die Brücke hinüber zum Museum, dort die Treppe hinunter und um die Probstei herum, bis du schließlich vor dem Haupteingang des Münsters stehst.");
 		raum = 37;
-		auswahl("Willst du in das Münster hinein (1), oder an ihm vorbei zum Rathaus laufen, in der Gefahr, auf den Dreistelzer zu stoßen (2), oder willst du die Treppenstufen hinab zum Park am Geroweiher (3)?", 3, ort38, ort36, ort46, NULL, NULL, NULL);
+		auswahl("Willst du in das Münster hinein (1), oder an ihm vorbei zum Rathaus laufen, in der Gefahr, auf den Dreistelzer zu stoßen (2), oder willst du die Treppenstufen hinab zum Park am Geroweiher (3)?", 3, ort38, ort36, ort46);
 	}
 	if(raum == 51) {
 		textausgabe("Als du an oben am Hügel ankommst, rennst du am Elektronikladen links herum. Du nimmst die Treppe, hinauf zum Museum und rennst dort über die Steinplatten, auf denen du in deiner Kindheit mit deinen Freunden Skateboard gefahren und Roller Skater gelaufen bist, aber diesmal heißt der Sport nicht Bremstest (wobei ab und an das Skateboard unter dem Gitter hindurchschoß), sondern überleben, einfach nur überleben. Du rennst über das Museum und dann die Treppe hinab, ein kurzes Stück durch den Park und dann hinüber, um das Münster herum. Etwas erschöpft stehst du nun vor dem Haupteingang. Dein Blick schweift über den Geroweiher. Bis jetzt siehst du dort unten keine Dreistelzer, allerdings machen der Wind und der Regen es nicht leicht, viel zu erkennen.");
 		raum = 37;
-		auswahl("Willst du in das Münster hinein (1), oder an ihm vorbei zum Rathaus laufen, in der Gefahr, auf den Dreistelzer zu stoßen (2), oder willst du die Treppenstufen hinab zum Park am Geroweiher (3)?", 3, ort38, ort36, ort46, NULL, NULL, NULL);
+		auswahl("Willst du in das Münster hinein (1), oder an ihm vorbei zum Rathaus laufen, in der Gefahr, auf den Dreistelzer zu stoßen (2), oder willst du die Treppenstufen hinab zum Park am Geroweiher (3)?", 3, ort38, ort36, ort46);
 	}
 	if((raum == 46) && dreistelzer) {
 		textausgabe("Statt offen die lange Treppe am Münster hochzulaufen, bist du das kurze Stück durch den Park rechts gespurtet, in dem du noch am Morgen dein Zelt aufgebaut hattest. Dann bist du seitlich hinten am Kirchenschiff herum gelaufen. Nun überlegst du, wie es weiter gehen soll.");
 		raum = 37;
-		auswahl("Du kannst in das Münster hinein (1), oder du könntest vesuchen, am ehemaligen Quelle vorbei und dann schnell über die Hindenburgstraße zu huschen, in der Hoffnung nicht bemerkt zu werden - und den Marktstieg erreichen (2)", 2, ort38, ort27, NULL, NULL, NULL, NULL);
+		auswahl("Du kannst in das Münster hinein (1), oder du könntest vesuchen, am ehemaligen Quelle vorbei und dann schnell über die Hindenburgstraße zu huschen, in der Hoffnung nicht bemerkt zu werden - und den Marktstieg erreichen (2)", 2, ort38, ort27);
 	}
 	raum = 37;
-	auswahl("Willst du weiter in Richtung des Abteibergs (1), die Treppen hinab zum Geroweiher (2) oder willst du in das Gladbacher Münster hinein (3)?", 3, ort35, ort46, ort38, NULL, NULL, NULL);
+	auswahl("Willst du weiter in Richtung des Abteibergs (1), die Treppen hinab zum Geroweiher (2) oder willst du in das Gladbacher Münster hinein (3)?", 3, ort35, ort46, ort38);
 }
 
 void ort38(void) {
@@ -1173,18 +1179,18 @@ void ort38(void) {
 	if(dreistelzer) {
 		textausgabe("Jetzt wo die Dreistelzer da draußen lauern, bist du dir nicht sicher, ob dieser uralte Bau dich noch lange schützen wird. Doch für einen Augenblick nimmst du dir Zeit. Die Zeit darüber nachzudenken, warum zum Teufel diese Typen da draußen sind - und deine Geburtsstadt in Schutt und Asche legen. Zu einer Erklärung gelangst du aber leider nicht.");
 		mahlzeit();
-		auswahl("Willst du das Münster verlassen (1) oder willst du in den Seitengang (2)?", 2, ort37, ort39, NULL, NULL, NULL, NULL);
+		auswahl("Willst du das Münster verlassen (1) oder willst du in den Seitengang (2)?", 2, ort37, ort39);
 	}
 	else
 		textausgabe("Das Hauptschiff der Kirche ist erst vor kurzem neu restauriert worden und erstrahlt in hellstem weiß. Die Kirche wird trotz ihrer Größe weniger bedrückend als so manch alter Göttertempel. Der Duft des Weihwassers erfüllt die Luft. Ein Ständer beherbergt Bücher und Pamphlete, während an anderer Stelle, Kerzen aller Größe brennen. Es ist ein seltsamer Ritus in fast allen Religionen, sinnlose Brandrituale durchzuführen, die der Umwelt nicht wirklich helfen - dafür aber die Ressourcen dieses einzigen Planeten, auf dem wir leben angreifen. Du könntest dich auf einer der Bänke niederlassen, dennoch fühlst du dich hier nicht wohl. Seitlich an der Wand steht eine Türe offen. In deiner Kindheit war eine der Mieterinnen deines Großvaters verantwortlich für die Schatzkammer, sie war öfters mit dir in diesem Gang, der unter anderem zu jener Kammer führte.");
 	mahlzeit();
-	auswahl("Du kannst das Münster verlassen (1) oder den Seitengang betreten (2).", 2, ort37, ort39, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst das Münster verlassen (1) oder den Seitengang betreten (2).", 2, ort37, ort39);
 }
 
 void ort39(void) {
 	// Im Seitengang des Münsters
 	textausgabe("Der Gang spannt sich um den Innenhof des Münsters. Glas gibt an jeder Stelle den Blick darauf frei, ebenso wie auf die Steinumtafelte Treppe, die in der Mitte des Rasenhofs nach unten führt. Auf der rechten Seite führt eine kurze Treppe hinab in die Gruft unter dem Hauptschiff.");
-	auswahl("Möchtest du in das Hauptschiff des Münsters (1), den Innenhof betreten (2) oder die Treppe zur Gruft hinuntersteigen (3)?", 3, ort38, ort41, ort40, NULL, NULL, NULL);
+	auswahl("Möchtest du in das Hauptschiff des Münsters (1), den Innenhof betreten (2) oder die Treppe zur Gruft hinuntersteigen (3)?", 3, ort38, ort41, ort40);
 }
 
 void ort40(void) {
@@ -1218,7 +1224,7 @@ void ort40(void) {
 
 void ort41(void) {
 	// Der Innenhof
-	auswahl("Durch eine Türe gelangst du in das Münster (1), ein weiterer Durchgang führt in das alte Rathaus (2). Eine Treppe in der Mitte des Innenhofes führt zu einer Stahltüre hinab (3).", 3, ort39, ort36, ort42, NULL, NULL, NULL);
+	auswahl("Durch eine Türe gelangst du in das Münster (1), ein weiterer Durchgang führt in das alte Rathaus (2). Eine Treppe in der Mitte des Innenhofes führt zu einer Stahltüre hinab (3).", 3, ort39, ort36, ort42);
 }
 
 void ort42(void) {
@@ -1226,7 +1232,7 @@ void ort42(void) {
 	if(sargverschoben) {
 		textausgabe("Du steigst die Stufen in der Mitte des Innenhofes hinab und öffnest die Stahltüre. Als du in den Raum hineinblickst, erkennst du, das sich ein Spalt in einer Wand geöffnet hat. Du gehst in den Raum hiein und bemerkst beim näherkommen, das der Spalt tatsächlich eher ein richtiger Durchgang ist - und das dahinter ein Gang liegt.");
 		raum = 42;
-		auswahl("Möchtest du den Gang betreten (1) oder willst du den Raum verlassen und die Treppe hinauf in den Innenhof gehen (2)?", 2, ort53, ort41, NULL, NULL, NULL, NULL);
+		auswahl("Möchtest du den Gang betreten (1) oder willst du den Raum verlassen und die Treppe hinauf in den Innenhof gehen (2)?", 2, ort53, ort41);
 	}
 	textausgabe("Du steigst die Stufen in der Mitte des Innenhofes hinab und öffnest die Plastikklinge an der Stahltüre. Die Türe öffnet sich problemlos. Der Innenraum riecht muffig, die Wände sind alt und nicht überall eben. Der Raum wird offensichtlich für nichts mehr benutzt. Da es hier nichts weiter zu sehen gibt, drehst du dich um, verläßt den Raum und steigst die Treppe hinauf in den Innenhof.");
 	raum = 42;
@@ -1239,16 +1245,16 @@ void ort43(void) {
 	textausgabe("Die Waldhausener Straße war früher das Herzstück der Mönchengladbacher Altstadt. Hier reihten sich die Kneipen und Diskotheken nur so aneinander, doch in den Anfangszeit der 1990er Jahre, hatten die christdemokratischen Hohlbirnen der Stadt dem ein Ende bereitet - und damit nachhaltig dem Flair der Stadt geschadet. Vor deinem geistigen Auge stellst du dir das ehemalige Blumengeschäfft der Schallenburgers vor. Du erinnerst dich daran, wie deine Mutter und ihr Mann oftmals in den Herbstmonaten dort Kränze gebunden hatten. Und daran, wie sie von den Schallenburgers die alte Nähmaschine bekamen, in der 10.000 Mark versteckt waren. Glücklicherweise waren sie so ehrlich, Micky und seiner Mutter das Geld zurückzugeben. Trotzdem wurde Micky nicht alt, und die Schallenburgers und die Geschichte ihres Blumen- und Friedhofsgeschäftes endeten bald darauf.");
 	if(dreistelzer) {
 		textausgabe("Zurück in der Gegenwart jedoch mußt du erkennen, das in weiter Entfernung, die Waldhausener Straße entlang in Richtung Hardt, wenigstens 2 Dreistelzer sich an den Häusern und Menschen der Stadt vergehen - während ein weiteres dieser Ungetüme nicht weit bergauf steht.");
-		auswahl("Am sichersten wäre es wohl, den Fliescherberg hinabzulaufen (1), eventuell wäre auch der Schleichweg die Turmstiege entlang eine Alternative (2)", 2, ort52, ort44, NULL, NULL, NULL, NULL);
+		auswahl("Am sichersten wäre es wohl, den Fliescherberg hinabzulaufen (1), eventuell wäre auch der Schleichweg die Turmstiege entlang eine Alternative (2)", 2, ort52, ort44);
 	}
-	auswahl("Die Straße führt hinauf zum Alten Markt (1), neben dem Dicken Turm verläuft die Turmstiege (2) und ein weiterer Weg führt durch den kleinen Grünbereich des Fliescherberges (3)", 3, ort26, ort44, ort52, NULL, NULL, NULL);
+	auswahl("Die Straße führt hinauf zum Alten Markt (1), neben dem Dicken Turm verläuft die Turmstiege (2) und ein weiterer Weg führt durch den kleinen Grünbereich des Fliescherberges (3)", 3, ort26, ort44, ort52);
 }
 
 void ort44(void) {
 	// Die Turmstiege
 	textausgabe("Die Turmstiege ist herrlich geschützt. An ihrem Ende zur Waldhausener Straße hin führt eine Treppe neben dem Dicken Turm hinab, von ihr selber eine Stiege den Turm hinauf und die lange Mauer ermöglicht es, dank der hervorragenden Steine an ihr hinaufzuklettern. Das taten deine Freunde und du schon als Kinder - und das tust du auch jetzt noch manchmal, den oben in der kleinen Zinne sieht einen Niemand.");
 	mahlzeit();
-	auswahl("Von hier aus hast du die Möglichkeit zur Waldhausener Straße zu gelangen (1), durch die Passage zum Alten Markt zu gehen (2) oder zum Kapuzinerplatz(3), wenn du schnell genug spurtest schaffst du es vielleicht sogar bis zum Haus deines Großvaters (4)", 4, ort43, ort26, ort28, ort9, NULL, NULL);
+	auswahl("Von hier aus hast du die Möglichkeit zur Waldhausener Straße zu gelangen (1), durch die Passage zum Alten Markt zu gehen (2) oder zum Kapuzinerplatz(3), wenn du schnell genug spurtest schaffst du es vielleicht sogar bis zum Haus deines Großvaters (4)", 4, ort43, ort26, ort28, ort9);
 }
 
 void ort45(void) {
@@ -1260,7 +1266,7 @@ void ort45(void) {
 	if(wuerfel(6) > 4)
 		textausgabe("Deine Gedanken schweifen ab zu Marios, der früher über dem Cafe wohnte. Oben in seiner Wohnung hattet ihr Commodore Basiclistings in den PC eingehämmert und stundenlang dann mit den Ergebnissen gespielt. Von hier aus seid ihr auch oft mit Dimmi zum Fußballspielen aufgebrochen. In der Bäckerei wohnte Michaela mit ihren Eltern, die die Backstube betrieben. Du hast leider nie erfahren, warum sie nach Ende der dritten Klasse nicht in die Schule zurückkehrte - oder wieso plötzlich die Bäckerei weg war.");
 	textausgabe("Du hast die Wallstraße immer gerne als Abkürzung benutzt, um zur Hindenburgstraße zu gelangen, nicht zuletzt wegen des Bücherladens, an dem du dir täglich am Schaufenster die Nase platt gedrückt hast, wo du dir das erste mal Michael Moorcocks \"Elric von Melnibone - Die Sage vom Ende der Zeit\" holtest, jenes Buch, das du dir sechs Mal kaufen mußtest, weil niemand es zurückgab, wenn man es ihm auch nur einmal auslieh. Und immer nach seinem Neuerwerb, hast du es nochmal gelesen. Du erinnerst dich auch noch an deine schräge Klassenkameradin, die einerseits total schüchtern her war vom Wesen - und die dennoch wie Boy George herumlief - und auch die Musik die ganze Zeit über hörte.");
-	auswahl("Du kannst von hier aus zur Hindenburgstraße (1), die Kaiserstraße hinab (2), den Marktstieg entlang (3) oder am Haus Zoar vorbei zum Kapuzinerplatz (4)", 4, ort34, ort29, ort27, ort28, NULL, NULL);
+	auswahl("Du kannst von hier aus zur Hindenburgstraße (1), die Kaiserstraße hinab (2), den Marktstieg entlang (3) oder am Haus Zoar vorbei zum Kapuzinerplatz (4)", 4, ort34, ort29, ort27, ort28);
 }
 
 void ort46(void) {
@@ -1273,10 +1279,10 @@ void ort46(void) {
 	if(dreistelzer) {
 		textausgabe("Dank des Regens wäre es dir fast nicht aufgefallen, das zwei Dreistelzer sich nahe der Kreuzung zur Aachener Straße und in Gegenrichtung nahe der Rheydter Straße platziert haben. Zwar gibt es noch den kurzen Tunnel hinüber zur Turmstraße, aber wer weiß, wie es sonst in dem Viertel aussieht? In Anbetracht der Situation - und bei dem Gedanken daran, das noch ein weiterer Dreistelzer oben am Markt lauert, wären die beiden sicheren Routen, um von hier weg zu kommen, wohl nur der Weg den Spatzenberg entlang, oder der Weg hinauf zum Münster. Die Abhänge sind deine Verbündeten. Du kannst dir nicht vorstellen, daß diese 30 Meter hohen mechanischen Ungetüme dort entlangstelzen können.");
 		raum = 46;
-		auswahl("Willst du also zum Spatzenberg (1) oder zum Münster (2) hinauf?", 2, ort52, ort37, NULL, NULL, NULL, NULL);
+		auswahl("Willst du also zum Spatzenberg (1) oder zum Münster (2) hinauf?", 2, ort52, ort37);
 	}
 	raum = 46;
-	auswahl("Du kannst den Spatzenberg hinauf (1), oder den Abteiberg (2) oder die Treppen zum Münstervorplatz nehmen (3)", 3, ort52, ort35, ort37, NULL, NULL, NULL);
+	auswahl("Du kannst den Spatzenberg hinauf (1), oder den Abteiberg (2) oder die Treppen zum Münstervorplatz nehmen (3)", 3, ort52, ort35, ort37);
 }
 
 void ort47(void) {
@@ -1288,7 +1294,7 @@ void ort47(void) {
 	}
 	else
 		textausgabe("Ein Dreibeiner steht neben der Kaiser-Friedrich-Halle und bedeckt ihr dach mit einem blau-grünlichen Flamme. Glücklicherweise ist er damit soweit weg, daß wohl kaum die Gefahr besteht, bemerkt zu werden.");
-	auswahl("Der Weg ist soweit sicher die Hindenburgstraße hinauf (1) oder weiter hinab bis zum Vorplatz des Hauptbahnhofs (2)", 2, ort51, ort48, NULL, NULL, NULL, NULL);
+	auswahl("Der Weg ist soweit sicher die Hindenburgstraße hinauf (1) oder weiter hinab bis zum Vorplatz des Hauptbahnhofs (2)", 2, ort51, ort48);
 }
 
 void ort48(void) {
@@ -1300,7 +1306,7 @@ void ort48(void) {
 	if(wuerfel(6) > 3)
 		textausgabe("Für die meisten Gladbacher ist das hier einfach der Platz vor dem Hauptbahnhof, für andere der Busbahnhof aber kaum jemand kennt den Namen des Platzes. Früher war da mal die Bank, wo der Mann deiner Mutter arbeitete. Amüsiert mußt du daran denken, wie er fassungslos nach Hause kam und davon erzählte, das die nette Frau aus dem Haus, die manchmal den Bankern etwas zu essen brachte, die Frau war, die ihren Mann zerstückelt und in Dosen im Bunten Garten verstreut hatte.");
 	textausgabe("Es stehen keinerlei Busse im Busbahnhof herum, auch sind kaum Menschen hier auszumachen. Betrachtet man nur den Platz, so wirkt alles so, wie es sein soll.");
-	auswahl("Du kannst von hier aus entweder die Hindenburgstraße entlang in Richtung Alter Markt gehen (1) oder das Innere des Hauptbahnhofs betreten (2)", 2, ort47, ort49, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst von hier aus entweder die Hindenburgstraße entlang in Richtung Alter Markt gehen (1) oder das Innere des Hauptbahnhofs betreten (2)", 2, ort47, ort49);
 }
 
 void ort49(void) {
@@ -1325,7 +1331,7 @@ void ort50(void) {
 		textausgabe("Ein Schuß erklingt!");
 		ort113();
 	}
-	auswahl("Du kannst am Adenauerplatz vorbei zur Blücherstraße (1) oder Richtung Hindenburgstraße in den Lichthof (2)", 2, ort31, ort33, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst am Adenauerplatz vorbei zur Blücherstraße (1) oder Richtung Hindenburgstraße in den Lichthof (2)", 2, ort31, ort33);
 }
 
 void ort51(void) {
@@ -1341,7 +1347,7 @@ void ort51(void) {
 		ort31();
 	}
 	raum = 51;
-	auswahl("Von hier aus kannst du der Hindenburgstraße bergauf folgen (1) oder in die Gegenrichtung auf den Hauptbahnhof zu (2), oder Richtung Kleiststraße durch den Lichthof (3)", 3, ort34, ort47, ort33, NULL, NULL, NULL);
+	auswahl("Von hier aus kannst du der Hindenburgstraße bergauf folgen (1) oder in die Gegenrichtung auf den Hauptbahnhof zu (2), oder Richtung Kleiststraße durch den Lichthof (3)", 3, ort34, ort47, ort33);
 }
 
 void ort52(void) {
@@ -1349,13 +1355,13 @@ void ort52(void) {
 	if(dreistelzer) {
 		textausgabe("Oben von der Annastiege aus, kannst du den Dreibeiner sehen - und auch die Männer, die allem Anschein nach die Bank leer räumen.");
 		raum = 52;
-		auswahl("Von hier aus kannst du versuchen die Neustraße langzuhuschen, ein kurzes Stück die Weiherstraße hinab zulaufen und dann die Treppen hinauf zum Münsterplatz (1), oder du rennst hinüber zur Waldhausener Straße, zum Dicken Turm (2) oder jagst wie in deiner Jugend die gesamte Anna-Schiller-Stiege bis zum Geroweiher hinab (3)", 3, ort37, ort43, ort46, NULL, NULL, NULL);
+		auswahl("Von hier aus kannst du versuchen die Neustraße langzuhuschen, ein kurzes Stück die Weiherstraße hinab zulaufen und dann die Treppen hinauf zum Münsterplatz (1), oder du rennst hinüber zur Waldhausener Straße, zum Dicken Turm (2) oder jagst wie in deiner Jugend die gesamte Anna-Schiller-Stiege bis zum Geroweiher hinab (3)", 3, ort37, ort43, ort46);
 	}
 	if(wuerfel(6) > 4)
 		textausgabe("Der Fliescherberg ist ein ganz sentimentaler Ort für dich. Oben auf der kleine Plattform naher der Ecke Neustraße habt ihr immer Detektiv gespielt - und die Bank beobachtet. Hier wuchsen auch die Knallerbsen mit denen ihr die Leute erschreckt habt. An den Ästen der beiden Bäume neben der Plattofrm seid ihr immer hinaufgeklettert - und wenn ihr Glück hattet, dann konnte man im Winter an ein oder zwei Tagen auch mit dem Schlitten den ganzen Fliescherberg hinuntersausen.");
 	textausgabe("An der Seite des Fliescherberges führt die lange Anna-Schiller-Stiege hinab, neben der ihr als Kinder immer in den Büschen Cowboys und Indianer oder Ritter gespielt hattet. Hier waren immer eure selbst gemachten Pfeilbögen und Schwerter versteckt. Ein lang gewundener Weg führt von der Waldhausener Straße hinüber und ein weiterer von der Ecke Neustraße hinunter. Du weißt gar nicht mehr, wie oft ihr als Kinder wagemutig auf euren Skateboards hier heruntergerast seid, ja, gerast trifft es, denn der Berg ist so steil, das die Endgeschwindigkeit einfach nur verboten schnell war.");
 	raum = 52;
-	auswahl("Du kannst von hier aus zum Abteiberg hinaufgehen (1), hinab zum Geroweiher (2) oder hinüber zur Waldhausener Straße (3)", 3, ort35, ort46, ort43, NULL, NULL, NULL);
+	auswahl("Du kannst von hier aus zum Abteiberg hinaufgehen (1), hinab zum Geroweiher (2) oder hinüber zur Waldhausener Straße (3)", 3, ort35, ort46, ort43);
 }
 
 void ort53(void) {
@@ -1379,10 +1385,10 @@ void ort54(void) {
 	raum = 54;
 	if(durchganggeoeffnet && (objekt[rucksack] > 0)) {
 		textausgabe("In der Südostecke des Raumes hat sich ein Stück des Bodens verschoben. Dort ist ein Loch im Boden, in dem eine Rutsche ist. Nachdem du sie dir näher angesehen und betastet hast, kommst du zu dem Ergebnis, daß das Metall zu glatt ist - um im Falle eines Falles dort wieder hochklettern zu können - hingegen wäre es wohl eine Leichtigkeit - hinunterzurutschen.");
-		auswahl("Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Du könntest einen von ihnen nehmen - oder aber eine ungewisse Rutschpartie wagen (3).", 3, ort53, ort55, ort56, NULL, NULL, NULL);
+		auswahl("Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Du könntest einen von ihnen nehmen - oder aber eine ungewisse Rutschpartie wagen (3).", 3, ort53, ort55, ort56);
 	}
 	else
-		auswahl("Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Welchen möchtest du einschlagen?", 2, ort53, ort55, NULL, NULL, NULL, NULL);
+		auswahl("Es führen zwei Wege aus dem Raum heraus, der eine führt nach Westen (1), der andere nach Norden (2). Welchen möchtest du einschlagen?", 2, ort53, ort55);
 }
 
 void ort55(void) {
@@ -1425,13 +1431,13 @@ void ort56(void) {
 void ort57(void) {
 	rotation++;
 	raum = 57;
-	auswahl("Du kannst dem Tunnel nach Osten folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort58, ort131, ort63, NULL, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Osten folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort58, ort131, ort63);
 }
 
 void ort58(void) {
 	rotation++;
 	raum = 58;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2), die Abzweigung nach Süden nehmen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort57, ort59, ort64, ort212, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2), die Abzweigung nach Süden nehmen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort57, ort59, ort64, ort212);
 }
 
 void ort59(void) {
@@ -1440,64 +1446,64 @@ void ort59(void) {
 		textausgabe("Du folgst dem Weg. Er wird nach kurzer Zeit zu einem behauenen Gang, der in einen Tunnel münded.");
 	}
 	raum = 59;
-	auswahl("Du kannst dem Weg nach Norden nehmen (1), den Tunnel nach Westen folgen (2) oder nach Osten (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort56, ort58, ort60, ort212, NULL, NULL);
+	auswahl("Du kannst dem Weg nach Norden nehmen (1), den Tunnel nach Westen folgen (2) oder nach Osten (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort56, ort58, ort60, ort212);
 }
 
 void ort60(void) {
 	rotation++;
 	raum = 60;
-	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort59, ort61, ort212, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort59, ort61, ort212);
 }
 
 void ort61(void) {
 	rotation++;
 	raum = 61;
-	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen", 3, ort60, ort62, ort212, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen", 3, ort60, ort62, ort212);
 }
 
 void ort62(void) {
 	rotation++;
 	raum = 62;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen", 3, ort61, ort135, ort212, NULL, NULL, NULL);
+	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen", 3, ort61, ort135, ort212);
 }
 
 void ort63(void) {
 	rotation++;
 	raum = 63;
-	auswahl("Du kannst den Tunnel zurückgehen (1) oder die Wänder nach Geheimgängen absuchen (2)", 2, ort135, ort57, NULL, NULL, NULL, NULL);
+	auswahl("Du kannst den Tunnel zurückgehen (1) oder die Wänder nach Geheimgängen absuchen (2)", 2, ort135, ort57);
 }
 
 void ort64(void) {
 	rotation++;
 	raum = 64;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder nimmst die Abzweigung nach Osten (3), natürlich kannst du aber auch die Wände nach Geheimgängen absuchen (4)", 4, ort58, ort139, ort65, ort212, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder nimmst die Abzweigung nach Osten (3), natürlich kannst du aber auch die Wände nach Geheimgängen absuchen (4)", 4, ort58, ort139, ort65, ort212);
 }
 
 void ort65(void) {
 	rotation++;
 	raum = 65;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Süden nehmen (3), oder natürlich die Wände nach Geheimgängen absuchen (4)", 4, ort64, ort133, ort66, ort212, NULL, NULL);
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Süden nehmen (3), oder natürlich die Wände nach Geheimgängen absuchen (4)", 4, ort64, ort133, ort66, ort212);
 }
 
 void ort66(void) {
 	rotation++;
 	raum = 66;
 	switch(rotation % 8) {
-		case 1: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort74, ort140, NULL, NULL, NULL);
+		case 1: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort74, ort140);
 				break;
-		case 2: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort73, ort140, NULL, NULL, NULL);
+		case 2: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort73, ort140);
 				break;
-		case 3: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort72, ort140, NULL, NULL, NULL);
+		case 3: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort72, ort140);
 				break;
-		case 4: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort71, ort140, NULL, NULL, NULL);
+		case 4: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort71, ort140);
 				break;
-		case 5: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort70, ort140, NULL, NULL, NULL);
+		case 5: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort70, ort140);
 				break;
-		case 6: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort69, ort140, NULL, NULL, NULL);
+		case 6: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort69, ort140);
 				break;
-		case 7: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort68, ort140, NULL, NULL, NULL);
+		case 7: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort68, ort140);
 				break;
-		default: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort67, ort140, NULL, NULL, NULL);
+		default: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort67, ort140);
 				break;
 	}
 }
@@ -2415,6 +2421,19 @@ void ort157(void) {
 void ort158(void) {
 	rotation++;
 	raum = 158;
+	textausgabe("Schon als du dich dem Raum näherst, bemerkst du die Veränderung der Helligkeit. Als du ihn schließlich betrittst, ist er taghell erleuchtet. Eine Art von Käfern krabbeln hier auf den Wänden entlang, ihre Panzer schimmern in hellem weißlichen Licht.");
+	if(minenzwerge == 158) {
+		if(schluessel111_1 && (wuerfel(6) > 4)) {
+			textausgabe("Die Zwerge beäugen dich äußerst mißtrauisch.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt er feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
+			charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
+			if(!kampf(&spieler, zwerg, 1, false, ort99)) {
+				textausgabe("Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
+				exit(EXIT_SUCCESS);
+			}
+			// Aus ist's mit den Zwergen
+			minenzwerge = 0;
+		}
+	}
 	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort99, ort159, ort212, NULL, NULL, NULL);
 }
 
@@ -3500,32 +3519,43 @@ void weiter(void) {
 }
 
 // Implementation: Auswahl
-void auswahl(char *beschreibung, int maxzahl, void (*funktion1)(), void (*funktion2)(), void (*funktion3)(), void (*funktion4)(), void (*funktion5)(), void (*funktion6)()) {
+void auswahl(char *beschreibung, int maxzahl, ...) {
 	char eingabe[20];
 	int ergebnis = 0;
 	char zusatzbeschreibung[300];
+	va_list zeiger;
+	// reserviere Platz für alle Auswahlmöglichkeiten
+	void (*fptr[maxzahl]) (void);
+	//void (fpointer *) (void);
 
+	// Werte der VA-Liste in die Funktionszeiger kopieren
+	va_start(zeiger, maxzahl); // Die maxzahl Zeiger auslesen
+	for(int i=0; i < maxzahl; ++i)
+		fptr[i] = va_arg(zeiger, void*);
+	va_end(zeiger);
+
+	// Die Zusatzfunktionen
 	while((ergebnis < 1) || (ergebnis > maxzahl)) {
 		color_set(1, 0);
 		strcpy(zusatzbeschreibung, " ");
 		if(objekt[gewandheitstrank] > 0)
-			strcat(zusatzbeschreibung, "(7) Gewandheitstrank trinken ");
+			strcat(zusatzbeschreibung, "(44) Gewandheitstrank trinken ");
 		if(objekt[staerketrank] > 0)
-			strcat(zusatzbeschreibung, "(8) Stärketrank trinken ");
+			strcat(zusatzbeschreibung, "(55) Stärketrank trinken ");
 		if(objekt[glueckstrank] > 0)
-			strcat(zusatzbeschreibung, "(9) Glückstrank trinken ");
-			strcat(zusatzbeschreibung, "(77) Spielstand laden (88) Spielstand speichern (99) Speichern & beenden");
+			strcat(zusatzbeschreibung, "(66) Glückstrank trinken ");
+		strcat(zusatzbeschreibung, "(77) Spielstand laden (88) Spielstand speichern (99) Speichern & beenden");
 		textausgabe(beschreibung);
 		textausgabe(zusatzbeschreibung);
 		getnstr(eingabe, 20);
 		ergebnis = atoi(eingabe);
 		color_set(0, 0);
 		switch(ergebnis) {
-			case 7: gewandheitstrank_trinken();
+			case 44: gewandheitstrank_trinken();
 					break;
-			case 8: staerketrank_trinken();
+			case 55: staerketrank_trinken();
 					break;
-			case 9: glueckstrank_trinken();
+			case 66: glueckstrank_trinken();
 					break;
 			case 77: laden();
 					 break;
@@ -3540,28 +3570,7 @@ void auswahl(char *beschreibung, int maxzahl, void (*funktion1)(), void (*funkti
 			default: break;
 		}
 	}
-	switch(ergebnis) {
-		case 1: funktion1();
-				break;
-				;;
-		case 2: funktion2();
-				break;
-				;;
-		case 3: funktion3();
-				break;
-				;;
-		case 4: funktion4();
-				break;
-				;;
-		case 5: funktion5();
-				break;
-				;;
-		case 6: funktion6();
-				break;
-				;;
-		default: fputs("FEHLER! Das Ergebnis einer Auswahlfunktion war nicht gültig.", stdin);
-				 exit(EXIT_FAILURE);
-	}
+	fptr[ergebnis-1](); // Umwandlung menschliche Nummerierung in Arraynummerierung
 }
 
 // Funktion: VersucheDeinGlueck
@@ -3799,6 +3808,7 @@ int speichern(void) {
 	fprintf(datei, "%d\n", rotation);
 	fprintf(datei, "%d\n", (int) dracheverletzt);
 	fprintf(datei, "%d\n", (int) drachetot);
+	fprintf(datei, "%d\n", minenzwerge);
 	fclose(datei);
 
 	color_set(3, 0);
@@ -3906,6 +3916,8 @@ int laden(void) {
 	dracheverletzt = (bool) atoi(eingabe);
 	fgets(eingabe, 100, datei);
 	drachetot = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	minenzwerge = (int) atoi(eingabe);
 	fclose(datei);
 
 	color_set(3, 0);
