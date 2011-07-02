@@ -123,6 +123,8 @@ static bool dreistelzer = false;
 static bool dracheverletzt = false;
 static bool drachetot = false;
 static int minenzwerge = 158;
+static int stollentroll = 150;
+static bool gitteroffen = false;
 
 static unsigned int rotation = 0; // Rotation ist eine Besonderheit. Hierüber werden die beiden Drehraumsegmente gesteuert. ^.^
 
@@ -1488,22 +1490,23 @@ void ort65(void) {
 void ort66(void) {
 	rotation++;
 	raum = 66;
+	char *text = "Du kannst dem Tunnel nach Norden (1) oder nach Süden folgen (2). Du kannst aber auch die Abzweigung nach Osten nehmen (3)";
 	switch(rotation % 8) {
-		case 1: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort74, ort140);
+		case 1: auswahl(text, 3, ort65, ort74, ort140);
 				break;
-		case 2: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort73, ort140);
+		case 2: auswahl(text, 3, ort65, ort73, ort140);
 				break;
-		case 3: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort72, ort140);
+		case 3: auswahl(text, 3, ort65, ort72, ort140);
 				break;
-		case 4: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort71, ort140);
+		case 4: auswahl(text, 3, ort65, ort71, ort140);
 				break;
-		case 5: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort70, ort140);
+		case 5: auswahl(text, 3, ort65, ort70, ort140);
 				break;
-		case 6: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort69, ort140);
+		case 6: auswahl(text, 3, ort65, ort69, ort140);
 				break;
-		case 7: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort68, ort140);
+		case 7: auswahl(text, 3, ort65, ort68, ort140);
 				break;
-		default: auswahl("Du kannst dem Tunnel nach Norden folgen (1), nach Süden (2), oder die Abzweigung nach Osten nehmen (3)", 3, ort65, ort67, ort140);
+		default: auswahl(text, 3, ort65, ort67, ort140);
 				break;
 	}
 }
@@ -1771,14 +1774,15 @@ void ort78(void) {
 void ort79(void) {
 	rotation++;
 	raum = 79;
+	char *text = "Willst du den Raum nach Norden verlassen (1)? Du kannst auch nach Geheimtüren suchen (2) oder warten (3)";
 	switch(rotation % 4) {
-		case 1: auswahl("Du den Raum nach Norden verlassen (1), den Boden nach Geheimtüren absuchen(2) oder lieber warten (2)?", 2, ort78, ort152, ort79);
+		case 1: auswahl(text, 2, ort78, ort152, ort79);
 				break;
-		case 2: auswahl("Du den Raum nach Norden verlassen (1), den Boden nach Geheimtüren absuchen (2) oder lieber warten (2)?", 2, ort77, ort152, ort79);
+		case 2: auswahl(text, 2, ort77, ort152, ort79);
 				break;
-		case 3: auswahl("Du den Raum nach Norden verlassen (1), den Boden nach Geheimtüren absuchen (2) oder lieber warten (2)?", 2, ort76, ort152, ort79);
+		case 3: auswahl(text, 2, ort76, ort152, ort79);
 				break;
-		default: auswahl("Du den Raum nach Norden verlassen (1), den Boden nach Geheimtüren absuchen (2) oder lieber warten (3)?", 2, ort75, ort152, ort79);
+		default: auswahl(text, 2, ort75, ort152, ort79);
 				break;
 	}
 }
@@ -1786,7 +1790,8 @@ void ort79(void) {
 void ort80(void) {
 	rotation++;
 	raum = 80;
-	char *text = "Wiilst du den Tunnel nach Norden gehen (1) oder nach Osten (2)?";
+	textausgabe("Der Raum, in dem du dich jetzt befindet, erscheint eine große natürliche Höhle zu sein. Sie ist bewachsen von exotischen Pflanzen. Grün ist hier eine weniger dominierende Farbe, als es sie an der Erdoberfläche zu sein scheint. Der Raum ist viel stickiger, als die Tunnel, durch die du dich seit einiger Zeit bewegst. Im nördlichen Teil der Höhle befindet sich ein großer Teich, in den ein Wasserfall hineinstürzt.");
+	char *text = "Willst du in den Teich hineinwaten und dich in die herabfallenden Wasser des Wasserfalls stellen (1) oder die Höhle durch ihren Ausgang im Osten verlassen (2)?";
 	switch(rotation % 8) {
 		case 1: auswahl(text, 2, ort143, ort72);
 				break;
@@ -1834,23 +1839,24 @@ void ort81(void) {
 void ort82(void) {
 	rotation++;
 	raum = 82;
+	char *text = "Du kannst den Tunnel nach Westen (1), nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)";
 	textausgabe("Der Raum in dem du stehst ist ungewöhnlich. Die Wände schimmern in einer Art dunklen Purpurs und der Raum selber stellt ein symetrisches Sechseck dar, so als wäre er eine überdimensionale Bienenwabe. In jeder seiner sechs Wände befundet sich eine Tunnelöffnung. Jetzt bleibt nur die Frage, welchen dieser sechs Tunnel du nehmen möchtest.");
 	switch(rotation % 8) {
-		case 1: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort68, ort81, ort83, ort84, ort85, ort86);
+		case 1: auswahl(text, 6, ort68, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 2: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort67, ort81, ort83, ort84, ort85, ort86);
+		case 2: auswahl(text, 6, ort67, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 3: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort74, ort81, ort83, ort84, ort85, ort86);
+		case 3: auswahl(text, 6, ort74, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 4: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort73, ort81, ort83, ort84, ort85, ort86);
+		case 4: auswahl(text, 6, ort73, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 5: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort72, ort81, ort83, ort84, ort85, ort86);
+		case 5: auswahl(text, 6, ort72, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 6: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort71, ort81, ort83, ort84, ort85, ort86);
+		case 6: auswahl(text, 6, ort71, ort81, ort83, ort84, ort85, ort86);
 				break;
-		case 7: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort70, ort81, ort83, ort84, ort85, ort86);
+		case 7: auswahl(text, 6, ort70, ort81, ort83, ort84, ort85, ort86);
 				break;
-		default: auswahl("Du kannst den Tunnel nach Westen nehmen (1), den nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)", 6, ort69, ort81, ort83, ort84, ort85, ort86);
+		default: auswahl(text, 6, ort69, ort81, ort83, ort84, ort85, ort86);
 				break;
 	}
 }
@@ -1934,19 +1940,38 @@ void ort88(void) {
 void ort89(void) {
 	rotation++;
 	raum = 89;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort88, ort90, ort212);
+	textausgabe("Du betrittst einen Raum, dessen Wände abgeschliffen und vollkommen Glatt sind. Nichts, nicht einmal Staub oder Schmutz, sind in diesem Raum sichtbar.");
+	if(wuerfel(6) > 3)
+		textausgabe("Dich beschleicht ein mulmiges Gefühl.");
+	auswahl("Du kannst den Raum durch den Ausgang im Norden verlassen (1) oder durch jenen im Süden (2). Wenn du tatsächlich glaubst, du könntest vielleicht einen Geheimgang oder eine Geheimtüre finden, so kannst du stattdessen auch die Wände absuchen (3)", 3, ort88, ort90, ort212);
 }
 
 void ort90(void) {
 	rotation++;
 	raum = 90;
-	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort89, ort91, ort212);
+	textausgabe("Der Raum den du betrittst verschlägt dir die Sprache. Er ist über und über voll mit Schnitzereien und Verzierungen im Fels und wie es aussieht, wurde einem riesigen Wandbild mit Hilfe von Edelsteinen Farbei eingehaucht. Es läßt Meisterwerke der Malerei neben sich zu einem Nichts verblassen. Wenn kein Erdbeben dieses Kunstwerk vernichtet, wird man es vermutlich noch in Jahrmillionen betrachten können. In der Ostwand ist ein beeindruckender, gigantischer Torrahmen.");
+	if(gitteroffen) {
+		textausgabe("Das Tor steht offen - doch kann man ganz obem am Türrahmen die feinen Verfärbungen des Gitters im Gestein sehen, das nur darauf zu lauern scheint, auf dich herabzustürzen, wenn du versuchst hindurchzugehen.");
+		auswahl("Du kannst dem Weg nach Norden einschlagen (1) oder das gigantische Tor nach Osten durchschreiten (2). Wenn du es für nötig hältst, kannst du jedoch auch die Wände nach Geheimgängen absuchen (3)", 3, ort89, ort91, ort212);
+	}
+	else {
+		textausgabe("Zwar steht das gigantische Tor offen, seine Türen sind weit aufgeschwungen, auch wenn du dir nicht vorstellen kannst, das irgendwer diese Flügel auch nur einen einzigen Millimeter weit bewegen könnte, dennoch kannst du nicht hindurch, den ein riesiges Gitter ist herabgelassen worden - und erlaubt nur den kleinsten Lebewesen ein Durchkommen. Klein - in der Größenordnungen von Katzen, Hunden oder Nagern. Du würdest es hingegen nicht einmal schaffen, deinen Kopf hindurchzuzwängen.");
+		auswahl("Du kannst den Weg zurück nach Norden gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 3, ort89, ort212);
+	}
 }
 
 void ort91(void) {
 	rotation++;
 	raum = 91;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort90, ort92, ort212);
+	textausgabe("Der Raum den du betrittst verschlägt dir die Sprache. Seine Wände scheinen von innen heraus zu leuchten, obwohl sie aus Metall zu scheinen sein. In die Wände hinein wurden Bilder geschnitzt, die durch das Leuchten der Wände irgendwie den Eindruck erwecken, als würden sie leben. An der Decke ist ein riesiges Bild dargestellt, dessen Sinn du nicht genau erkennen kannst, denn es ist aus Edelsteinen erstellt und sein Anblickt schmerzt geradezu in deinen Augen, so daß dir die Tränen kommen. In der Westwand ist ein beeindruckender, gigantischer Torrahmen.");
+	if(gitteroffen) {
+		textausgabe("Das Tor steht offen - doch kann man ganz obem am Türrahmen die feinen Verfärbungen des Gitters im Gestein sehen, das nur darauf zu lauern scheint, auf dich herabzustürzen, wenn du versuchst hindurchzugehen.");
+		auswahl("Du kannst den Weg durch das Tor nach Westen nehmen (1) oder den Ausgang nach Osten nehmen (2). Wenn du es für nötig hältst, kannst du jedoch auch die Wände nach Geheimgängen absuchen (3)", 3, ort90, ort92, ort212);
+	}
+	else {
+		textausgabe("Zwar steht das gigantische Tor offen, seine Türen sind weit aufgeschwungen, auch wenn du dir nicht vorstellen kannst, das irgendwer diese Flügel auch nur einen einzigen Millimeter weit bewegen könnte, dennoch kannst du nicht hindurch, den ein riesiges Gitter ist herabgelassen worden - und erlaubt nur den kleinsten Lebewesen ein Durchkommen. Klein - in der Größenordnungen von Katzen, Hunden oder Nagern. Du würdest es hingegen nicht einmal schaffen, deinen Kopf hindurchzuzwängen.");
+		auswahl("Du kannst den Weg zurück nach Osten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 3, ort92, ort212);
+	}
 }
 
 void ort92(void) {
@@ -2351,7 +2376,7 @@ void ort148(void) {
 void ort149(void) {
 	rotation++;
 	if(raum == 149)
-		if(schluessel9 || schluessel66 || schluessel99 || schluessel125 || schluesselbootshaus)
+		if(schluessel9 || schluessel66 || schluessel99 || schluessel111_2 || schluessel125 || schluesselbootshaus)
 			textausgabe("Nach mehreren Versuchen gibst du auf. Es sieht nicht danach aus, das du den richtigen Schlüssel bei dir hast.");
 		else
 			textausgabe("Die Türe ist verschlossen und äußerst massiv. Ohne Schlüssel wirst du hier nicht weiterkommen.");
@@ -2366,9 +2391,9 @@ void ort149(void) {
 		textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
 	if(wuerfel(6) > 4)
 		textausgabe("Für einen kurzen Moment hattest du das Gefühl, ein Stöhnen von hinter der Türe gehört zu haben.");
-	if(schluessel111_1 || schluessel111_2)
+	if(schluessel111_1)
 		auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob einer deiner Schlüssel die Türe im Osten öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort150, ort212, NULL, NULL);
-	else if(schluessel9 || schluessel66 || schluessel99 || schluessel125 || schluesselbootshaus)
+	else if(schluessel9 || schluessel66 || schluessel99 || schluessel111_2 || schluessel125 || schluesselbootshaus)
 		auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob einer deiner Schlüssel die Türe im Osten öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort149, ort212, NULL, NULL);
 	else
 		auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob du die Türe im Osten öffnen kannst (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort149, ort212, NULL, NULL);
@@ -2376,6 +2401,17 @@ void ort149(void) {
 
 void ort150(void) {
 	rotation++;
+	if((raum == 149) && (stollentroll == 150)) {
+		charakter_t troll = { "Stollentroll", 9, 9, 10, 10 };
+		if(!kampf(&spieler, &troll, 1, false, NULL)) {
+			textausgabe("Die Fäuste des Stollentrolls hämmern gnadenlos auf deinen Kopf ein. Du spürst das Blut in deine Augen laufen, hörst das Knacken und Krachen deiner berstenden Schädelplatte. Ein heftiger Schmerz durchzuckt dich - dann verschwimmt alles vor deinen Augen, wird blasser, dunkel. Ein Tunnel ... da ist ein Licht am ENDE des Tunnels ...");
+			exit(EXIT_SUCCESS);
+		}
+		// Dann platzieren wir mal die Zwerge um
+		if(minenzwerge == 158)
+			minenzwerge = 160;
+	}
+	textausgabe("Der Raum ist dunkel. Der Stollentroll, mit dem du eine wilde Keilerei hattest, liegt tot am Boden und sein Kadaver stinkt wie einst im Mai. Tatsächlich ist der Gestank so stechend, daß dir die Tränen in die Augen steigen. Im Westen befindet sich die offene Türe, durch die du hereingekommen bist, und im Süden glaubst du, einen weiteren Durchgang im Schatten ausmachen zu können.");
 	raum = 150;
 	auswahl("Du kannst nach Westen gehen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort149, ort155, ort212);
 }
@@ -2406,8 +2442,16 @@ void ort154(void) {
 
 void ort155(void) {
 	rotation++;
-	raum = 155;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort150, ort159, ort212);
+	if(raum == 159) {
+		textausgabe("Der Raum liegt im Dunkeln. Du glaubst vor dir im Schatten eine Bewegung auszumachen. Ein Brüllen ist zu hören - und plötzlich, stürzt vor dir die Decke ein! Du nimmst die Beine in die Hand und rennst wie von der Tarantel gestochen zur Türe, durch die du gerade erst hereingekommen bist, hinaus.");
+		raum = 155;
+		ort159();
+	}
+	else {
+		textausgabe("Der Raum liegt im Dunkeln. Du kannst über dir im Gestein ein schweres Knacken und Knirschen hören. Eine Gänsehaut jagt dir über den Rücken. Wenn du etwas nicht möchtest, dann an diesem Ort unter Stein begraben zu werden. Hastig drehst du dich um und rennst zurück nach Norden.");
+		raum = 155;
+		ort150();
+	}
 }
 
 void ort156(void) {
@@ -2423,13 +2467,13 @@ void ort157(void) {
 }
 
 void ort158(void) {
+	charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
 	rotation++;
 	raum = 158;
 	textausgabe("Schon als du dich dem Raum näherst, bemerkst du die Veränderung der Helligkeit. Als du ihn schließlich betrittst, ist er taghell erleuchtet. Eine Art von Käfern krabbeln hier auf den Wänden entlang, ihre Panzer schimmern in hellem weißlichen Licht.");
 	if(minenzwerge == 158) {
 		if(schluessel111_1 && (wuerfel(6) > 4)) {
 			textausgabe("Die Zwerge beäugen dich äußerst mißtrauisch.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt er feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
-			charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
 			if(!kampf(&spieler, zwerg, 1, false, ort99)) {
 				textausgabe("Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
 				exit(EXIT_SUCCESS);
@@ -2437,19 +2481,85 @@ void ort158(void) {
 			// Aus ist's mit den Zwergen
 			minenzwerge = 0;
 		}
+		if(!schluessel111_1) {
+			textausgabe("Du kannst sehen, das an der Hose eines der Zwerge ein Schlüssel an einem Lederbändchen herabbaumelt.");
+			if(janeinfrage("Möchtest du versuchen, dem Zwerg den Schlüssel heimlich und in einem unbeobachteten Moment zu stibitzen (j/n)?")) {
+				if(tdg(&spieler)) {
+					schluessel111_1 = true;
+					textausgabe("Gerade, als keiner der Zwerge in deine Richtung schaut, hältst du für einen Moment die Luft an und greifst zu. Es ist ganz leicht, den Knoten zu lösen - und schon hältst du den Schlüssel in der Hand. Mit einer sanft gleitenden Bewegung läßt du ihn in deiner Tasche verschwinden.");
+				}
+				else {
+					if(!kampf(&spieler, zwerg, 1, false, ort99)) {
+						textausgabe("Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
+						exit(EXIT_SUCCESS);
+					}
+					// Aus ist's mit den Zwergen
+					minenzwerge = 0;
+				}
+			}
+			if(minenzwerge == 158)
+				textausgabe("Die Zwerge sind viel zu abgelenkt, um dich tatsächlich wahrzunehmen. Du siehst, wie sie den Felsen scheinbar streicheln und mit ihren Spitzhacken dann gezielt auf Stellen schlagen. Der Fels teilt sich und legt darunterliegende Gesteinsadern frei. Der Vorgang wirkt viel natürlicher und bewußter, als die plumpe Art der Menschen, wahllos auf den Fels einzuprügeln und ihn Kubikmeterweise auszuplündern. Sie entnehmen immer nur Teile der Gesteine aus der Ader, so als wollten sie verhindern, die Ader ausbluten zu lassen. Die so erwirtschafteten Steine legen sie beinahe zärtlich in die Lore, die hier auf den Schienen steht.");
+		}
 	}
 	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort99, ort159, ort212);
 }
 
 void ort159(void) {
 	rotation++;
+	if((raum == 155) && ((minenzwerge == 158) || (minenzwerge == 160))) {
+		minenzwerge = 159;
+		charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
+		textausgabe("Die Zwerge sind herangestürmt und beäugen dich äußerst mißtrauisch.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt einer von ihnen feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
+		if(!kampf(&spieler, zwerg, 1, false, ort158)) {
+			textausgabe("Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
+			exit(EXIT_SUCCESS);
+		}
+		// Aus ist's mit den Zwergen
+		minenzwerge = 0;
+	}
+	if(raum == 159)
+		if(schluessel9 || schluessel66 || schluessel99 || schluessel111_1 || schluessel125 || schluesselbootshaus)
+			textausgabe("Nach mehreren Versuchen gibst du auf. Es sieht nicht danach aus, das du den richtigen Schlüssel bei dir hast.");
+		else
+			textausgabe("Die Türe ist verschlossen und äußerst massiv. Ohne Schlüssel wirst du hier nicht weiterkommen.");
+	else
+		textausgabe("Der Stollen fällt hier stärker von Osten nach Westen ab. Das Wurzelwerk breitet sich nur sehr spärlich an der Decke aus und entsprechend schlecht ist die natürliche Sicht hier unten. Die Struktur der Wände an der Südwand ist teilweise zerklüftet, scharfkantige Strukturen stehen hervor und der Schattenwurf ist großflächig.");
 	raum = 159;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Norden nehmen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort158, ort160, ort155, ort212);
+	if(wuerfel(6) > 3)
+		textausgabe("Dir kommt es so vor, als würdest du Klopfgeräusche aus dem Stollen kommen hören.");
+	if(wuerfel(6) > 3)
+		textausgabe("Es kommt dir so vor, als hätte sich das Gestein des Felsens leicht verändert.");
+	if(wuerfel(6) > 4)
+		textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
+	if(schluessel111_2)
+		auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder versuchen, ob einer deiner Schlüssel die Türe in der Nordwand öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort158, ort160, ort155, ort212, NULL, NULL);
+	else if(schluessel9 || schluessel66 || schluessel99 || schluessel111_1 || schluessel125 || schluesselbootshaus)
+		auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder versuchen, ob einer deiner Schlüssel die Türe in der Nordwand öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort158, ort160, ort159, ort212, NULL, NULL);
+	else
+		auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 4, ort158, ort160, ort212);
 }
 
 void ort160(void) {
 	rotation++;
 	raum = 160;
+	textausgabe("Der Tunnel endet in einem großen Raum, der sehr stark nach Brandwein und altem Stinkekäse riecht. Er ist vollgestellt mit Schaufeln, Spitzhacken und allerlei anderem Gerümpel.");
+	if(!schluessel111_2)
+		if(janeinfrage("An einem Haken neben der Eingangstüre hängt ein Kupferschlüssel. Deutlich kannst du darauf die Schriftzeichen \"111\" ausmachen. Möchtest du den Schlüssel an dich nehmen (j/n)?"))
+			schluessel111_2 = true;
+	if((minenzwerge == 160) && (schluessel111_1 || schluessel111_2)) {
+		charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
+		textausgabe("Erst spät bemerkst du die Zwerge, die zwischen den Gerätschaften im Schatten stehen.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt einer von ihnen feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
+		if(!kampf(&spieler, zwerg, 1, false, ort159)) {
+			textausgabe("Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
+			exit(EXIT_SUCCESS);
+		}
+		// Aus ist's mit den Zwergen
+		minenzwerge = 0;
+	}
+	// Der Mechanismus für den Durchgang zwischen Raum 90 und Raum 91
+	if(wuerfel(6) > 3)
+		if((gitteroffen == false) && janeinfrage("In einem leeren Brandweinfaß bemerkst du einen Hebel. Als du daran ziehst merkst du, daß er nicht zufällig darin ist. Es scheint eine Art Tarnung für den Hebel zu sein. Möchtest du kräftig an dem Hebel ziehen (j/n)?"))
+			gitteroffen = true;
 	auswahl("Du kannst den Tunnel zurück nach Westen gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort159, ort212);
 }
 
@@ -3530,8 +3640,6 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
 	va_list zeiger;
 	// reserviere Platz für alle Auswahlmöglichkeiten
 	void (*fptr[maxzahl]) (void);
-	//void (fpointer *) (void);
-
 	// Werte der VA-Liste in die Funktionszeiger kopieren
 	va_start(zeiger, maxzahl); // Die maxzahl Zeiger auslesen
 	for(int i=0; i < maxzahl; ++i)
@@ -3813,6 +3921,8 @@ int speichern(void) {
 	fprintf(datei, "%d\n", (int) dracheverletzt);
 	fprintf(datei, "%d\n", (int) drachetot);
 	fprintf(datei, "%d\n", minenzwerge);
+	fprintf(datei, "%d\n", stollentroll);
+	fprintf(datei, "%d\n", (int) gitteroffen);
 	fclose(datei);
 
 	color_set(3, 0);
@@ -3922,6 +4032,10 @@ int laden(void) {
 	drachetot = (bool) atoi(eingabe);
 	fgets(eingabe, 100, datei);
 	minenzwerge = (int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	stollentroll = (int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	gitteroffen = (bool) atoi(eingabe);
 	fclose(datei);
 
 	color_set(3, 0);
