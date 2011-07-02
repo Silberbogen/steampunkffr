@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.019
+ *        Version:  0.020
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -1607,6 +1607,7 @@ void ort66(void) {
 
 void ort67(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	if(raum == 67)
 		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
 	raum = 67;
@@ -1632,6 +1633,7 @@ void ort67(void) {
 
 void ort68(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	if(raum == 68)
 		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
 	raum = 68;
@@ -1657,6 +1659,7 @@ void ort68(void) {
 
 void ort69(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	if(raum == 69)
 		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
 	raum = 69;
@@ -1682,6 +1685,7 @@ void ort69(void) {
 
 void ort70(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	if(raum == 70)
 		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
 	raum = 70;
@@ -1707,6 +1711,7 @@ void ort70(void) {
 
 void ort71(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	if(raum == 71)
 		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
 	raum = 71;
@@ -1732,6 +1737,7 @@ void ort71(void) {
 
 void ort72(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	if(raum == 72)
 		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
 	raum = 72;
@@ -1757,6 +1763,7 @@ void ort72(void) {
 
 void ort73(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	if(raum == 73)
 		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
 	raum = 73;
@@ -1782,6 +1789,9 @@ void ort73(void) {
 
 void ort74(void) {
 	rotation++;
+	if(raum == 95)
+		textausgabe("Du entdeckst im Schatten hinter einem scharfkantigen Vorsprung einen für das Auge beinahe unsichtbaren Tunnel. Du mußt dich auf Hände und Knie hinablassen und kriechst hinein. So gut es dir möglich ist, kriechst du durch einen stockdunklen Gang. Du bist dir nicht einmal sicher, in welche Richtung du krabbelst. Mehr als nur einmal hast du das Gefühl, mehr als einen Weg zur Auswahl zu haben, doch du kriechst intuitiv der Nase nach, bis du endlich, den Tunnel verlassen kannst.");
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	if(raum == 74)
 		textausgabe("Plötzlich verspürst du, wie der Raum sich bewegt.");
 	raum = 74;
@@ -1798,7 +1808,7 @@ void ort74(void) {
 				 break;
 		case 6: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort73, ort67, ort80, ort74);
 				 break;
-		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem orange erleuchteten Ausgang oder stehenbleiben und warten (4)", 3, ort73, ort67, ort95, ort74);
+		case 7: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem orange erleuchteten Ausgang oder stehenbleiben und warten (4)", 3, ort73, ort67, (wuerfel(6) > 3) ? ort95 : ort98, ort74);
 				 break;
 		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2), dem gelblich erleuchteten Ausgang (3) oder stehenbleiben und warten (4)", 4, ort73, ort67, ort66, ort74);
 				 break;
@@ -1807,6 +1817,7 @@ void ort74(void) {
 
 void ort75(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	raum = 75;
 	switch(rotation % 4) {
 		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort76, ort78, ort75);
@@ -1822,6 +1833,7 @@ void ort75(void) {
 
 void ort76(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	raum = 76;
 	switch(rotation % 4) {
 		case 1: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort75, ort77, ort76);
@@ -1837,6 +1849,7 @@ void ort76(void) {
 
 void ort77(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	raum = 77;
 	switch(rotation % 4) {
 		case 3: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort78, ort76, ort77);
@@ -1852,6 +1865,7 @@ void ort77(void) {
 
 void ort78(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem behauenen Raum, der Ausgänge in verschiedenfarbige Tunnel bietet.");
 	raum = 78;
 	switch(rotation % 4) {
 		default: auswahl("Du kannst dem grünlich erleuchteten Tunnel folgen (1), dem rötlich erleuchteten Tunnel (2) oder stehenbleiben und warten (3)", 3, ort77, ort75, ort78);
@@ -1868,15 +1882,21 @@ void ort78(void) {
 void ort79(void) {
 	rotation++;
 	raum = 79;
-	char *text = "Willst du den Raum nach Norden verlassen (1)? Du kannst auch nach Geheimtüren suchen (2) oder warten (3)";
+	textausgabe("Der Raum in dem du dich befindest hat nur einen Ausgang, der im Norden liegt. Er besteht ganz aus Rosenmarmor, doch ist seine Oberfläche überall seltsam aufgeraut und macht es schwierig, eine Stelle genauer zu betrachten. In der Mitte des Raumes befindet sich ein großer Sockel, in dessen Mitte ein Becken mit kristallklarem Wasser ist.");
+	if(!schluessel66)
+		if(janeinfrage("Willst du deine Hände in das Becken tauchen (j/n)?")) {
+			schluessel66 = true;
+			textausgabe("Du läßt die Hände in das Becken gleiten. Das Wasser fühlt sich seltsam warm an, so daß es beinahe deine Sinne betäubt. Du gleitest mit deinen Händen über die Wände des Beckens und plötzlich fühlst du, daß da ein Gegenstand ist. Du tastest danach und bekommst ihn zu greifen. Als du die Hände aus dem Becken herausholst, hälst du deinen Kristallschlüssel in der Hand, der vollkommen durchsichtig ist.");
+		}
+	char *text = "Willst du den Raum wieder verlassen (1)? Du kannst auch nach Geheimtüren suchen (2) oder warten (3)";
 	switch(rotation % 4) {
-		case 1: auswahl(text, 2, ort78, ort152, ort79);
+		case 1: auswahl(text, 3, ort78, ort152, ort79);
 				break;
-		case 2: auswahl(text, 2, ort77, ort152, ort79);
+		case 2: auswahl(text, 3, ort77, ort152, ort79);
 				break;
-		case 3: auswahl(text, 2, ort76, ort152, ort79);
+		case 3: auswahl(text, 3, ort76, ort152, ort79);
 				break;
-		default: auswahl(text, 2, ort75, ort152, ort79);
+		default: auswahl(text, 3, ort75, ort152, ort79);
 				break;
 	}
 }
@@ -2072,26 +2092,37 @@ void ort91(void) {
 
 void ort92(void) {
 	rotation++;
+	textausgabe("Du stehst in einem perfekt aus dem Felsen geschnitzten Tunnelstück, das von Westen nach Osten führt.");
 	raum = 92;
 	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort91, ort93, ort212);
 }
 
 void ort93(void) {
 	rotation++;
+	textausgabe("Du stehst an einer Abbiegugn des Tunnels, die von Norden nach Westen verläuft.");
 	raum = 93;
 	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Westen (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort94, ort92, ort212);
 }
 
 void ort94(void) {
 	rotation++;
+	textausgabe("Du hast das Ende des aus dem Felsen geschnitzten Tunnels erreicht. Die Wände hier sind mit Motiven eines Drachens dargestellt. Er ist von roter Farbe - und wie es aussieht, hat er einen Hort, den er bewacht. Viele Schriftzeichen bedecken die Wände in langen Reihen. Du weißt nicht warum, aber du kannst dich des unbestimmten Gefühls nicht erwehren, gerade in einer Art Grabkammer zu stehen, auch wenn du kein einziges der Schriftzeichen an der Wand auch nur im entferntesten deuten kannst.");
 	raum = 94;
-	auswahl("Du kansnt den Weg zurück nach Süden gehen (1) oder die Wänche nach Geheimgängen absuchen (2)", 2, ort93, ort142);
+	// Die Chance den richtigen Ausgang zu finden ist 
+	auswahl("Dir steht nur der Weg zurück durch den Felstunnel offen (1). Du kannst aber selbstverständlich versuchen, die Wände nach Geheimgängen abzutasten (2).", 2, ort93, (wuerfel(6) > 4) ? ort142 : ort95);
 }
 
 void ort95(void) {
 	rotation++;
-	raum = 95;
-	auswahl("Du kannst entweder den Weg zurück nach Norden gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort134, ort74);
+	if((raum == 74) || (raum == 142) || (raum == 99) || (raum == 97) || (raum == 98) ) {
+		textausgabe("Du entdeckst einen Geheimgang und kriechst in ihn hinein. Nur mühsam, auf Knien und Handflächen, robbst du durch den engen Tunnel. Mermalst drohst du, die Orientierung zu verlieren, doch schließlich hat die Dunkelheit und mit ihr die Orientierungslosikeit ein Ende. Du gelangst in einen hell erleuchteten Raum. Eigentlich, wenn man den geheimen Tunnel nicht bemerkt, ist der Raum eine Art Sackgasse. Aus ihm führt nur ein Gang hinaus.");
+		raum = 95;
+		auswahl("Du kannst dem Gang hinaus folgen (1) oder dich umdrehen und versuchen, den Weg durch den Geheimgang zurückzufinden (2)", 2, ort134, ort74);
+	} else { // raum == 134
+		raum = 95;
+		textausgabe("Du gelangst an das Ende des Ganges. Enttäuscht mußt du feststellen, das hier nur unbehauene Wände und sonst rein gar nichts ist.");
+		auswahl("Willst du unverrichteter Dinge umkehren (1) oder die Wände nach Geheimgängen absuchen (2)?", 2, ort134, ort74);
+	}
 }
 
 void ort96(void) {
@@ -2103,13 +2134,13 @@ void ort96(void) {
 void ort97(void) {
 	rotation++;
 	raum = 97;
-	auswahl("Du kannst dem Weg nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort148, ort154, ort96);
+	auswahl("Du kannst dem Weg nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort148, ort154, (wuerfel(6) > 3) ? ort96 : ort95);
 }
 
 void ort98(void) {
 	static charakter_t drache = { "Drache", 20, 20, 20, 20 };
 	rotation++;
-	if(raum == 99)
+	if((raum == 99) || (raum == 74))
 		textausgabe("Du findest eine Spalte im Schatten der Wand. Sie ist äußerst schmal, aber es gelingt dir, dich hineinzuquetschen. So kriechst du auf Händen und Füßen weiter - und plötzlich wird dir klar, das nach all den kleinen Windungen, du dich ja gar nicht umdrehen kannst. Zeitweise mußt du sogar flach auf den Boden gepreßt, die Arme vorausgestreckt, weiterkriechen um nicht steckenzubleiben. Die Minuten werden für dich zu kleinen Ewigkeiten, die Sekunden dehnen sich zu Stunden aus. Und endlich - sind deine Arme frei, du kriechst schneller, kletterst aus dem beengenden Gang heraus und richtest dich auf, wobei deine Glieder heftig maulend über die vorhergehende Position reagieren. Du reckst und streckst dich, so gut es eben geht. Es ist immer noch so dunkel wie in dem endlosen Gang um dich herum, aber du spürst trotzdem eine Veränderung. Es fühlt sich an, als wäre die Luft wärmer geworden. Aber vermutlich ist daß nur Einbildung. Tatsächlich war der Kriechgang anstrengend und du bist ganz schön ins Schwitzen gekommen.");
 	if(raum == 162)
 		textausgabe("Während du dich weiter durch den stockdunklen Gang nach Westen tastest, spürst du eine Veränderung in der der Umgebung. Die Luft fühlt sich wärmer an. Sie riecht anders, verbrauchter. Und die Klänge der Hall deiner Schritte, alles klingt, als wäre jetzt mehr Raum da.");
@@ -2158,7 +2189,7 @@ void ort98(void) {
 		// Ich denke, an der Legende ist doch ein Körnchen Wahrheit
 		staerkesteigerung(0,1);
 	}
-	auswahl("Du kannst jetzt dem Tunnel weiter nach Westen folgen (1) oder nach Osten gehen (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort161, ort162, ort99);
+	auswahl("Du kannst jetzt dem Tunnel weiter nach Westen folgen (1) oder nach Osten gehen (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort161, ort162, (wuerfel(6) > 3) ? ort99 : ort95);
 }
 
 void ort99(void) {
@@ -2173,7 +2204,7 @@ void ort99(void) {
 		textausgabe("Es kommt dir so vor, als hätte sich das Gestein des Felsens leicht verändert.");
 	if(wuerfel(6) > 4)
 		textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort149, ort158, ort98);
+	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort149, ort158, (wuerfel(6) > 3) ? ort98 : ort95);
 }
 
 // -----------
@@ -2375,26 +2406,52 @@ void ort132(void) {
 
 void ort133(void) {
 	rotation++;
-	raum = 133;
-	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort65, ort134, ort212);
+	textausgabe("Der Gang in dem du dich befindest, scheint unendlich lang zu sein.");
+	if(raum == 65) {
+		raum = 133;
+		auswahl("Du kannst dem Gang weiter folgen (1) oder umdrehen und zurückgehen (2). Wenn du willst, kannst du auch die Wände nach Geheimgängen abtasten (3)", 3, ort134, ort65, ort212);
+	} else { // raum == 134
+		raum = 133;
+		auswahl("Du kannst dem Gang weiter folgen (1) oder umdrehen und zurückgehen (2). Wenn du willst, kannst du auch die Wände nach Geheimgängen abtasten (3)", 3, ort65, ort134, ort212);
+	}
 }
 
 void ort134(void) {
 	rotation++;
-	raum = 134;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort133, ort95, ort212);
+	textausgabe("Du kommst zu einer Stelle, an der der Gang eine Biegung macht.");
+	if(raum == 95) {
+		raum = 134;
+		auswahl("Möchtest du der Abbiegung nach links folgen (1) oder drehst du um und gehst zurück (2)? Wenn du möchtest, kannst du auch die Wände nach Geheimgängen abtasten (3)", 3, ort133, ort95, ort212);
+	} else { // raum == 133
+		raum = 134;
+		auswahl("Möchtest du der Abbiegung nach rechts folgen (1) oder drehst du um und gehst zurück (2)? Wenn du möchtest, kannst du auch die Wände nach Geheimgängen abtasten (3)", 3, ort95, ort133, ort212);
+	}
 }
 
 void ort135(void) {
 	rotation++;
-	raum = 135;
-	auswahl("Du kannst dem Gang weiter nach Norden folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort62, ort136, ort212);
+	if(raum == 62) {
+		raum = 135;
+		textausgabe("Der Gang knickt hier nach links ab.");
+		auswahl("Du kannst dem Gang weiter folgen (1) oder dich umdrehen und zurückkehren (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort136, ort62, ort212);
+	} else {
+		raum = 135;
+		textausgabe("Der Gang knickt hier nach rechts ab.");
+		auswahl("Du kannst dem Gang weiter folgen (1) oder dich umdrehen und zurückkehren (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort62, ort136, ort212);
+	}
 }
 
 void ort136(void) {
 	rotation++;
-	raum = 136;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Norden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort135, ort63, ort212);
+	if(raum == 63) {
+		raum = 136;
+		textausgabe("Der Gang knickt hier nach rechts ab.");
+		auswahl("Du kannst dem Gang weiter folgen (1) oder dich umdrehen und zurückkehren (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort135, ort63, ort212);
+	} else {
+		raum = 136;
+		textausgabe("Der Gang knickt hier nach links ab.");
+		auswahl("Du kannst dem Gang weiter folgen (1) oder dich umdrehen und zurückkehren (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort63, ort135, ort212);
+	}
 }
 
 void ort137(void) {
@@ -2451,8 +2508,23 @@ void ort141(void) {
 
 void ort142(void) {
 	rotation++;
+	if(raum == 94)
+		textausgabe("Du kriechst durch die Schwärze eines Tunnels, eine halbe Ewigkeit lang, wie es dir erscheint, bis du schließlich ein violett schimmerndes Licht am Ende deines Tunnels erblicken kannst. So schnell du kannst, krabbelst du darauf zu.");
 	raum = 142;
-	auswahl("Du kannst dem Tunnel nach Westen gehen (1) oder den nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort141, ort96, ort94);
+	textausgabe("Der Raum sieht aus wie ein großes Achteck. Die Wände und der Boden, alles deutet darauf hin, daß du in einem riesigen Amethysten stehst. Das Spiel der Farben ist atemberaubend, und doch benebelt der Anblick auch die Sinne, denn die Tiefenschärfe hat leichte Probleme, die genaue Kontur der Wände wahrzunehmen. Drei Türen befinden sich in diesem Raum. Die eine ist aus weißem Marmor geformt und befindet sich im Westen, die zweite besteht aus schwarzem Onyx und befindet sich im Süden. Im Osten ist eine Türe, die aussieht, als wäre sie aus Gold, doch verrät dir der Versuch an ihr zu kratzen, daß das Material härter ist als der härteste Stahl. Die Türe verfügt über 4 Schlüssellöcher.");
+	if((schluessel9 + schluessel66 + schluessel99 + schluessel111_1 + schluessel111_2 + schluessel125) > 3) {
+		if(janeinfrage("Du hast genügend Schlüssel bei dir. Möchtest du versuchen die Türe zu öffnen (j/n)?"))
+			if(schluessel9 && schluessel66 && schluessel99 && schluessel125) {
+				textausgabe("Du probierst die Schlüssel aus. Sie passen. Ein Schlüssel nach dem anderen läßt sich in eines der Schlüssellöcher nach dem anderen einsetzen und umdrehen. Nachdem der vierte Schlüssel eingeführt worden ist, gibt es ein klickendes Geräusch. Dieses Geräusch ist das letzte, was du wahrnimmst. Du erhältst einen Schlag auf den Kopf, dann wird alles dunkel um dich.");
+				// HIER GEHT ES DANN WEITER --- ORT MUSS NOCH BENANNT WERDEN
+				// *********************************************************
+			}
+			else
+				textausgabe("Leider hast du nicht die passenden Schlüssel bei dir.");
+	}
+	else
+		textausgabe("Du probierst erst gar nicht, die Schlüssel in die Schlösser zu stecken, da du deutlich zu wenige davon hast.");
+	auswahl("Du kannst den Raum durch die Marmortüre im Westen verlassen (1) oder durch die schwarze Onyxtüre im Süden (2). Ebenso kannst du die glitzernden und funkelnden Amethystwände nach Geheimtüren absuchen (3)", 3, ort141, ort96, (wuerfel(6) > 3) ? ort94 : ort95);
 }
 
 void ort143(void) {
