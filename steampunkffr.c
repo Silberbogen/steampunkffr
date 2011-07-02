@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.020
+ *        Version:  0.021
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -53,6 +53,7 @@
  *                VA-Liste umgestellt. Somit stehen viel mehr Möglichkeiten offen.
  *   - 02.07.2011 Beendigung der Arbeit an der Zwergenmine
  *   - 02.07.2011 Beschreibungen der Labyrinthwege
+ *   - 02.07.2011 Eine Funktion für Versrätsel wurde hinzugefügt
  *
  * =====================================================================================
  */
@@ -127,6 +128,11 @@ static bool drachetot = false;
 static int minenzwerge = 158;
 static int stollentroll = 150;
 static bool gitteroffen = false;
+static bool raetsel1 = false;
+static bool raetsel2 = false;
+static bool raetsel3 = false;
+static bool raetsel4 = false;
+static bool raetsel5 = false;
 
 static unsigned int rotation = 0; // Rotation ist eine Besonderheit. Hierüber werden die beiden Drehraumsegmente gesteuert. ^.^
 
@@ -226,6 +232,9 @@ int laden(void);
 
 // Funktion: quit
 void quit(void);
+
+// Funktion: Rätsel
+bool raetsel(char *raetseltext, char *antworttext);
 
 // ---------------------------------
 // Implementation für das Spielmodul
@@ -672,6 +681,8 @@ void intro(void) {
 					 break;
 		}
 	}
+
+	
 }
 
 void vorwort(void) {
@@ -1886,7 +1897,7 @@ void ort79(void) {
 	if(!schluessel66)
 		if(janeinfrage("Willst du deine Hände in das Becken tauchen (j/n)?")) {
 			schluessel66 = true;
-			textausgabe("Du läßt die Hände in das Becken gleiten. Das Wasser fühlt sich seltsam warm an, so daß es beinahe deine Sinne betäubt. Du gleitest mit deinen Händen über die Wände des Beckens und plötzlich fühlst du, daß da ein Gegenstand ist. Du tastest danach und bekommst ihn zu greifen. Als du die Hände aus dem Becken herausholst, hälst du deinen Kristallschlüssel in der Hand, der vollkommen durchsichtig ist.");
+			textausgabe("Du läßt die Hände in das Becken gleiten. Das Wasser fühlt sich seltsam warm an, so daß es beinahe deine Sinne betäubt. Du gleitest mit deinen Händen über die Wände des Beckens und plötzlich fühlst du, daß da ein Gegenstand ist. Du tastest danach und bekommst ihn zu greifen. Als du die Hände aus dem Becken herausholst, hälst du deinen Kristallschlüssel in der Hand, der vollkommen durchsichtig ist. Die Zinken scheinen die Zahl 66 zu formen.");
 		}
 	char *text = "Willst du den Raum wieder verlassen (1)? Du kannst auch nach Geheimtüren suchen (2) oder warten (3)";
 	switch(rotation % 4) {
@@ -1906,6 +1917,13 @@ void ort80(void) {
 	if(raum == 143)
 		textausgabe("Kaum daß du den Wasserfall durchschritten hast, bemerkst du eine Veränderung deiner Kompaßnadel. Sie hört auf mit ihrem Tanz und zeigt wieder konstant nach Norden.");
 	raum = 80;
+	if(!schluessel99) {
+		textausgabe("Du siehst etwas funkelndes im Wasser.");
+		if(janeinfrage("Möchtest du im Wasser nach dem funkelnden etwas tauchen (j/n)?")) {
+			schluessel99 = true;
+			textausgabe("Es ist ein kupferfarbener Schlüssel, dessen Zinken so geformt sind, als würden sie die Zahl 99 ergeben.");
+		}
+	}
 	textausgabe("Der Raum, in dem du dich jetzt befindet, scheint eine große natürliche Höhle zu sein. Sie ist bewachsen von exotischen Pflanzen. Grün ist hier eine weniger dominierende Farbe, als es sie an der Erdoberfläche zu sein scheint. Der Raum ist viel stickiger, als die Tunnel, durch die du dich seit einiger Zeit bewegst. Im nördlichen Teil der Höhle befindet sich ein großer Teich, in den ein Wasserfall hineinstürzt.");
 	char *text = "Willst du in den Teich hineinwaten und dich in die herabfallenden Wasser des Wasserfalls stellen (1) oder die Höhle durch ihren Ausgang im Osten verlassen (2)?";
 	switch(rotation % 8) {
@@ -1932,6 +1950,18 @@ void ort81(void) {
 	rotation++;
 	raum = 81;
 	char *text = "Willst du den Tunnel nach Westen nehmen (1) oder den nach Südosten(2)?";
+	char *raetseltext = "Verfertigt ist's vor langer Zeit,\ndoch mehrenteils gemacht erst heut;\nsehr schätzbar ist es seinem Herrn,\nund dennoch hütet's niemand gern.";
+	char *antworttext = "Bett";
+	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Smaragd heraus geschnitten.");
+	if(!raetsel1) {
+		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+			if(raetsel(raetseltext, antworttext)) {
+				raetsel1 = true;
+				textausgabe("Deine Antwort war ... weise!");
+			} else
+				textausgabe("Deine Antwort war ... unwissend!");
+	}
 	switch(rotation % 8) {
 		case 1: auswahl(text, 2, ort67, ort82);
 				break;
@@ -1956,7 +1986,14 @@ void ort82(void) {
 	rotation++;
 	raum = 82;
 	char *text = "Du kannst den Tunnel nach Westen (1), nach Nordwesten (2), nach Nordosten (3), nach Osten (4), nach Südwesten (5) oder nach Südosten (6)";
-	textausgabe("Der Raum in dem du stehst ist ungewöhnlich. Die Wände schimmern in einer Art dunklen Purpurs und der Raum selber stellt ein symetrisches Sechseck dar, so als wäre er eine überdimensionale Bienenwabe. In jeder seiner sechs Wände befundet sich eine Tunnelöffnung. Jetzt bleibt nur die Frage, welchen dieser sechs Tunnel du nehmen möchtest.");
+	textausgabe("Du befindest dich im Zentrum eines malvenfarbenen Raumes, der aus einem großen, dir unbekannten Stein herausgeschnitzt worden zu sein scheint. Sechs Türen befinden sich in den sechs Wänden des Raumes, je eine im Nordostern, im Osten, im Südosten, im Südwesten, im Westen und im Nordwesten.");
+	if(!schluessel125 && raetsel1 && raetsel2 && raetsel3 & raetsel4 && raetsel5) {
+		textausgabe("In der Mitte des Raumes schraubt sich langsam ein Sockel in die Höhe. Im Sockel siehst du eine Vertiefung, in der sich ein moosgrüner Schlüssel befindet.");
+		if(janeinfrage("Willst du den Schlüssel an dich nehmen (j/n)?")) {
+			schluessel125 = true;
+			textausgabe("Du nimmst den moosgrünen Schlüssel an dich, der offensichtlich aus Jade geschnitzt wurde. Sein kurzes Griffstück erscheint, als wäre es eine kunstvolle Darstellung der Ziffern 1, 2 & 5. Kaum daß du den Schlüssel an dich genommen hast, schraubt sich der Sockel ebenso leise wieder in den Boden, wie er sich zuvor herausgeschraubt hatte.");
+		}
+	}
 	switch(rotation % 8) {
 		case 1: auswahl(text, 6, ort68, ort81, ort83, ort84, ort85, ort86);
 				break;
@@ -1980,24 +2017,72 @@ void ort82(void) {
 void ort83(void) {
 	rotation++;
 	raum = 83;
+	char *raetseltext = "Rat, wenn du kannst!\nEs nennen einen Wanst\nfünf Zeichen dir,\nund auch die letzten vier.";
+	char *antworttext = "Bauch";
+	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Rubin heraus geschnitten.");
+	if(!raetsel3) {
+		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+			if(raetsel(raetseltext, antworttext)) {
+				raetsel3 = true;
+				textausgabe("Deine Antwort war ... weise!");
+			} else
+				textausgabe("Deine Antwort war ... unwissend!");
+	}
 	auswahl("Du kannst den Weg zurück nach Südwesten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212);
 }
 
 void ort84(void) {
 	rotation++;
 	raum = 84;
+	char *raetseltext = "Etwas, das alles und jeden verschlingt:\nBaum, der rauscht, Vogel, der singt,\nfrisst Eisen, zermalmt den härtesten Stein,\nzerbeißt jedes Schwert, zerbricht jeden Schrein,\nSchlägt Könige nieder, schleift ihren Palast,\nträgt mächtigen Fels fort als leicht Last.";
+	char *antworttext = "Zeit";
+	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Lapislazuli heraus geschnitten.");
+	if(!raetsel4) {
+		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+			if(raetsel(raetseltext, antworttext)) {
+				raetsel4 = true;
+				textausgabe("Deine Antwort war ... weise!");
+			} else
+				textausgabe("Deine Antwort war ... unwissend!");
+	}
 	auswahl("Du kannst den Weg zurück nach Westen gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212);
 }
 
 void ort85(void) {
 	rotation++;
 	raum = 85;
+	char *raetseltext = "Der arme Tropf\nhat keinen Kopf;\ndas arme Weib\nhat keinen Leib,\ndie arme Kleine\nhat keine Beine.\nSie ist ein langer Darm,\ndoch schlingt sie einen Arm\nbedächtig in den anderen ein.\nWas mag das für\nein Weiblein sein?";
+	char *antworttext = "Brezel";
+	textausgabe("Du stehst in einem Raum, der aus eine einzigen, riesigen Tigerauge geschnitzt zu sein scheint.");
+	if(!raetsel5) {
+		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+			if(raetsel(raetseltext, antworttext)) {
+				raetsel5 = true;
+				textausgabe("Deine Antwort war ... weise!");
+			} else
+				textausgabe("Deine Antwort war ... unwissend!");
+	}
 	auswahl("Du kannst den Weg zurück nach Nordwesten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212);
 }
 
 void ort86(void) {
 	rotation++;
+	char *raetseltext = "Ich hab' ein Ding im Sinn,\nwohl lieben es die Mädchen traut,\nes liegt um ihre zarte Haut,\ndoch stecken Nägel drin.";
+	char *antworttext = "Handschuh";
 	raum = 86;
+	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Türkis heraus geschnitten.");
+	if(!raetsel2) {
+		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+			if(raetsel(raetseltext, antworttext)) {
+				raetsel2 = true;
+				textausgabe("Deine Antwort war ... weise!");
+			} else
+				textausgabe("Deine Antwort war ... unwissend!");
+	}
 	auswahl("Du kannst den Weg zurück nach Nordosten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212);
 }
 
@@ -4124,6 +4209,11 @@ int speichern(void) {
 	fprintf(datei, "%d\n", minenzwerge);
 	fprintf(datei, "%d\n", stollentroll);
 	fprintf(datei, "%d\n", (int) gitteroffen);
+	fprintf(datei, "%d\n", (int) raetsel1);
+	fprintf(datei, "%d\n", (int) raetsel2);
+	fprintf(datei, "%d\n", (int) raetsel3);
+	fprintf(datei, "%d\n", (int) raetsel4);
+	fprintf(datei, "%d\n", (int) raetsel5);
 	fclose(datei);
 
 	color_set(3, 0);
@@ -4237,6 +4327,16 @@ int laden(void) {
 	stollentroll = (int) atoi(eingabe);
 	fgets(eingabe, 100, datei);
 	gitteroffen = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel1 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel2 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel3 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel4 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel5 = (bool) atoi(eingabe);
 	fclose(datei);
 
 	color_set(3, 0);
@@ -4252,3 +4352,16 @@ int laden(void) {
 void quit(void) {
 	endwin();
 }
+
+// Funktion: Rätsel
+bool raetsel(char *raetseltext, char *antworttext) {
+	char eingabe[41];
+	textausgabe(raetseltext);
+	textausgabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!");
+	getnstr(eingabe, 40);
+	if(0 == strcmp(antworttext, eingabe))
+		return true;
+	else
+		return false;
+}
+
