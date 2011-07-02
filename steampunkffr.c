@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.018
+ *        Version:  0.019
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -51,6 +51,8 @@
  *   - 26.06.2011 Der Drache ist jetzt im Spiel ^.^
  *   - 28.06.2011 Die Funktion auswahl() wurde von 6 möglichen Auswahlen auf eine
  *                VA-Liste umgestellt. Somit stehen viel mehr Möglichkeiten offen.
+ *   - 02.07.2011 Beendigung der Arbeit an der Zwergenmine
+ *   - 02.07.2011 Beschreibungen der Labyrinthwege
  *
  * =====================================================================================
  */
@@ -1432,14 +1434,38 @@ void ort56(void) {
 
 void ort57(void) {
 	rotation++;
+	if(raum == 58) {
+		raum = 57;
+		textausgabe("Du hast schon das Gefühl, der Gang würde niemals enden. Dann aber scheint er doch an sein Ende zu kommen und macht einen Knick nach links.");
+		auswahl("Möchtest du dem Gang nach links folgen (1) oder zurückgehen (2)? Du kannst natürlich auch nach Geheimgängen suchen (3)", 3, ort131, ort58, ort63);
+	} else if(raum == 63) {
+		raum = 57;
+		textausgabe("Der Geheimgang, den du gefunden hast, ist verwirrend. Er ändert immer wieder sporadisch die Richtung, mal mußt du kriechen, dann wieder über Hindernisse klettern. Einmal wenigstens hast du sogar Angst, stecken zu bleiben, doch schließlich gelangst du an sein Ende. In einer schattigen Mulde trittst du aus ihm hervor.");
+		auswahl("Der Gang führt hier weiter geradeaus (1), du kannst aber auch einem Weg nach rechts folgen (2) oder kehrt machen und wieder zurück an deinen Ausgangsort durch den Geheimgang, so du ihn denn wiederfindest (3).", 3, ort58, ort131, ort63);
+	} else { // raum == 131
+		raum = 57;
+		textausgabe("Der Gang macht an dieser Stelle einen Knick nach rechts.");
+		auswahl("Möchtest du dem Gang nach rechts folgen (1) oder zurückgehen (2)? Du kannst natürlich auch nach Geheimgängen suchen (3)", 3, ort58, ort131, ort63);
+	}
 	raum = 57;
 	auswahl("Du kannst dem Tunnel nach Osten folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort58, ort131, ort63);
 }
 
 void ort58(void) {
 	rotation++;
-	raum = 58;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2), die Abzweigung nach Süden nehmen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort57, ort59, ort64, ort212);
+	if(raum == 57) {
+		textausgabe("Du kommst, nachdem du einem langen Tunnel gefolgt bist, an eine Abbiegung.");
+		raum = 58;
+		auswahl("Von hier aus kannst du weiter geradeaus gehen (1) oder der Abbiegung nach rechts folgen (2). Du kannst dich aber natürlich auch umdrehen und zurückgehen (3) oder nach Geheimgängen suchen (4)", 4, ort59, ort64, ort57, ort212);
+	} else if(raum == 59) {
+		raum = 58;
+		auswahl("Von hier aus kannst du weiter geradeaus gehen (1) oder der Abbiegung nach links folgen (2). Du kannst dich aber natürlich auch umdrehen und zurückgehen (3) oder nach Geheimgängen suchen (4)", 4, ort57, ort64, ort59, ort212);
+
+	} else { // raum == 64
+		textausgabe("Der Gang kommt mündet hier in einen anderen Gang, der von rechts nach links verläuft.");
+		raum = 58;
+		auswahl("Möchtest du nach rechts gehen (1) oder nach links (2) oder drehst du dich um und gehst zurück (3)? Wenn du magst, kannst du auch nach Geheimwänden suchen (4)", 4, ort59, ort57, ort64, ort212);
+	}
 }
 
 void ort59(void) {
@@ -1477,8 +1503,17 @@ void ort63(void) {
 
 void ort64(void) {
 	rotation++;
-	raum = 64;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder nimmst die Abzweigung nach Osten (3), natürlich kannst du aber auch die Wände nach Geheimgängen absuchen (4)", 4, ort58, ort139, ort65, ort212);
+	if(raum == 58) {
+		raum = 64;
+		auswahl("Du kannst weiter geradeaus gehen (1) oder nach links abbiegen (2) oder dich umdrehen und zurückgehen (3). Wenn du magst, kannst du aber auch nach Geheimgängen suchen (4).", 4, ort139, ort65, ort58, ort212);	
+	} else if(raum == 65) {
+		raum = 64;
+		auswahl("Du kommst an eine Abzweigung, von wo aus du nur nach rechts gehen kannst (1) oder nach links (2). Natürlich kannst du auch kehrt machen (3) oder versuchen, ob du einen Geheimgang finden kannst (4)", 4, ort58, ort139, ort65, ort212);	
+
+	} else {
+		raum = 64;
+		auswahl("Du kannst weiter geradeaus gehen (1) oder nach rechts abbiegen (2) oder dich umdrehen und zurückgehen (3). Wenn du magst, kannst du aber auch nach Geheimgängen suchen (4).", 4, ort58, ort65, ort139, ort212);	
+	}
 }
 
 void ort65(void) {
@@ -2256,14 +2291,25 @@ void ort130(void) {
 
 void ort131(void) {
 	rotation++;
-	raum = 131;
-	auswahl("Du kannst dem Gang nach Norden folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort57, ort132, ort212);
+	if(raum == 57) {
+		raum = 131;
+		auswahl("Der Gang macht hier einen Knick nach links. Willst du dem Knick folgen (1) oder dich umdrehen und zurückgehen (2)? Du kannst natürlich auch die Wände nach Geheimgängen absuchen (3).", 3, ort132, ort57, ort212);
+	} else { // raum == 132
+		raum = 131;
+		auswahl("Der Gang macht hier einen Knick nach rechts. Willst du dem Knick folgen (1) oder dich umdrehen und zurückgehen (2)? Du kannst natürlich auch die Wände nach Geheimgängen absuchen (3).", 3, ort57, ort132, ort212);
+	}
 }
 
 void ort132(void) {
 	rotation++;
-	raum = 132;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort131, ort138, ort212);
+	if(raum == 131) {
+		raum = 132;
+		auswahl("Der Gang macht hier einen Knick nach rechts. Willst du dem Knick folgen (1) oder dich umdrehen und zurückgehen (2)? Du kannst natürlich auch die Wände nach Geheimgängen absuchen (3).", 3, ort138, ort131, ort212);
+		
+	} else { // raum == 138
+		raum = 132;
+		auswahl("Der Gang macht hier einen Knick nach links. Willst du dem Knick folgen (1) oder dich umdrehen und zurückgehen (2)? Du kannst natürlich auch die Wände nach Geheimgängen absuchen (3).", 3, ort131, ort138, ort212);
+	}
 }
 
 void ort133(void) {
@@ -2292,20 +2338,41 @@ void ort136(void) {
 
 void ort137(void) {
 	rotation++;
-	raum = 137;
-	auswahl("Du kannst dem Gang nach Osten folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort138, ort143, ort212);
+	textausgabe("Du kommst an einen Knick im Tunnel.");
+	if(raum == 138) {
+		raum = 137;
+		auswahl("Willst du dem Gang weiter nach links folgen (1) oder kehrt machen und den Weg zurückgehen (2)? Du kannst natürlich auch die Wände nach Geheimgängen absuchen (3).", 3, ort143, ort138, ort212);
+	}
+	else {
+		raum = 137;
+		auswahl("Willst du dem Gang weiter nach rechts folgen (1) oder kehrt machen und den Weg zurückgehen (2)? Du kannst natürlich auch die Wände nach Geheimgängen absuchen (3).", 3, ort138, ort143, ort212);
+	}
 }
 
 void ort138(void) {
 	rotation++;
-	raum = 138;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Osten (2) oder der Abzweigung nach Norden (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort137, ort139, ort132, ort212);
+	if(raum == 132) {
+		raum = 137;
+		auswahl("Du stößt auf ein Ende des Ganges. Von hier aus kannst du nur noch nach rechts (1) oder nach links (2) weitergehen, sofern du dich nicht lieber schnurstracks umdrehst, um dich nicht weiter zu verirren (3). Wenn du denkst, es könnt hier ein Geheimgang sein, kannst du natürlich auch die Wände absuchen (4)!", 4, ort137, ort139, ort132, ort212);
+	}
+	else if(raum == 137) {
+		raum = 137;
+		auswahl("Du kommst an eine Abzweiung. Du kannst weiter geradeaus gehen (1) oder nach links abbiegen (2). Natürlich kannst du dich auch einfach umdrehen und zurückgehen (3) oder nach Geheimgängen suchen (4), wenn du glaubst, hier könnte einer sein.", 4, ort139, ort132, ort137, ort212);
+	} else { // raum == 139
+		raum = 137;
+		auswahl("Du kommst an eine Abzweigung. Du kannst weiter geradeaus gehen (1) oder nach rechts abbiegen (2). Natürlich kannst du dich auch einfach umdrehen und zurückgehen (3) oder nach Geheimgängen suchen (4), wenn du glaubst, hier könnte einer sein.", 4, ort137, ort132, ort139, ort212);
+	}
 }
 
 void ort139(void) {
 	rotation++;
-	raum = 139;
-	auswahl("Du kannst den Weg nach Norden einschlagen (1) oder nach Westen (2) oder die Wände nach Geheimgängen absuchen (4)", 3, ort64, ort138, ort212);
+	if(raum == 64) {
+		raum = 139;
+		auswahl("Der Gang macht an dieser Stelle einen Knick nach rechts. Willst du dem Knick folgen (1) oder zurückgehen (2)? Du kannst natürlich auch die Wände nach Geheimgängen absuchen (3)", 3, ort138, ort64, ort212);
+	} else { // raum == 138
+		raum = 139;
+		auswahl("Der Gang macht an dieser Stelle einen Knick nach links. Willst du dem Knick folgen (1) oder zurückgehen (2)? Du kannst natürlich auch die Wände nach Geheimgängen absuchen (3)", 3, ort64, ort138, ort212);
+	}
 }
 
 void ort140(void) {
@@ -2330,7 +2397,8 @@ void ort142(void) {
 void ort143(void) {
 	rotation++;
 	raum = 143;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort137, ort80, ort212);
+	textausgabe("Die Wände dieses Raumes scheinen die Funktionsfähigkeit deines Kompasses zu beeinflussen, die Nadel rotiert wie wild. Der Raum in dem du jetzt stehst, wird an seinem einen Ende durch eine herabstürzende Wand aus Wasser begrenzt, während auf der anderen Seite ein Tunnel in den Felsen führt.");
+	auswahl("Du kannst dem Tunnel folgen (1) oder versuchen die Wasserwand zu durchqueren(2). Wenn du glaubst, du könntest einen Geheimgang finden, dürfte hier der ideale Ort zum Suchen sein (3).", 3, ort137, ort80, ort212);
 }
 
 void ort144(void) {
