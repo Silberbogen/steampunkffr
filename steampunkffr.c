@@ -1471,34 +1471,80 @@ void ort58(void) {
 void ort59(void) {
 	rotation++;
 	if(raum == 56) {
-		textausgabe("Du folgst dem Weg. Er wird nach kurzer Zeit zu einem behauenen Gang, der in einen Tunnel münded.");
+		raum = 59;
+		textausgabe("Du folgst dem Weg. Er wird nach kurzer Zeit zu einem behauenen Gang, der in einen Tunnel mündet. Zu deinem Bedauern mußt du feststellen, daß dein Kompass hier verrückt spielt.");
+		auswahl("Willst du dem Tunnel nach links folgen (1) oder nach rechts (2) oder umdrehen und zurückgehen (3)? Wenn du es für möglich hältst, das hier ein Geheimgang ist, kannst du auch nach diesem suchen (4)", 4, ort60, ort58, ort56, ort212);		
+	} else if(raum == 58) {
+		raum = 59;
+		textausgabe("Du gelangst an eine Abbiegung.");
+		auswahl("Möchtest du dem Weg weiter geradeaus folgen (1) oder nach links gehen (2) oder dich umdrehen und zurückgehen (3)? Du kannst gerne auch nach Geheimgängen suchen (4)", 4, ort60, ort56, ort58, ort212);
+	} else { // raum == 60
+		raum = 59;
+		textausgabe("Du gelangst an eine Abbiegung.");
+		auswahl("Möchtest du dem Weg weiter geradeaus folgen (1) oder nach rechts gehen (2) oder dich umdrehen und zurückgehen (3)? Du kannst gerne auch nach Geheimgängen suchen (4)", 4, ort58, ort56, ort60, ort212);
 	}
-	raum = 59;
-	auswahl("Du kannst dem Weg nach Norden nehmen (1), den Tunnel nach Westen folgen (2) oder nach Osten (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort56, ort58, ort60, ort212);
 }
 
 void ort60(void) {
 	rotation++;
-	raum = 60;
-	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort59, ort61, ort212);
+	textausgabe("Der Gang, dem du folgst, scheint endlos lang zu sein.");
+	if(raum == 59) {
+		raum = 60;
+		auswahl("Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort61, ort59, ort212);
+	} else { // raum == 61
+		raum = 60;
+		auswahl("Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort59, ort61, ort212);
+	}
 }
 
 void ort61(void) {
 	rotation++;
-	raum = 61;
-	auswahl("Du kannst dem Gang entweder nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen", 3, ort60, ort62, ort212);
+	textausgabe("Der Gang, dem du folgst, scheint endlos lang zu sein.");
+	if(raum == 60) {
+		raum = 61;
+		if(wuerfel(6) > 3)
+			auswahl("Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort61, ort60, ort212);
+		else
+			auswahl("Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort62, ort60, ort212);
+	} else { // raum == 62
+		raum = 61;
+		if(wuerfel(6) > 3)
+			auswahl("Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort61, ort62, ort212);
+		else
+			auswahl("Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort60, ort62, ort212);
+	}
 }
 
 void ort62(void) {
 	rotation++;
-	raum = 62;
-	auswahl("Du kannst dem Gang nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen", 3, ort61, ort135, ort212);
+	if(raum == 60) {
+		raum = 62;
+		if(wuerfel(6) > 3) {
+			textausgabe("Der Gang, dem du folgst, scheint endlos lang zu sein. Als du es fast schon nicht mehr für möglich hältst, gelangst du dennoch endlich an sein scheinbares Ende, er macht einen Knick nach rechts.");
+			auswahl("Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort135, ort61, ort212);
+		}
+		else {
+			textausgabe("Der Gang, dem du folgst, scheint endlos lang zu sein.");
+			auswahl("Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort62, ort61, ort212);
+		}
+	} else { // raum == 133
+		raum = 62;
+		textausgabe("Der Gang macht hier einen Knick nach links.");
+		auswahl("Du kannst entweder weiter dem Gang folgen (1) oder dich umdrehen und zurückgehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort61, ort135, ort212);
+	}
 }
 
 void ort63(void) {
 	rotation++;
-	raum = 63;
-	auswahl("Du kannst den Tunnel zurückgehen (1) oder die Wänder nach Geheimgängen absuchen (2)", 2, ort135, ort57);
+	if(raum == 57) {
+		raum = 63;
+		textausgabe("In den Schatten der Wand findest du einen Geheimgang. Du folgst ihm, doch schon nach einiger Zeit mußt du kriechen. Er windet sich - und mit der Zeit verlierst du die Orientierung, ja du bist dir nicht einmal sicher, ob du zwischendurch vielleicht nicht auf Abzweigungen gestoßen bist. Doch endlich, nach einer schier endlos langen Zeit, vielen Windungen, Kriechgängen und Hindernissen, die du in der Dunkelheit überwinden mußtest, hast du das Ende erreichst. Du schältst dich aus den Schatten und bist in einem erleuchteten Raum.");
+		auswahl("Du kannst dem Tunnel folgen (1) oder dich umdrehen und versuchen den Rückweg durch den Geheimgang zu finden (2)", 2, ort136, ort57);
+	} else {
+		raum = 63;
+		textausgabe("Das war's dann wohl. Der Tunnel endet hier vor einer groben Felswand, in der es vor scharfen Kanten und tiefen Schatten nur so zu wimmeln scheint.");
+		auswahl("Du kannst den Tunnel zurückgehen (1) oder die Wände hier nach Geheimgängen absuchen (2)", 2, ort136, ort57);
+	}
 }
 
 void ort64(void) {
@@ -1518,12 +1564,25 @@ void ort64(void) {
 
 void ort65(void) {
 	rotation++;
-	raum = 65;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Abzweigung nach Süden nehmen (3), oder natürlich die Wände nach Geheimgängen absuchen (4)", 4, ort64, ort133, ort66, ort212);
+	if(raum == 64) {
+		raum = 65;
+		textausgabe("Du gelangst an eine Abzweigung.");
+		auswahl("Möchtest du weiter geradeaus gehen (1) oder der Abzweigung nach rechts folgen (2) oder dich umdrehen und zurückgehen (3)? Du kannst auch, wenn du magst, nach Geheimgängen suchen (4)", 4, ort133, ort66, ort64, ort212);
+	} else if(raum == 66) {
+		raum = 65;
+		textausgabe("Der Gang mündet an dieser Stelle in einen Tunnel der von links nach rechts führt.");
+		auswahl("Möchtest du nach links gehen (1) oder nach rechts (2) oder dich umdrehen und zurückgehen (3)? Du kannst auch, wenn du magst, nach Geheimgängen suchen (4)", 4, ort64, ort133, ort66, ort212);
+	} else { // raum == 133
+		raum = 65;
+		textausgabe("Du gelangst an eine Abzweigung.");
+		auswahl("Möchtest du weiter geradeaus gehen (1) oder der Abzweigung nach links folgen (2) oder dich umdrehen und zurückgehen (3)? Du kannst auch, wenn du magst, nach Geheimgängen suchen (4)", 4, ort64, ort66, ort133, ort212);
+	}
 }
 
 void ort66(void) {
 	rotation++;
+	if((raum == 65) || (raum == 133))
+		textausgabe("Du gelangst an eine Abzweigung im Tunnel. Zu deiner großen Verblüffung funktioniert dein Kompass hier wieder.");
 	raum = 66;
 	char *text = "Du kannst dem Tunnel nach Norden (1) oder nach Süden folgen (2). Du kannst aber auch die Abzweigung nach Osten nehmen (3)";
 	switch(rotation % 8) {
@@ -1824,8 +1883,10 @@ void ort79(void) {
 
 void ort80(void) {
 	rotation++;
+	if(raum == 143)
+		textausgabe("Kaum daß du den Wasserfall durchschritten hast, bemerkst du eine Veränderung deiner Kompaßnadel. Sie hört auf mit ihrem Tanz und zeigt wieder konstant nach Norden.");
 	raum = 80;
-	textausgabe("Der Raum, in dem du dich jetzt befindet, erscheint eine große natürliche Höhle zu sein. Sie ist bewachsen von exotischen Pflanzen. Grün ist hier eine weniger dominierende Farbe, als es sie an der Erdoberfläche zu sein scheint. Der Raum ist viel stickiger, als die Tunnel, durch die du dich seit einiger Zeit bewegst. Im nördlichen Teil der Höhle befindet sich ein großer Teich, in den ein Wasserfall hineinstürzt.");
+	textausgabe("Der Raum, in dem du dich jetzt befindet, scheint eine große natürliche Höhle zu sein. Sie ist bewachsen von exotischen Pflanzen. Grün ist hier eine weniger dominierende Farbe, als es sie an der Erdoberfläche zu sein scheint. Der Raum ist viel stickiger, als die Tunnel, durch die du dich seit einiger Zeit bewegst. Im nördlichen Teil der Höhle befindet sich ein großer Teich, in den ein Wasserfall hineinstürzt.");
 	char *text = "Willst du in den Teich hineinwaten und dich in die herabfallenden Wasser des Wasserfalls stellen (1) oder die Höhle durch ihren Ausgang im Osten verlassen (2)?";
 	switch(rotation % 8) {
 		case 1: auswahl(text, 2, ort143, ort72);
