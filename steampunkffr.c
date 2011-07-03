@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.021
+ *        Version:  0.022
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -54,6 +54,7 @@
  *   - 02.07.2011 Beendigung der Arbeit an der Zwergenmine
  *   - 02.07.2011 Beschreibungen der Labyrinthwege
  *   - 02.07.2011 Eine Funktion für Versrätsel wurde hinzugefügt
+ *   - 03.07.2011 Die Eingangsebene der Hohlwelt ist fertig
  *
  * =====================================================================================
  */
@@ -1952,7 +1953,17 @@ void ort81(void) {
 	char *text = "Willst du den Tunnel nach Westen nehmen (1) oder den nach Südosten(2)?";
 	char *raetseltext = "Verfertigt ist's vor langer Zeit,\ndoch mehrenteils gemacht erst heut;\nsehr schätzbar ist es seinem Herrn,\nund dennoch hütet's niemand gern.";
 	char *antworttext = "Bett";
-	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Smaragd heraus geschnitten.");
+	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Smaragd heraus geschnitten. An einer Wand ist ein Symbol sichtbar.");
+	weiter();
+	color_set(1,0); // Cyan darstellen
+	textausgabe("   *###*");
+	textausgabe("       #");
+	textausgabe("       #");
+	textausgabe("   ^###*");
+	textausgabe("   #");
+	textausgabe("   #");
+	textausgabe("   *##n_");
+	color_set(0,0); // zurück auf Weiß
 	if(!raetsel1) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
@@ -2019,7 +2030,17 @@ void ort83(void) {
 	raum = 83;
 	char *raetseltext = "Rat, wenn du kannst!\nEs nennen einen Wanst\nfünf Zeichen dir,\nund auch die letzten vier.";
 	char *antworttext = "Bauch";
-	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Rubin heraus geschnitten.");
+	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Rubin heraus geschnitten. An der Wand befindet sich ein Symbol.");
+	weiter();
+	color_set(2,0); // Dunkelblau darstellen
+	textausgabe("*####_");
+	textausgabe(" #");
+	textausgabe("#");
+	textausgabe("#");
+	textausgabe(" #");
+	textausgabe(" #");
+	textausgabe("  V");
+	color_set(0,0); // zurück auf Weiß
 	if(!raetsel3) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
@@ -2037,7 +2058,17 @@ void ort84(void) {
 	raum = 84;
 	char *raetseltext = "Etwas, das alles und jeden verschlingt:\nBaum, der rauscht, Vogel, der singt,\nfrisst Eisen, zermalmt den härtesten Stein,\nzerbeißt jedes Schwert, zerbricht jeden Schrein,\nSchlägt Könige nieder, schleift ihren Palast,\nträgt mächtigen Fels fort als leicht Last.";
 	char *antworttext = "Zeit";
-	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Lapislazuli heraus geschnitten.");
+	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Lapislazuli heraus geschnitten. An der Wand siehst du ein Symbol.");
+	weiter();
+	color_set(3,0); // Grün darstellen
+	textausgabe("*###*");
+	textausgabe(" # #");
+	textausgabe("#   #");
+	textausgabe("#   #");
+	textausgabe("#   #");
+	textausgabe(" # #");
+	textausgabe(" \\ /");
+	color_set(0,0); // zurück auf Weiß
 	if(!raetsel4) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
@@ -2055,7 +2086,18 @@ void ort85(void) {
 	raum = 85;
 	char *raetseltext = "Der arme Tropf\nhat keinen Kopf;\ndas arme Weib\nhat keinen Leib,\ndie arme Kleine\nhat keine Beine.\nSie ist ein langer Darm,\ndoch schlingt sie einen Arm\nbedächtig in den anderen ein.\nWas mag das für\nein Weiblein sein?";
 	char *antworttext = "Brezel";
-	textausgabe("Du stehst in einem Raum, der aus eine einzigen, riesigen Tigerauge geschnitzt zu sein scheint.");
+	textausgabe("Du stehst in einem Raum, der aus eine einzigen, riesigen Tigerauge geschnitzt zu sein scheint. Du siehst ein Symbol an der Wand.");
+	weiter();
+	color_set(4,0); // Rot darstellen
+	textausgabe("*##*");
+	textausgabe(" ##");
+	textausgabe(" ##");
+	textausgabe("  #");
+	textausgabe("  ## /");
+	textausgabe("  # V");
+	textausgabe("  /");
+	textausgabe(" /");
+	color_set(0,0); // zurück auf Weiß
 	if(!raetsel5) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
@@ -2074,6 +2116,17 @@ void ort86(void) {
 	char *antworttext = "Handschuh";
 	raum = 86;
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Türkis heraus geschnitten.");
+	weiter();
+	color_set(2,0); // Dunkelblau darstellen
+	textausgabe("  #");
+	textausgabe("   #");
+	textausgabe("##  #");
+	textausgabe(" ###");
+	textausgabe(" ##");
+	textausgabe("  #");
+	textausgabe("  #");
+	textausgabe(" \\/");
+	color_set(0,0); // zurück auf Weiß
 	if(!raetsel2) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
@@ -2088,8 +2141,9 @@ void ort86(void) {
 
 void ort87(void) {
 	rotation++;
+	textausgabe("Du betrittst eine Naturhöhle. Das Licht hier ist intensiver, als in den meisten Gängen, die du bisher betreten hast. Büsche wachsen hier, voller Beeren, die du nicht kennst, deren Farbe aber ein deutliches Signalrot aufweisen, was kein gutes Zeichen in deiner Erinnerung ist. In deinen Ohren klingt es, als würde ein Bach oder ein Fluß in der Nähe rauschen, doch sehen kannst du von hier aus keinen. Die Höhle hat Ausgänge in drei Richtungen: einen behauenen Tunnel im Norden, eine Loch in der Ostwand und einen natürlichen Tunnel im Süden.");
 	raum = 87;
-	char *text = "Du kannst dem Tunnal nach Norden (1) oder nach Süden folgen (2), oder du nimmst den Weg nach Osten (3)";
+	char *text = "Du kannst dem behauenen Tunnel nach Norden folgen (1), ebenso kannst du den Südtunnel nehmen (2), oder dich dem Weg hinein in das große Loch in der Ostwand anvertrauen (3)";
 	switch(rotation % 8) {
 		case 1: auswahl(text, 3, ort70, ort151, ort146);
 				break;
@@ -2218,8 +2272,11 @@ void ort96(void) {
 
 void ort97(void) {
 	rotation++;
+	if((raum == 96) || (raum == 98))
+		textausgabe("Du bewegst dich für eine lange Zeit durch einen dunklen Gang. Er ist eng und an einigen Stellen mußt du sogar auf allen Vieren weiterkrabbeln. Es ist stockfinster und du verlierst vollkommen die Orientierung. Mehr als nur einmal hast du das Gefühl, in mehr als eine Richtung weitergehen zu können. Schließlich gelingt es dir, einen Ausgang zu finden. Du wirst geblendet von dem Licht und brauchst einige Momente um dich zurechtzufinden, erst dann kannst du erkennen, wo du bist.");
 	raum = 97;
-	auswahl("Du kannst dem Weg nach Westen folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort148, ort154, (wuerfel(6) > 3) ? ort96 : ort95);
+	textausgabe("Du befindest dich in einem Wald aus Pilzen der verschiedensten Größe. Weit entfernt in südlicher Richtung kannst du einen Pilz gigantischer Größe ausmachen, der alle anderen überragt. Helles Licht entströmt den Lamellen unter seinem gigantischen Pilzhut, er scheint die Lichtquelle dieser Höhle zu sein.");
+	auswahl("Du kannst dich entweder in westliche Richtung fortbewegen (1) oder nach Süden (2). Wenn du etwas Zeit investierst, findest du vielleicht auch noch einen Weg in eine weitere Richtung (3)", 3, ort148, ort154, (wuerfel(6) > 3) ? ort96 : ort95);
 }
 
 void ort98(void) {
@@ -2270,7 +2327,7 @@ void ort98(void) {
 			textausgabe("Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
 			exit(EXIT_SUCCESS);
 		}
-		textausgabe("Ein Ruck geht durch den Körper des Drachen, ein letztes Aufbäumen, dann sinkt er tot zusammen. Sein Körper sieht aus, als würde er glühen. Vielleicht verbrennt er ja innerlich, du weißt es nicht. Das hier war der erste Drache, den du in deinem Leben gesehen hast. Und du dachtest immer, Drachen würden in das Reich der Märchen gehören. Die Legende von der Unverwundbarkeit durch Drachenblut jedenfalls hast du wiederlegt. Dein linker Arm ist nur so besudelt von Drachenblut, trotzdem hast du lange Schnittwunden darauf.");
+		textausgabe("Ein Ruck geht durch den Körper des Drachen, ein letztes Aufbäumen, dann sinkt er tot zusammen. Sein Körper sieht aus, als würde er glühen. Vielleicht verbrennt er ja innerlich, du weißt es nicht. Das hier war der erste Drache, den du in deinem Leben gesehen hast. Und du dachtest immer, Drachen würden in das Reich der Märchen gehören. Die Legende von der Unverwundbarkeit durch Drachenblut jedenfalls hast du wiederlegt. Dein linker Arm ist nur so besudelt von Drachenblut, trotzdem hast du lange Schnittwunden darauf.\nPlötzlich mußt du lachen, als du bemerkst, das jemand ein Wort auf die Unterseite des Drachens gemalt hat: \"Bauch\"\nEin ganz klares Zeichen dafür, das du nicht der erste bist, der sich hier in die Höhle des Drachens gewagt hat.");
 		// Ich denke, an der Legende ist doch ein Körnchen Wahrheit
 		staerkesteigerung(0,1);
 	}
@@ -2644,19 +2701,28 @@ void ort145(void) {
 void ort146(void) {
 	rotation++;
 	raum = 146;
-	auswahl("Du kannst dem Tunnal nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort87, ort147, ort212);
+	textausgabe("Du befindest dich in einer riesigen Höhle. Sie ist so riesig, das du nur im Westen eine Wand wahrnehmen kannst. Umgeben bist du von einer Art Wald, aber es ist kein natürlicher Wald, wie du ihn von der Oberfläche her kennst. Es ist ein Funghi-Wald. Pilze, kleine Pilze, wie Champions wachsen hier so zahlreich, das es unmöglich erscheint, nicht auf sie zu treten, aber auch Pilze in der Größe von Mäusen, von Katzen. Doch es sind auch größere Exemplare da, Pilze in der Größe von Schränken, von Bäumen und sogar so hoch, wie ein Hochhaus. Ihre Stengel und Hüte haben die verschiedensten Farben und Formen und du kannst Summen und Surren hören. Der Anblick ist atemberaubend.");
+	if(wuerfel(6) > 3)
+		textausgabe("Trotz dieser gleichzeitig verstörenden und beeindruckenden Schönheit dieses Ortes, wirst du dir schnell einer Sache bewußt: Wenn derart großes Leben hier unten möglich ist, dann wäre es vielleicht an der Zeit, ein wenig mehr Achtsamkeit und Wachsamkeit an den Tag zu legen.");
+	auswahl("Du kannst die Pilzhöhle im Westen verlassen und einen Tunnel betreten (1) oder dich weiter in östlicher Richtung durch den Pilzwald bewegen (2) oder versuchen, ob du einen Weg in eine andere Richtung finden kansnt (3)", 3, ort87, ort147, ort210);
 }
 
 void ort147(void) {
 	rotation++;
 	raum = 147;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort146, ort148, ort212);
+	textausgabe("Du befindest dich in einem Pilzwald. Überall um dich herum wachsen Pilze der verschiedensten Größe. Surrende Geräusche erfüllen die Luft.");
+	if(wuerfel(6) > 4)
+		ort210();
+	auswahl("Du kannst dich weiter in westlicher Richtung bewegen (1) oder in östlicher Richtung (2). Wenn du etwas Zeit investierst, kannst du vielleicht noch einen anderen Weg entdecken (3)", 3, ort146, ort148, ort210);
 }
 
 void ort148(void) {
 	rotation++;
+	textausgabe("Du befindest dich in einem Pilzwald, tief unter der Erde. Um dich herum befindet sich ein bunter Wald aus Pilzen. Hier ist ein kleiner Teich voll klaren Wassers, ein paar Felsen laden zum darauf sitzen ein.");
+	if(raum != 148)
+		mahlzeit();
 	raum = 148;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort147, ort97, ort212);
+	auswahl("Du kannst dich weiter in westlicher Richtung bewegen (1) oder in östlicher (2). Wenn du etwas Zeit investierst, kannst du vielleicht noch einen anderen Weg entdecken (3)", 3, ort147, ort97, ort210);
 }
 
 void ort149(void) {
@@ -2705,25 +2771,31 @@ void ort150(void) {
 void ort151(void) {
 	rotation++;
 	raum = 151;
-	auswahl("Du kannst nach Norden gehen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 2, ort87, ort152, ort212);
+	textausgabe("Der Raum, den du betrittst riecht, als wäre er aus Kuhfladen oder schlimmeren hergestellt. Die Wände erscheinen porös oder schlimmer zu sein. Jeder Schritt auf dem Boden läßt dich in dem braunen Schlick ein wenig einsinken.");
+	auswahl("Du kannst dich nach Norden bewegen (1) oder dem stinkigen Weg weiter nach Osten folgen (2). Wenn es dich vor nichts graust, so kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort87, ort152, ort212);
 }
 
 void ort152(void) {
 	rotation++;
+	if(raum == 79)
+		textausgabe("Du bewegst dich durch einen stockdunklen Gang. Mehr als einmal triffst du auf abzweigende Gänge - und immer entscheidest du dich intuitiv, wo du langgehst. Schließlich wird es etwas heller. Deine Hände greifen durch eine Art von Ranken hindurch, du teilst sie und stehst Augenblicke später in einem hell erleuchteten Raum. Deine Augen tränen etwas und du benötigst einen Moment, um dich an das Licht zu gewöhnen. Offensichtlich war der Gang länger, als du dachtest.");
 	raum = 152;
-	auswahl("Du kannst den Weg zurück nach Westen gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort151, ort79);
+	textausgabe("Der Raum in dem du dich befindest, riecht eigenartig und überall an den Wänden hängen ranken eines seltsamen rötlichbraunen Grases herunter, so daß die darunterliegenden Wände eher zu erahnen als zu erkennen sind. Nur in westlicher Richtung kannst du einen Ausgang ausmachen, der Raum selber scheint eine Art totes Ende zu sein.");
+	auswahl("Du kannst den Weg zurück nach Westen gehen (1) oder die Ranken absuchen, ob sich irgendwo darunter vielleicht noch ein weiterer Weg versteckt (2)", 2, ort151, ort79);
 }
 
 void ort153(void) {
 	rotation++;
 	raum = 153;
-	auswahl("Du kannst nach Osten gehen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort154, ort156, ort212);
+	textausgabe("Du befindest dich in einem unüberschaubar großen Wald aus Pilzen. Fremde Geräusche dringen von allen Seiten auf dich ein. Südlich von dir befindet sich der gigantische Pilz, der das Zentrum dieses Ortes zu sein scheint.");
+	auswahl("Die Wand aus Pilzen läßt es offensichtlich nur zu, das du dich von hier aus in östlicher Richtung (1) oder weiter nach Süden auf den Riesenpilz zu bewegen kannst (2). Wenn du willst, kannst du etwas Zeit investieren und versuchen, ob du vielleicht noch einen weiteren Weg finden kannst (3)", 3, ort154, ort156, ort210);
 }
 
 void ort154(void) {
 	rotation++;
 	raum = 154;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder der Abzweigung nach Westen folgen (3) oder die Wände nach Geheimgängen absuchen (4)", 4, ort97, ort157, ort153, ort212);
+	textausgabe("Du befindest dich inmitten eines Meeres aus Pilzen aller Größen und Farben. Die Luft wirkt hier sehr stickig und das Atmen fällt dir etwas schwerer als normal. Schweißperlen bilden sich auf deiner Stirn. Von hier aus führen Wege durch das Pilzdickicht in verschiedene Richtungen.");
+        auswahl("Du könntest dich weiter in südlicher (1) oder westlicher (2) Richtung an den Riesenpilz im Zentrum heranwagen oder dich in nördlicher (3) Richtung von ihm entfernen. Wenn du etwas Zeit zu investieren bereit bist, kannst du auch nach weiteren Wegen im Dickicht suchen (4).", 4, ort157, ort153, ort97, ort210);
 }
 
 void ort155(void) {
@@ -2742,14 +2814,22 @@ void ort155(void) {
 
 void ort156(void) {
 	rotation++;
+	if(raum == 156) {
+		textausgabe("Trotz deiner intensiven Suche, kannst du keinerlei weitere Wege entdecken.");
+		mahlzeit();
+	}
 	raum = 156;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort153, ort163, ort212);
+	textausgabe("Du befindest dich jetzt im Licht des Riesenpilzes. Je näher du dem Stamm kommst, um so gewaltiger empfindest du ihn. Die Ausmaße sind so riesig, das er an der Oberfläche bestimmt jeden einzelnen der Wolkenkratzer im durch Betonstahl verseuchten Herzen Frankfurts überragen dürfte. Der freie Raum vor dem Riesenstamm ist nicht sehr groß, es wirkt, als würden sich alle anderen Pilze in diesem für deine Verhältnisse gewöhnungsbedürftigen Wald, sich auf diesen Pilz zubewegen.");
+	if(wuerfel(6) > 4)
+		textausgabe("Eine frische Brise kommt auf und es riecht jetzt salzig in der Luft. Du glaubst sogar, das Schlagen von Wellen an das Ufer hören zu können.");
+	auswahl("Du kannst dich von hier aus in südlicher Richtung (1) oder in nördlicher Richtung (2) bewegen. Wenn du etwas Zeit investierst, kannst du auch den dichten Pilzwald nach weiteren Wegen durchsuchen (3)", 3, ort163, ort153, ort210);
 }
 
 void ort157(void) {
 	rotation++;
 	raum = 157;
-	auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort154, ort164, ort212);
+	textausgabe("Du machst einen weiten Bogen um den Zentralpilz herum. Weit im Osten glaubst du, eine Wand sehen zu können, aber aufgrund des Dunstes in der Luft könnte es auch eine reine Wunschprojektion deines Geistes sein. Der Pilzstamm liegt von dir aus weit im Westen. Die Pilze um dich herum verbreiten einen üblen Gestank, trotzdem kannst du atmen.");
+	auswahl("Du kannst dich von hier aus weiter in südlicher Richtung (1) oder in nördlicher Richtung (2) bewegen. Wenn du etwas Zeit investierst, vermagst du vielleicht noch weitere Wecke in diesem erdrückenden Pilzwald auszumachen (3)", 3, ort164, ort154, ort210);
 }
 
 void ort158(void) {
@@ -2851,26 +2931,86 @@ void ort160(void) {
 
 void ort161(void) {
 	rotation++;
+	if(raum != 161)
+		textausgabe("Du stehst in einer von leuchtenden Adern durchzogenen Höhle, die voller Gold und Juwelen ist. Ein Drachenhort, ganz so, wie man ihn aus den Märchen und Erzählungen der Großväter kennt. Das kleine Kind in dir jauchzt fröhlich vor Vergnügen an dem Anblick - und das Herz des Obdachlosen würde sich am liebsten alles, was es hier sieht, einstecken und zu Geld machen, wenn, ja wenn Geld noch irgendeine Bedeutung hätte. Schmerzlich wirst du dir bewußt, daß du in der Tat ein Flüchtling bist, ein Flüchtling, der vor einer unbekannten Besatzungsmacht flieht, die seine Heimatstadt mit der Hilfe seltsamer Maschinenwesen in eine Landschaft aus rauchenden Trümmern und Asche verwandelt hat.\nDu beginnst dem Berg aus Edelmetallen zu durchsuchen, nach etwas sinnvollem, etwas nützlichem. Eine Waffe wäre vielleicht interessant, aber alles, was du hier findest, sind scheinbar wertvolle Gesteinsbrocken, Juwelen, aber nichts, was dir wirklich weiter helfen würde.");
 	raum = 161;
-	auswahl("Du kannst den Weg zurück nach Osten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort98, ort212);
+	if(wuerfel(6) > 4)
+		textausgabe("In all den Kostbarkeiten, stößt du auf einen Zettel. Du entfaltest ihn und liest nur ein einziges Wort: \"Handschuh\"");
+	if(wuerfel(6) > 4)
+		textausgabe("Während du dich am Fuße des Horts entlangbewegst, bemerkst du ein mit Kreide an die Wand geschriebenes Wort: \"Bett\"");
+	if(wuerfel(6) > 4)
+		textausgabe("In einer Ecke hat jemand das Wort \"Brezel\" auf den Boden geritzt.");
+	if(wuerfel(6) > 4)
+		textausgabe("Am Ausgang des Horts hat jemand das Wort \"Zeit\" in Augenhöhe an die Wand geschrieben.");
+	auswahl("Du kannst den Hort verlassen und zurück nach Osten gehen (1) oder die Wände absuchen, ob nicht ein Geheimgang an diesen Ort führt (2)", 2, ort98, ort212);
 }
 
 void ort162(void) {
 	rotation++;
 	raum = 162;
-	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort98, ort163, ort212);
+	textausgabe("Du befindest dich in einem breiten Tunnel. Im Osten siehst du ein Licht, vermutlich ist es der Ausgang aus diesem Tunnel, während es in westlicher Richtung nur tiefer in die Schwärze hineinzugehen scheint.");
+	auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten in Richtung auf das Licht zu gehen (2). Wenn du magst, kannst du auch die Wände nach Geheimgängen absuchen (3)", 3, ort98, ort163, ort212);
 }
 
 void ort163(void) {
 	rotation++;
+	if(raum == 163)
+		textausgabe("Du gehst an den endlosen Reihen der Stämme entlang, hast jedoch Angst den einzigen Weg, den du durch den Pilzwald kennst, aus den Augen zu verlieren, so drehst du um und näherst dich wieder der Felswand im Westen.");
 	raum = 163;
-	auswahl("Du kannst dem Weg nach Norden folgen (1) oder nach Westen (2) oder die Wände nach Geheimgängen absuchen (3)", 3, ort156, ort162, ort212);
+	textausgabe("Du befindest dich an einem großen, weiten Strand, an dessen Ufer die Wellen eines Meeres branden. Weit nördlich von hier aus befindet sich ein riesiger Pilz und ein Pilzwald zieht sich am Strand entlang, soweit dein Auge reicht. Nicht weit im Westen von dir ist die Felswand die sich weit nach oben streckt. Das Meer erstreckt sich bis zum Horizont, du kannst seine Ausmaße nicht einmal erahnen. Salzig duftende, frische Brisen streichen dir durch das Gesicht. In der Westwand befindet sich ein Tunnel.");
+	auswahl("Du kannst dich nach Westen am Strand lang bewegen und den Tunnel im Berg betreten (1) oder du kannst dich in Richtung des Riesenpilzes nach Norden weiterbewegen (2). Wenn du willst, kannst du den Strand auch nach weiteren Wegen absuchen (3)", 3, ort162, ort156, ort210);
 }
 
 void ort164(void) {
+	int zufallszahl = wuerfel(1000);
+	int geraten;
+	char eingabe[21];
 	rotation++;
+	if((raum == 164) && schluessel9)
+		switch(wuerfel(6)) {
+			case 1: textausgabe("\"Du schon wieder?\" lächelt der kleine Gnom dich an, dann schließt er die Augen und ignoriert dich.");
+				if(wuerfel(6) > 4)
+					textausgabe("\"Der Tempel birgt ein Geheimnis!\" lächelt der kleine Blauhäutige und wendet sich ab.");
+				break;
+			case 2: textausgabe("\"Hat dir mein kleines Spielchen gefallen?\" fragt der Gnom und lächelt dich desinteressiert an.");
+				break;
+			case 3: textausgabe("Der kleine Gnom reagiert nicht auf dich, egal wie oft du ihn ansprichst.");
+				if(wuerfel(6) > 4)
+					textausgabe("\"Laß ab von Drachen!\" lächelt der kleine Gnom und ignoriert dich und deine Fragen auch weiterhin.");
+				break;
+			case 4: textausgabe("\"Mich nennen alle nur Papa!\" grinst der kleine Gnom, zieht an seiner Pfeife und bläst ein Rauchwölkchen aus. Es ist ein sehr kunstvolles Rauchwölkchen, das davonschwebt. Dir kommt es so vor, als würde sie eine Kutsche mit 4 Pferden davor darstellen.");
+				break;
+			case 5: textausgabe("\"Wie ist das Wetter da oben?\" fragt der kleine Blaue verschmitzt.");
+				if(wuerfel(6) > 4)
+					textausgabe("\"Manchmal bleibt der Drache Sieger!\" murmelt das Männlein und bläst einen atemberaubend großen Rauchkringel in die Luft.");
+				break;
+			default: textausgabe("\"Hast du nicht noch etwas anderes zu tun?\" fragt das kleine Männlein verschmitzt und ignoriert all deine Worte.");
+				 if(wuerfel(6) > 4)
+					 textausgabe("\"Hab' Angst vor Drachen!\" sagt das Männlein weise und wendet sich von dir ab.");
+				 break;
+		}
+	if(raum == 157)
+		textausgabe("Als du aus dem Dickicht der Pilzstämme trittst, siehst du ein seltsames Männlein, das gemütlich eine Pfeife rauchend im Schatten eines Pilzhauses sitzt. Das Männlein trägt rotes Beinkleid und eine entsprechende Zipfelmütze, und hat eine bläuliche Haut. Ein weißer Rauschebart ziert sein freundliches Gesicht mit der großen, knubbeligen Nase.");
 	raum = 164;
-	auswahl("Du kannst den Weg zurück nach Norden nehmen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort157, ort212);
+	if(!schluessel9 && janeinfrage("Das kleine Männlein sagt: \"Ein Rätsel habe ich für dich, löst du es, dann lohnt es sich! Möchtest du, daß ich dir mein Rätsel stelle (j/n)?\"")) {
+		textausgabe("Der kleine Gnom lächelt dich gutmütig an.\n\"Ich habe mir eine Zahl zwischen 1 und 1000 ausgedacht. Du hast 9 Versuche, die Zahl zu erraten.\"");
+		for(int i=1; i <= 9; ++i) {
+			textausgabe("\"Was denkst du, wie lautet meine Zahl?\"");
+			getnstr(eingabe, 20);
+			geraten = atoi(eingabe);
+			if(zufallszahl == geraten) {
+				schluessel9 = true;
+				textausgabe("\"Du bist sehr klug!\" lobt dich der kleine Gnome und gibt dir einen kleinen, blauen Schlüssel, der wie die Zahl 9 oder 6 geformt ist.");
+				break;
+			}
+			if(zufallszahl < geraten)
+				textausgabe("\"Deine Zahl ist zu groß!\" lächelt der kleine Gnom.");
+			if(zufallszahl > geraten)
+				textausgabe("\"Deine Zahl ist zu klein!\" schmunzelt der rauschebärtige Gnom.");
+		}
+	}
+	textausgabe("Der kleine Gnom lehnt sich zurück und zieht schmauchend an seiner Pfeife.");
+	auswahl("Du kannst den Weg zurück in nördlicher Richtung nehmen (1) oder suchen, ob du noch einen weiteren Ausgang finden kannst (2). Vielleicht möchtest du ja auch noch einen Schwatz mit dem kleinen Gnom halten (3)?", 3, ort157, ort210, ort164);
 }
 
 void ort165(void) {
@@ -3013,9 +3153,89 @@ void ort209(void) {
 }
 
 void ort210(void) {
+	// Die Untersuchung der Pilze in der Pilzwaldhöhle ruft diese Funktion auf.
+	switch(wuerfel(6)) {
+		case 1: textausgabe("Du berührst einen großen Pilzstamm. Unter der Wärme deiner Hand fühlt es sich an, als würde sein Stamm anfangen zu pulsieren.");
+				break;
+		case 2: textausgabe("Der Pilzstamm fühlt sich warm an, während du mit deiner Hand darüber gehst.");
+				break;
+		case 3: textausgabe("Du glaubst zu hören, das hinter einer undurchdringlichen Wand aus Pilzen das Geräusch eines fließenden Gewässers erklingt.");
+				break;
+		case 4: textausgabe("Während du den Pilzhut eines mannshohen Pilzes genauer untersuchst, kannst du dich des Gefühls nicht erwehren, das etwas dich beobachtet.");
+				break;
+		case 5: textausgabe("Als du den Stamm eines baumhohen Pilzes abklopfst, kommt es dir so vor, als wäre klänge er hohl. Möglicherweise ist der Stamm des Pilzes ja hohl?");
+				break;
+		default: textausgabe("Du kannst absolut nichts ungewöhnliches wahrnehmen.");
+				 break;
+	}
+	switch(wuerfel(4)) {
+		case 1: textausgabe("Vielleicht ist es nur Einbildung, aber du hattest gerade das Gefühl, einen Windstoß im Nacken zu spüren.");
+				break;
+		case 2: textausgabe("Für einen Moment glaubtest du, ein knackendes Geräusch gehört zu haben.");
+				break;
+		case 3: textausgabe("Es kommt dir so vor, als wäre es still hier, sehr still, ja, unnatürlich still. Die Stille erscheint dir zu konsequent, als das sie natürlich erscheint.");
+				break;
+		case 4: textausgabe("Ein ungutes Gefühl breitet sich in deiner Magengrube aus.");
+				break;
+	}
+	// 20% Wahrscheinlichkeit einer Zufallsbegegnung.
+	if(wuerfel(10) > 6)
+		ort211();
+	else
+		raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 }
 
 void ort211(void) {
+	// Begegnung mit einem Zufallsgegner der oberen Hohlwelt
+	int zufallsgegner = wuerfel(7);
+	bool kampfausgang;
+	charakter_t gegner1 = { "gefiederte Schnecke", 6, 6, 3, 3 };
+	charakter_t gegner2 = { "Riesenborkenkäfer", 6, 6, 3, 3 };
+	charakter_t gegner3 = { "gigantische Pilzlaus", 3, 3, 4, 4 };
+	charakter_t gegner4 = { "wandernder Riesensteinpilz", 5, 5, 4, 4 };
+	charakter_t gegner5 = { "Sporenkrabbe", 6, 6, 9, 9 };
+	charakter_t gegner6 = { "fleischfressender Pilzaal", 7, 7, 4, 4 };
+	charakter_t gegner7 = { "zu groß geratenes Frettchen", 9, 9, 8, 8 };
+	switch(zufallsgegner) {
+		case 1: textausgabe("Um einen Pilzstamm herum kommt eine Schnecke gekrochen, eine Schnecke, die den Hut eines Pilzes als Haus auf dem Rücken trägt. Plötzlich richtet sie sich auf. Ihr Rücken hat ein Gefieder, das sie ausbreitet, während hier Mund sich weit öffnet, rasiermesserscharfe Zähne zeigt - und ihre Augen sich dir zuwenden.");
+				kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
+				break;
+		case 2: textausgabe("Ein Borkenkäfer, in der größe eines Ponys kommt herabgeschwebt und läßt sich vor dir auf dem Boden nieder, augenscheinlich um zu - fressen?");
+				if(wuerfel(6) >4)
+					textausgabe("Als du dein Gewicht verlagerst, trittst du auf einen kleinen Pilz der jämmerlich zu schreien anfängt. Damit hast du nun die ungeteilte Aufmerksamkeit des Borkenkäfers erlangt.");
+				kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
+				break;
+		case 3: textausgabe("Am Stamm eines größeren Pilzes kommt eine Laus heruntergekrabbelt. Ihr Kopf bewegt sich, als würde sie etwas riechen.");
+		       		if(wuerfel(6) > 4)
+					textausgabe("Und wenn man die Richtung ihrer Bewegung weiter verfolgt, weiß man auch, was sie riecht: Dich!");
+				kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
+				break;
+		case 4: if(wuerfel(6) > 4)
+					textausgabe("Du hast einen Riesensteinpilz erschreckt. Er dreht sich um und kommt schweren Schrittes auf dich zu.");
+				kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
+				break;
+		case 5: if(wuerfel(6) > 4)
+					textausgabe("Du hast gerade einer Sporenkrabbe auf die Schere getreten.");
+				else
+					textausgabe("Du hast gerade einer Sporenkrabbe auf ein Bein getreten.");
+				kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
+				break;
+		case 6: if(wuerfel(6) > 3)
+					textausgabe("Die Vibration deines Klopfens an einen übergroßen Pilzstamm hat eine Pilzaal hervorgelockt. Die großen, scharfen Zähne in seinem weit aufgerissenen Maul lassen darauf schließen, daß es sich bei ihm um einen Fleischfresser handelt. Und seinem Blick nach zu urteilen handelt es sich bei dir um ein Mittagessen in seinen Augen.");
+				else
+					textausgabe("Die Vibration deines Klopfens an einen übergroßen Pilzstamm hat einen wütenden Pilzaal hervorgelockt. Bei deinem Anblick reißt er sein Maul weit auf und präsentiert dir eine paar hübsche Reihen rasiermesserscharfe Zähne, die dich sehr an das Maul eines großen weißen Hais erinnern. Du könntest schwören, gerade in deinem Kopf eine Stimme vernommen zu haben, die sagte: \"Hallo Abendessen!\"");
+				kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
+				break;
+		default: textausgabe("Wie aus dem Nichts heraus, stürmt plötzlich ein ziemlich großes Frettchen auf dich zu.");
+				kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
+				break;
+	}
+	if(!kampfausgang) {
+		textausgabe("Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
+		exit(EXIT_SUCCESS);
+	}
+	getoetetegegner += 1;
+	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 }
 
 void ort212(void) {
