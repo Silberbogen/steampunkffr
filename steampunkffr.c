@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.022
+ *        Version:  0.023
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -55,6 +55,7 @@
  *   - 02.07.2011 Beschreibungen der Labyrinthwege
  *   - 02.07.2011 Eine Funktion für Versrätsel wurde hinzugefügt
  *   - 03.07.2011 Die Eingangsebene der Hohlwelt ist fertig
+ *   - 04.07.2011 Beginn an der Storyline der Dwellmer
  *
  * =====================================================================================
  */
@@ -134,6 +135,11 @@ static bool raetsel2 = false;
 static bool raetsel3 = false;
 static bool raetsel4 = false;
 static bool raetsel5 = false;
+static bool dwellmer = false;
+static int arianna = 0;
+static int elke = 0;
+static bool schluesselarianna = false;
+static int verloben = 0;
 
 static unsigned int rotation = 0; // Rotation ist eine Besonderheit. Hierüber werden die beiden Drehraumsegmente gesteuert. ^.^
 
@@ -236,6 +242,9 @@ void quit(void);
 
 // Funktion: Rätsel
 bool raetsel(char *raetseltext, char *antworttext);
+
+// Funktion: Zweisamkeit
+void zweisamkeit(int);
 
 // ---------------------------------
 // Implementation für das Spielmodul
@@ -1955,14 +1964,14 @@ void ort81(void) {
 	char *antworttext = "Bett";
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Smaragd heraus geschnitten. An einer Wand ist ein Symbol sichtbar.");
 	weiter();
-	color_set(1,0); // Cyan darstellen
-	textausgabe("   *###*");
-	textausgabe("       #");
-	textausgabe("       #");
-	textausgabe("   ^###*");
-	textausgabe("   #");
-	textausgabe("   #");
-	textausgabe("   *##n_");
+	color_set(4,0); // Rot darstellen
+	textausgabe("*###*");
+	textausgabe("    #");
+	textausgabe("    #");
+	textausgabe("^###*");
+	textausgabe("#");
+	textausgabe("#");
+	textausgabe("*##n_");
 	color_set(0,0); // zurück auf Weiß
 	if(!raetsel1) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
@@ -2267,6 +2276,10 @@ void ort95(void) {
 void ort96(void) {
 	rotation++;
 	raum = 96;
+	if(arianna == 99) {
+		zweisamkeit(1);
+		textausgabe("Als du das erste Mal diesen Ort betreten hast, da war er für dich nur eine Höhle, in der ein Lavabecken stand - und ein seltsamer Metalklumpen, der die eigenartig glatt erschien. Aber jetzt weißt du, was er in Wahrheit darstellt. Das hier ist eine echte Zwergenschmiede, eine Schmiede, in der im heißesten aller Feuer, der Bund für die Ewigkeit besiegelt wird. Alle Zwerge aus Dwellmerdan tummeln sich hier in der Schmiede. Du bahnst dir unter freundschaftlichen Schulterklapsen deinen Weg durch die Meute, nach vorne, wo der Dorfälteste und der Schmied dich bereits erwarten. Und dann wird es leise, etwas, was nur selten bei Zwergen vorkommt - und Arianna wird in Begleitung ihrer Mutter und ihres Vaters zum Amboß geführt. Lansam, ruhig und gemessenen Schrittes nähern sich die drei, während ein Chor aus Sackpfeifen und Blechbläsern die zwergische Hochtzeitsweise anstimmt.\nUnd plötzlich stehen Arianna und ihre Eltern nur noch einen Schritt entfernt vor dir. Das Gesicht ihres Vaters ist Rot vor Zorn. Er holt aus - und schlägt dir mit aller Wut ins Gesicht. Du knickst ein, doch als du aufstehst, tust du es im gleich. Mit all der Kraft, die die Liebe zu Arianna dir verleiht, schlägst du zu - und du hast Glück. Du triffst ihren Vater nicht nur, du fällst ihn wie einen Baum. Er knickt nicht einmal in den Beinen ein, sondern kippt unter dem Gröhlen der Zwerge hinten über. Du Mutter und ein paar herbeieilende Dwellmer packen ihn am Kragen und ziehen ihn in die Reihe der Feiernden, die bereits damit begonnen haben, Met aus ihren Gürtelschläuchen zu saufen. Als nächstes legen Arianna und du eure Oberbekleidung ab. Mit nackten Oberkörpern steht ihr voreinander. Zwei Zwerge legen euch mit Zangen die eisernen Bande um die Handgelenke. Der Schmerz ist so überwältigend, daß dir Tränen in die Augen schießen. Und schon hämmert Arianna auf dein Armband ein, verschließt es mit kräftigen Hammerschlägen, während die Zwerge dazu ihr Lied des ewigen Bundes anstimmen. Diesmal klingt es viel volltönender, da noch keiner der Zwerge zu besoffen zum singen ist.\nNachdem du den Schock des Schmerzes überwunden hast - und Arianna dich noch einmal flüsternd daran erinnert hat, beginnst auch du damit, mit deiner freien Hand und einem Schmiedehammer auf ihr Band einzuhämmer und verschließt es. Hinterher kannst du gar nicht mehr sagen, wie lange es gedauert hat, doch als ihr endlich fertig wart mit dem Hämmern, da leuchteten Runen in den Armbändern für Bruchteile einer Sekunde auf - und besiegelten so für immer euer Bündnis. Jetzt stürmen auch die anderen Zwerge auf euch ein, reichen euch die Schläuche voller Met und saufen mit euch um die Wette.");
+	}
 	auswahl("Du kannst den Weg entweder zurück nach Norden gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort142, ort97);
 }
 
@@ -2654,12 +2667,16 @@ void ort142(void) {
 		textausgabe("Du kriechst durch die Schwärze eines Tunnels, eine halbe Ewigkeit lang, wie es dir erscheint, bis du schließlich ein violett schimmerndes Licht am Ende deines Tunnels erblicken kannst. So schnell du kannst, krabbelst du darauf zu.");
 	raum = 142;
 	textausgabe("Der Raum sieht aus wie ein großes Achteck. Die Wände und der Boden, alles deutet darauf hin, daß du in einem riesigen Amethysten stehst. Das Spiel der Farben ist atemberaubend, und doch benebelt der Anblick auch die Sinne, denn die Tiefenschärfe hat leichte Probleme, die genaue Kontur der Wände wahrzunehmen. Drei Türen befinden sich in diesem Raum. Die eine ist aus weißem Marmor geformt und befindet sich im Westen, die zweite besteht aus schwarzem Onyx und befindet sich im Süden. Im Osten ist eine Türe, die aussieht, als wäre sie aus Gold, doch verrät dir der Versuch an ihr zu kratzen, daß das Material härter ist als der härteste Stahl. Die Türe verfügt über 4 Schlüssellöcher.");
+	if(dwellmer) {
+		auswahl("Du kannst die Höhlen der Jagd verlassen und das Dorf der Dwellmer im Osten betreten (1), den Raum durch die Marmortüre im Westen verlassen (2) oder durch die schwarze Onyxtüre im Süden (3). Wenn dir nach einem Abenteuer ist, kannst du dich auch durch die dunklen Geheimtunnel zwängen (4)", 4, ort165, ort141, ort96, (wuerfel(6) > 3) ? ort94 : ort95);
+
+	}
 	if((schluessel9 + schluessel66 + schluessel99 + schluessel111_1 + schluessel111_2 + schluessel125) > 3) {
 		if(janeinfrage("Du hast genügend Schlüssel bei dir. Möchtest du versuchen die Türe zu öffnen (j/n)?"))
 			if(schluessel9 && schluessel66 && schluessel99 && schluessel125) {
 				textausgabe("Du probierst die Schlüssel aus. Sie passen. Ein Schlüssel nach dem anderen läßt sich in eines der Schlüssellöcher nach dem anderen einsetzen und umdrehen. Nachdem der vierte Schlüssel eingeführt worden ist, gibt es ein klickendes Geräusch. Dieses Geräusch ist das letzte, was du wahrnimmst. Du erhältst einen Schlag auf den Kopf, dann wird alles dunkel um dich.");
-				// HIER GEHT ES DANN WEITER --- ORT MUSS NOCH BENANNT WERDEN
-				// *********************************************************
+				// Jetzt geht es weiter -> ins Zwergendorf
+				ort175();
 			}
 			else
 				textausgabe("Leider hast du nicht die passenden Schlüssel bei dir.");
@@ -3013,37 +3030,96 @@ void ort164(void) {
 	auswahl("Du kannst den Weg zurück in nördlicher Richtung nehmen (1) oder suchen, ob du noch einen weiteren Ausgang finden kannst (2). Vielleicht möchtest du ja auch noch einen Schwatz mit dem kleinen Gnom halten (3)?", 3, ort157, ort210, ort164);
 }
 
+// ============================================
+// Dwellmerdan - das Dorf der Dwellmer (Zwerge)
+// ============================================
 void ort165(void) {
+	// Der Eingang zum Zwergendorf
+	if(wuerfel(6) > 4)
+		textausgabe("Du befindest dich an der großen Eingangsschleuse des Zwergendorfes. Die Schleuse ist so groß, das man in ihr bequem einen Zug mit fünf Waggons parken könnte - und hätte trotzdem noch genügend Platz.");
+	textausgabe("Du kannst den Wächtern in der Schleusensteuerung von Dwellmerdan ein Zeichen geben, ob du das Dorf der Dwellmer betreten möchtest, oder ob du hinaus in die Höhlen der Jagd willst.\nZum Betreten der Dwellmersiedlung mußt du \"Melone\" in den großen Kupfertrichter in der Mitte der Schleuse sagen, um hingegen die Höhlen der Jagd zu betreten heißt das Losungswort \"Fellohne\".");
+	raum = 165;
+	auswahl("Sagst du \"Melone\" (1) oder \"Fellohne\" (2)? in den großen Kupfertrichter?", 2, ort166, ort142);
 }
 
 void ort166(void) {
+	// Der große Platz
+	raum = 166;
+	textausgabe("Du befindest dich auf dem \"Großen Platz\", obwohl die Bezeichnung \"der einzige Platz des Dorfes\" genauso treffend wäre - und verglichen mit der Höhle des Riesenpilzes ist der große Platz und das in die Felsen gehauene Dorf der Dwellmer nun wirklich nicht der Rede wert. Wäre es das erste gewesen, was du nach deiner Rutschpartie in die unterirdische Welt gesehen hättest, wärst du vermutlich vor Ergriffenheit erzittert, aber in den letzten Tagen hast du einfach schon zuviel erlebt, zuviel gesehen und auch zuviele Schmerzen und Verletzungen erlitten. Der Platz ist über und über mit Mustern versehen, er erinnert ein wenig an die Zengärten Japans, wobei hier jedoch weniger das Bild der Leere, als vielmehr die Erzählkunst der Dwellmer in den Vordergrund gerückt wird.");
+	if(wuerfel(6) > 4)
+		textausgabe("Vom Großen Platz aus kannst du all die Zentralorte des Dorfes erreichen, wie etwa das Haus Haus der Feier, wo die Dwellmer es gerne ordentlich krachen lassen, oder der Arena, wo die Zwerge sich schon gegenseitig eines auf die Fünf geben.");
+	auswahl("Möchtest du das Dorf der Dwellmer verlassen und die Höhlen der Jagd betreten (1), ins Haus der Feier (2), ins Haus der Maschinen (3), in das Haus der Helden der Waffen (4), in das Haus der herzhaften Düfte (5), in die Arena des kochenden Blutes (6), in das Haus der Einkehr (7), in das Haus der Ältesten (8), in das Haus der Alchemiker (9) oder in das Haus der Ruhe (10). Du kannst auch einfach nur auf dem Platz herumstehen und die Zeit totschlagen (11).", 11, ort142, ort167, ort168, ort169, ort170, ort171, ort172, ort173, ort174, ort175, ort166);
 }
 
 void ort167(void) {
+	// Das Haus der Feier
 }
 
 void ort168(void) {
+	// Das Haus der Maschinen
 }
 
 void ort169(void) {
+	// Das Haus des Helden der Waffen = Held = Bewahrer
 }
 
 void ort170(void) {
+	// Das Haus der herzhaften Düfte
 }
 
 void ort171(void) {
+	// Die Arena des kochenden Blutes
 }
 
 void ort172(void) {
+	// Das Haus der Einkehr
 }
 
 void ort173(void) {
+	// Das Haus des Ältesten
 }
 
 void ort174(void) {
+	// Das Haus der Alchemiker
 }
 
 void ort175(void) {
+	// Das Haus der Ruhe
+	int n;
+	if(raum == 142) { // Du erwachst nach dem Niederschlag
+		textausgabe("Als du deine Augen aufschlägst, hast du das Gefühl, dein ganzer Kopf wäre in Watte gepackt. Das Bild will sich nicht scharf stellen vor deinen Augen, ja, du hast sogar das Gefühl, als würde das Bild in verschiedene Richtungen fallen, eines für das rechte und eines für das linke Auge. Du versuchst etwas zu murmeln und nickst wieder ein.\nBeim nächsten Mal, als du die Augen öffnest, ist das Bild klarer. Vor dir siehst du eine Gestalt. Offensichtlich ist ihr Kopf nah vor deinem, aber obwohl sie den Mund bewegt, hörst du kein Wort - und auch das Gefühl, den Kopf in Zuckerwatte gebettet zu haben ist noch da. Du beschließt zu antworten, schließt die Augen um etwas Kraft zu sammeln - und bist schon wieder eingeschlafen.\nNachdem du die Augen wieder aufgeschlagen hast, stellst du fest, daß dein Kopf sich nicht mehr wie in Watte gebettet anfühlt. Dafür spürst du jetzt einen scharfen Schmerz, der sich durch deine ganze Wirbelsäule erstreckt, als du auch nur den Versuch machst, den Kopf einen Millimeter weit zu drehen. Offensichtlich liegst du in einem Bett, einem sehr angenehmen Bett. Es fühlt sich bequem an - und trotzdem scheint es deinen Körper zu umschließen, zu fixieren. In deinen Augenwinkeln erkennst du zwei Gestalten, die sich miteinander zu unterhalten scheinen. Du strengst dich an - und kannst Worte verstehen, Worte, deren Klang dir falsch erscheint. Die Rhytmik ist irgendwie atonal - und dennoch kannst du der Unterhaltung folgen.\n\"Siehst du, siehst du! Das Kerlchen hat die Augen offen. Ich wette 5 zu 1, das er in den nächsten 2 Minuten wieder wegdöst!\" ertönt eine keckernde Stimme, während eine etwas tiefere ihr antwortet: \"Die Wette hast du schon jetzt verloren!\"\nEines der beiden Gesichter kommt jetzt näher, füllt einen Großteil deines Gesichtsfeldes aus.\n\"Bist du wach?\" Die Stimme die du hörst ist die tiefere. Das Gesicht ist haarig, nein, behaart. Die Person hat ein irgendwie grobschlächtiges und doch freundliches bärtiges Gesicht.\nDu öffnest deinen Mund, willst antworten, aber dein Mund ist zu trocken - und so entströmt nur ein Krächzen deinen Stimmbändern. Sehr schnell ist jetzt auch die zweite Person bei dir, sie hat eine Ampulle in der Hand, aus der eine Art Glasstrohhalm hervorschaut. Sie zielt mit dem offenen Stück in deinen Mund und spritzt Wasser hinein. Das Schlucken tut weh, trotzdem bist du dankbar, bringt das Nass doch eine angenehme Kühle auf deine Stimmbänder. Das zweite Wesen hat keinen Rauschebart wie das erste, nur einen sanften Bartflaum auf den Wangen.\n\"Trink!\" flüstert dir das Wesen jetzt mit einer angenehmeren, höhren Tonlage zu. Dir gelingt es, den Mund um den Strohhalm zu schließen und daran zu saugen. Das Brennen im Hals wird mit jedem Mal weniger - und ein wohliges Gefühl breitet sich in dir aus. Du beschließt dich zu bedanken und lallst: \"Dampfe!\"\nDann sackt das Bild vor deinen Augen weg.\nDu weißt nicht, wieviel Zeit vergangen ist, als du das nächste Mal aufwachst, aber diesmal fühlst du dich quietschlebendig. Du richtest dich auf uns sitzt im Bett. Das Wesen, augenscheinlich eine Art von Zwerg, wie diejenigen, die du schon in den Minen gesehen hast, hört auf mit ihrer Arbeit an einem Schreibtisch und steht auf, dann kommt es zu dir hinüber.\n\"Du siehst besser aus!\" sagt es zu dir.\n\"Ich fühle mich auch schon viel besser!\" antwortest du mit klarer Stimme.\n\"Das höre ich gerne\" antwortet das Wesen und tritt näher. \"Und jetzt streck doch bitte einmal deine Zunge heraus.\"\nKeine 5 Minuten später hast du eine vollständig medizinische Untersuchung hinter dir, die erste seit Jahren! Und daß das Wesen ein Arzt ist, daran hast du jetzt auch keinen Zweifel mehr, auch wenn der fehlende weiße Kittel und kein Stethoskop um den Hals doch etwas verwirrend wirken.\n\"Würdest du das bitte trinken?\" fragt dich das Wesen und reicht dir eine kleine graue Kristallflasche mit einer bräunlich aussehenden Brühe darin.");
+		if(janeinfrage("Willst du die Kristallflasche annehmen und der Bitte des Arztes nachkommen, sie zu trinken (j/n)?")) {
+			n = wuerfel(6);
+			staerkesteigerung(n, n);
+			n = wuerfel(6);
+			gewandheitssteigerung(n, n);
+			n = wuerfel(6);
+			glueckssteigerung(n, n);
+		}
+		else
+			textausgabe("\"Wie du meinst!\" entgegnet das Wesen, und stellt die kleine Flasche in einen Schrank zurück.");
+		textausgabe("\"Mein Name ist Arianna.\", stellt sich das Wesen vor, \"Ich bin die Heilkundige dieses Dorfs.\"\nHeilkundige? Du hättest schwören können, einen Mann vor dir zu haben. Deine Verwunderung versuchst du zu verbergen, schluckst einmal kurz und nennst ihr deinen Namen. Im Laufe der nächsten halben Stunde erklärt dir Arianna, was passiert ist in der Zeit, während du geschlafen hast - und vor allem, WARUM du geschlafen hast. Und das kam so:\nDie fünf Schlüssel, die du zusammengesucht hast, sind so etwas wie ein Notbehelf, falls die Magie des Tores einmal versagen sollte. Mit Hilfe dieser 5 Schlüssel kann man das Tor manuell öffnen, man muß nur im nächsten Augenblick zur Seite springen, da es auch eine Falle aktiviert, um ungebetene Gäste abzuhalten - und eben jene Falle hast du aktiviert. Dein Metabolismus war glücklicherweise kräftig genug, daß du die Falle überlebt hast, wenn auch zu dem Preis, daß du querschnittgelähmt warst, ein Problem, das für die Heilkundige dieses Ortes jedoch nur eine Lapalie ist. Wie es scheint haben Dwellmer, denn so nennen sich die Zwerge selber, bei ihren Tätigkeiten selber öfter einmal den Hang dazu, ihren Körper unnötig zu überlasten - und die Heilkünste Ariannas zu benötigen.\nJetzt, wo du wach bist, kannst du dich einkleiden, neu einkleiden. Eine andere Dwellmerfrau war scheinbar so nett - und hat dir neue Kleidung geschneidert. Deine alte war etwas mitgenommen, durch die Jahre, aber auch durch die Erlebnisse der letzten Tage. Die neue Kleidung fühlt sich sehr leicht an und paßt wie angegossen, wobei ihr Stoff eine Farbe irgendwo zwischen Perl- und Cremefarben darstellt.\nAls du fertig angekleidet bist, betrachtest du dich im Spiegel. Dein Bart ist etwas gewachsen, und deine Haare sind lang, aber im Nacken zu einem Zopf zusammengeflochten, ganz wie es hier die Mode bei den Herren zu sein scheint.");
+	}
+	if(raum != 175)
+		textausgabe("Du befindest dich im \"Haus der Ruhe\", einer Art Haus der Erholung im Dorf der Dwellmer. Hier geht man hin, wenn das eigene Wohlbefinden angegriffen ist - oder man einfach nur Ruhe vor den Pflichten des Alltags oder den anderen Dwellmern benötigt.");
+	if(raum == 175) {
+		if(wuerfel(6) > 5) {
+			textausgabe("Du suchst einen der Ruheräume auf, wo du dich entkleidest und die Sauna betrittst. Als du lässig an der Wand lehnst, betritt Arianna den Raum, nur ein Handtuch lässig über die Schulter geworfen. Sie begrüßt dich und fragt, ob sie sich dem Saunagang anschließen darf.");
+		       if((arianna >= 40) || janeinfrage("Bist du dazu bereit, den Saunagang mit Arianna gemeinsam zu machen(j/n)?")) {
+				       textausgabe("Du hast nichts dagegen und ihr verbringt die nächste Stunde mit einer lockeren Plauderei und noch mehr Schwitzen. Nach dem Saunagang erhältst du von ihr sogar noch eine Ganzkörpermassage. Du fühlst dich so wohl, wie noch nie in deinem Leben.");
+				       zweisamkeit(1);
+			} else {
+				textausgabe("Du verneinst, da du dich zu erschöpft fühlst. Sie nickt verstehend und verläßt den Saunaraum. Es ist ja nicht so, als wäre dies die einzige Sauna im Haus der Ruhe.");
+				zweisamkeit(-1); 
+			}
+		} else 
+			textausgabe("Du suchst einen der Ruheräume auf, wo du zuerst einen Saunagang machst und dich anschließend auf einem Massagesessel ausruhst. Als du einige Stunden später wieder aufwachst, fühlst du dich vollkommen erfrischt.");
+		spieler.staerke = spieler.staerke_start;
+		spieler.gewandheit = spieler.gewandheit_start;
+		spieler.glueck = spieler.glueck_start;
+	}
+	raum = 175;
+	auswahl("Du kannst hier eine Verschnaufpause einlegen (1) oder das Haus der Ruhe verlassen (2).", 2, ort175, ort166);
 }
 
 void ort176(void) {
@@ -4434,6 +4510,11 @@ int speichern(void) {
 	fprintf(datei, "%d\n", (int) raetsel3);
 	fprintf(datei, "%d\n", (int) raetsel4);
 	fprintf(datei, "%d\n", (int) raetsel5);
+	fprintf(datei, "%d\n", (int) dwellmer);
+	fprintf(datei, "%d\n", arianna);
+	fprintf(datei, "%d\n", elke);
+	fprintf(datei, "%d\n", (int) schluesselarianna);
+	fprintf(datei, "%d\n", verloben);
 	fclose(datei);
 
 	color_set(3, 0);
@@ -4557,6 +4638,16 @@ int laden(void) {
 	raetsel4 = (bool) atoi(eingabe);
 	fgets(eingabe, 100, datei);
 	raetsel5 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	dwellmer = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	arianna = (int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	elke = (int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluesselarianna = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	verloben = (int) atoi(eingabe);
 	fclose(datei);
 
 	color_set(3, 0);
@@ -4585,3 +4676,36 @@ bool raetsel(char *raetseltext, char *antworttext) {
 		return false;
 }
 
+// Funktion: Zweisamkeit
+void zweisamkeit(int wert) {
+	arianna += wert;
+	switch(arianna) {
+		case 20: textausgabe("Euch beiden gefällt es, zusammen etwas zu unternehmen, tatsächlich könnte man sagen, das ihr echte Freunde geworden seid.");
+			 break;
+		case 40: textausgabe("In der letzten Zeit wurde es euch immer bewußter, daß die gemeinsame Zeit für euch beide die beste Zeit des Tages ist. Nach einem ausführlichen Gespräch seid ihr zu dem Ergebnis gekommen, das es nicht verkehrt werde, den Großteil der Zeit ab sofort gemeinsam zu verbringen.");
+			 break;
+		case 60: textausgabe("Arianna sieht dich verstohlen an. Sie gibt dir verschmitzt einen Kuss auf den Mund und läßt einen Schlüssel in deine Hand gleiten. \"Mein Heim soll ab jetzt auch dein Heim sein!\" sagt sie dabei und errötet kräftig unter dem Flaum ihres Backenbarts.");
+			 schluesselarianna = true;
+			 break;
+		case 80: textausgabe("Arianna druckst etwas herum, schließlich aber bringt sie auf den Punkt, was sie sagen möchte: \"Was hältst du davon, wenn wir den Ewigen Bund der Schmiede eingehen?\" Sie sieht jetzt irgendwie schüchtern aus.");
+			 if(janeinfrage("Willst du dich mit Arianna verloben (j/n)?")) {
+				textausgabe("Du mußt nicht einen Augenblick lang nachdenken, sondern grinst frech zurück: \"Na klar!\" und erhältst von ihr einen Knuff der dich zu Boden schickt, dann liegt sie auch schon auf dir und bedeckt dein Gesicht mit Küssen. Und dann wird sie plötzlich wieder ernst: \"Dann wirst du dich mit meinen Eltern treffen müssen - sie müssen dem Bund zustimmen!\"\nIrgendwie war es klar, das nichts im Leben besonders einfach isti");
+				verloben = 1;
+			 } else {
+				 textausgabe("Ganz liebevoll sagst du ihr, daß du das zum jetzigen Zeitpunkt nicht für eine gute Idee hältst - und erhältst dafür ein Schmollgesicht von ihr, wie du es noch nie zuvor gesehen hast.");
+				 arianna = 61;
+			 }
+			 break;
+		case 99: if(verloben < 6)
+				 arianna = 98;
+			 else
+				 textausgabe("Jetzt ist alles perfekt! Ihr beide solltet so bald als möglich in die große Schmiede gehen!");
+			 break;
+		case 100: if((verloben >= 6) && (raum == 96))
+				textausgabe("Jetzt ist der große Tag da, an dem du mit Arianna den Bund eingehen wirst!");
+			  else
+				  arianna = 99;
+			  break;
+		default: break;
+	}
+}
