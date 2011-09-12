@@ -186,7 +186,7 @@ void textausgabe(char *gesamttext, ...) {
 
 // Implementation: Texteingabe
 void texteingabe(char *text, char *eingabe, unsigned int laenge) {
-  printw(text);
+  textausgabe(text);
   attrset(A_BOLD);
   getnstr(eingabe, laenge);
   attrset(A_NORMAL);
@@ -213,7 +213,9 @@ int waehle(char* beschreibung, int maxzahl) {
 
 // Implementation: Weiter
 void weiter(void) {
+    attrset(A_BLINK);
 	printw("--- Bitte ENTER-Taste drücken um fortzufahren ---");
+    attrset(A_NORMAL);
 	getch();
 	clear(); // Bildschirm löschen
 	curs_set(0);

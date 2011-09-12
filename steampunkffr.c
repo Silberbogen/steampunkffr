@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.025
+ *        Version:  0.026
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -60,6 +60,7 @@
  *                spielerischen Teil
  *                Optimierung einiger Routinen
  *                Minimierung eingebundener Quellen
+ *                Veränderung der Laden-/Speichern-Routinen
  *
  * =====================================================================================
  */
@@ -67,10 +68,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-// #include <time.h> // Zufallsgenerator
 #include <string.h>
-#include <ncurses.h> // Farbige Grafische Ausgabe
-// #include <locale.h>
 #include <stdarg.h> // Für die VA-Liste
 #include "toolbox.h"
 
@@ -683,9 +681,8 @@ void intro(void) {
     vordergrundfarbe(blau);
     textausgabe("Sascha\n");
 	vordergrundfarbe(zyan);
-        texteingabe("Welchen Namen möchtest du deinem Abenteurer geben? ", spieler.name, 30);
-        textausgabe(spieler.name);
-        vordergrundfarbe(weiss);
+    texteingabe("Welchen Namen möchtest du deinem Abenteurer geben? ", spieler.name, 30);
+    vordergrundfarbe(weiss);
 	spieler.gewandheit_start = wuerfel(6) + 6;
 	spieler.gewandheit = spieler.gewandheit_start;
 	spieler.staerke_start = wuerfel(6) + wuerfel(6) + 12;
@@ -4343,7 +4340,7 @@ int speichern(void) {
 	datei = fopen(DATEINAME, "w");
 	if(ferror(datei)) {
 		vordergrundfarbe(rot);
-		textausgabe("Fehler!\nDie Datei läßt sich incht speichern. Fahre ohne gespeicherten Spielstand fort.");
+		textausgabe("Fehler!\nDie Datei läßt sich nicht speichern. Fahre ohne gespeicherten Spielstand fort.");
 		vordergrundfarbe(weiss);
 		return 1;
 	}
@@ -4401,12 +4398,12 @@ int speichern(void) {
 	fprintf(datei, "%d\n", elke);
 	fprintf(datei, "%d\n", (int) schluesselarianna);
 	fprintf(datei, "%d\n", verloben);
-	fclose(datei);
-
 	vordergrundfarbe(gruen);
 	textausgabe("Spielstand gespeichert.\n");
 	textausgabe("Raum: %d\n", raum);
 	vordergrundfarbe(weiss);
+    weiter();
+    fclose(datei);
 	return 0;
 }
 
@@ -4557,8 +4554,6 @@ bool raetsel(char *raetseltext, char *antworttext) {
 	textausgabe(raetseltext);
     vordergrundfarbe(gelb);
     texteingabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!", eingabe, 40);
-//    textausgabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!");
-//	getnstr(eingabe, 40);
     vordergrundfarbe(weiss);
 	if(0 == strcmp(antworttext, eingabe))
 		return true;
@@ -4607,18 +4602,16 @@ void zweisamkeit(int wert) {
 int main(void) {
 	bool spielerlebt = true;
 
-        zufall_per_zeit();
-        ncurses_init(quit);
-
-
-	vordergrundfarbe(blau); // Blaue Schrift auf schwarzem Hintergrund
+    zufall_per_zeit();
+    ncurses_init(quit);
+	vordergrundfarbe(blau);
 	textausgabe("--------------------------");
 	textausgabe("Steampunk FFR - Der Anfang");
 	textausgabe("--------------------------");
-	vordergrundfarbe(weiss);
+	vordergrundfarbe(gelb);
 	textausgabe("Ein \"Das-ist-dein-Abenteuer\" Roman\n");
-	vordergrundfarbe(blau);
-	textausgabe("Nach einer Geschichte von Sascha Karl (Kochs) Biermanns\n");
+	vordergrundfarbe(magenta);
+	textausgabe("Nach einer Geschichte von Sascha Biermanns\n");
     vordergrundfarbe(weiss);
 	if(janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?"))
 		laden();
