@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.023
+ *        Version:  0.024
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -56,6 +56,10 @@
  *   - 02.07.2011 Eine Funktion für Versrätsel wurde hinzugefügt
  *   - 03.07.2011 Die Eingangsebene der Hohlwelt ist fertig
  *   - 04.07.2011 Beginn an der Storyline der Dwellmer
+ *   - 12.09.2011 Splittung des Moduls in einen technischen Teil (toolbox.X) und den
+ *                spielerischen Teil
+ *                Optimierung einiger Routinen
+ *                Minimierung eingebundener Quellen
  *
  * =====================================================================================
  */
@@ -63,11 +67,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <time.h> // Zufallsgenerator
+// #include <time.h> // Zufallsgenerator
 #include <string.h>
 #include <ncurses.h> // Farbige Grafische Ausgabe
-#include <locale.h>
+// #include <locale.h>
 #include <stdarg.h> // Für die VA-Liste
+#include "toolbox.h"
 
 #define DATEINAME ".steampunkffrsicherung.txt"
 
@@ -161,12 +166,35 @@ bool beenden = false;
 
 charakter_t mechanicher_geher = { "mechanicher Geher", 14, 13, 12, 12 };
 
+// --------------
+// externe Module
+// --------------
+
+extern void hintergrundfarbe(enum farben); // Funktion: Hintergrundfarbe ändern
+
+extern bool janeinfrage(char *); // Funktion: Ja-Nein-Frage
+
+extern void ncurses_init(void (*)()); // Initialisierung der ncurses-Umgebung
+
+extern char taste(void); // Funktion: Taste
+
+extern void textausgabe(char *); // Funktion: Textausgabe
+
+extern void texteingabe(char *, char *, unsigned int); // Funktion: Texteingabe
+
+extern void vordergrundfarbe(enum farben); // Funktion: Vordergrundfarbe ändern
+
+extern int waehle(char*, int); // Funktion: waehle
+
+extern void weiter(void); // Funktion: Weiter
+
+extern int wuerfel(unsigned int); // Funktion: Wuerfel
+
+extern void zufall_per_zeit(void); // Initialisierung der Zufallszahlen
+
 // -------------------
 // Funktionsprototypen
 // -------------------
-
-// Funktion: Wuerfel
-int wuerfel(unsigned int);
 
 // Funktion: Teste dein Glück
 bool tdg(charakter_t *);
@@ -180,15 +208,6 @@ bool kampf(charakter_t *, charakter_t *, int, bool, void (*)());
 // Funktion: Momentane Werte
 void momentane_werte(charakter_t *);
 
-// Funktion: Taste
-char taste(void);
-
-// Funktion: Textausgabe
-void textausgabe(char *);
-
-// Funktion: Weiter
-void weiter(void);
-
 // Funktion: Auswahl
 void auswahl(char *, int, ...);
 
@@ -197,9 +216,6 @@ void versuchedeinglueck(void (*)(), void (*)());
 
 // Funktion: VersucheDeineGewandheit
 void versuchedeinegewandheit(void (*)(), void (*)());
-
-// Funktion: waehle
-int waehle(char*, int);
 
 // Funktion: Flucht
 void flucht(void (*funktion1)());
@@ -219,9 +235,6 @@ void glueckstrank_trinken();
 // Funktion: Objkekt ablegen
 void objekt_ablegen();
 
-// Funktion: Ja-Nein-Frage
-bool janeinfrage(char *);
-
 // Funktion: gewandheitssteigerung
 void gewandheitssteigerung(int, int);
 
@@ -238,7 +251,7 @@ int speichern(void);
 int laden(void);
 
 // Funktion: quit
-void quit(void);
+void quit();
 
 // Funktion: Rätsel
 bool raetsel(char *raetseltext, char *antworttext);
@@ -663,21 +676,28 @@ void (*raumptr[401]) (void) = {vorwort, ort1, ort2, ort3, ort4, ort5, ort6, ort7
 void intro(void) {
 	int eingabe = 0;
 
-	color_set(0, 0);
-	textausgabe("Hinweis\nIn diesem Roman wird niemand anderes als du selbst die Person sein, die das Abenteuer durchlebt. Von daher würde ich sagen, würdest du dir selber beim Erleben der Spielatmosspähre helfen, wenn du die Spielfigur nach dir benennst, oder ihr einen Namen gibst, der dir gefällt oder den du gerne tragen würdest.\nViel Spaß beim Lesen und Spielen!\nSascha");
-	color_set(1, 0);
-	printw("Welchen Namen möchtest du deinem Abenteurer geben? ");
-	getnstr(spieler.name, 30);
-	color_set(0, 0);
+    vordergrundfarbe(gelb);
+    textausgabe("Hinweis!");
+	vordergrundfarbe(gruen);
+	textausgabe("In diesem Roman wird niemand anderes als du selbst die Person sein, die das Abenteuer durchlebt. Von daher würde ich sagen, würdest du dir selber beim Erleben der Spielatmosspähre helfen, wenn du die Spielfigur nach dir benennst, oder ihr einen Namen gibst, der dir gefällt oder den du gerne tragen würdest.\nViel Spaß beim Lesen und Spielen!\n");
+    vordergrundfarbe(blau);
+    textausgabe("Sascha\n");
+	vordergrundfarbe(zyan);
+        texteingabe("Welchen Namen möchtest du deinem Abenteurer geben? ", spieler.name, 30);
+        textausgabe(spieler.name);
+        vordergrundfarbe(weiss);
 	spieler.gewandheit_start = wuerfel(6) + 6;
 	spieler.gewandheit = spieler.gewandheit_start;
 	spieler.staerke_start = wuerfel(6) + wuerfel(6) + 12;
 	spieler.staerke = spieler.staerke_start;
 	spieler.glueck_start = wuerfel(6) + 6;
 	spieler.glueck = spieler.glueck_start;
-	textausgabe("Zu Beginn dieses Abenteuer wirst du nur ein absolutes Minimum an Objekten bei dir führen, als da wären ein Rucksack, ein Multifunktionstaschenmesser, eine Pumptaschenlampe und etwas Proviant. Außerdem ein Engergydrink, den du dir selber auswählen kannst. Welchen der Energydrinks wählst du?\n(1) den Gewandheitstrank - er stellt die anfängliche Gewandheitspunktzahl wieder her\n(2) den Stärketrank - er stellt die anfängliche Stärkepunktzahl wieder her\n(3) den Glückstrank - er stellt die anfängliche Glückspunktzahl wieder her und verbesser sie zusätzlich um einen Punkt");
+    vordergrundfarbe(gruen);
+	textausgabe("\nZu Beginn dieses Abenteuer wirst du nur ein absolutes Minimum an Objekten bei dir führen, als da wären ein Rucksack, ein Multifunktionstaschenmesser, eine Pumptaschenlampe und etwas Proviant. Außerdem ein Engergydrink, den du dir selber auswählen kannst. Welchen der Energydrinks wählst du?\n(1) den Gewandheitstrank - er stellt die anfängliche Gewandheitspunktzahl wieder her\n(2) den Stärketrank - er stellt die anfängliche Stärkepunktzahl wieder her\n(3) den Glückstrank - er stellt die anfängliche Glückspunktzahl wieder her und verbesser sie zusätzlich um einen Punkt");
 	while((eingabe < 1) || (eingabe > 3)) {
+        vordergrundfarbe(zyan);
 		eingabe = waehle("Für welchen Energydrink entscheidest du dich? ", 3);
+        vordergrundfarbe(weiss);
 		switch(eingabe) {
 			case 1: objekt[gewandheitstrank] += 2;
 					break;
@@ -685,14 +705,16 @@ void intro(void) {
 					break;
 			case 3: objekt[glueckstrank] += 2;
 					break;
-			default: color_set(4, 0);
-					 printw("Unerklärbarer Fehler! In der Energydrink-Auswahl,  in Funktion intro().");
-					 color_set(0, 0);
+			default: vordergrundfarbe(rot);
+					 textausgabe("Unerklärbarer Fehler!\nIn der Energydrink-Auswahl,  in Funktion intro().");
+					 vordergrundfarbe(weiss);
 					 break;
 		}
 	}
-
-	
+    vordergrundfarbe(gruen);
+    textausgabe("\nSo möge es denn sein! Du hast deine Wahl getroffen. Viel Spaß!\n");
+    vordergrundfarbe(weiss);
+    weiter();
 }
 
 void vorwort(void) {
@@ -1964,7 +1986,7 @@ void ort81(void) {
 	char *antworttext = "Bett";
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Smaragd heraus geschnitten. An einer Wand ist ein Symbol sichtbar.");
 	weiter();
-	color_set(4,0); // Rot darstellen
+    vordergrundfarbe(rot);
 	textausgabe("*###*");
 	textausgabe("    #");
 	textausgabe("    #");
@@ -1972,8 +1994,8 @@ void ort81(void) {
 	textausgabe("#");
 	textausgabe("#");
 	textausgabe("*##n_");
-	color_set(0,0); // zurück auf Weiß
-	if(!raetsel1) {
+	vordergrundfarbe(weiss);
+    if(!raetsel1) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
 			if(raetsel(raetseltext, antworttext)) {
@@ -2041,7 +2063,7 @@ void ort83(void) {
 	char *antworttext = "Bauch";
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Rubin heraus geschnitten. An der Wand befindet sich ein Symbol.");
 	weiter();
-	color_set(2,0); // Dunkelblau darstellen
+	vordergrundfarbe(blau);
 	textausgabe("*####_");
 	textausgabe(" #");
 	textausgabe("#");
@@ -2049,7 +2071,7 @@ void ort83(void) {
 	textausgabe(" #");
 	textausgabe(" #");
 	textausgabe("  V");
-	color_set(0,0); // zurück auf Weiß
+    vordergrundfarbe(weiss);
 	if(!raetsel3) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
@@ -2069,7 +2091,7 @@ void ort84(void) {
 	char *antworttext = "Zeit";
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Lapislazuli heraus geschnitten. An der Wand siehst du ein Symbol.");
 	weiter();
-	color_set(3,0); // Grün darstellen
+	vordergrundfarbe(gruen);
 	textausgabe("*###*");
 	textausgabe(" # #");
 	textausgabe("#   #");
@@ -2077,7 +2099,7 @@ void ort84(void) {
 	textausgabe("#   #");
 	textausgabe(" # #");
 	textausgabe(" \\ /");
-	color_set(0,0); // zurück auf Weiß
+    vordergrundfarbe(weiss);
 	if(!raetsel4) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
@@ -2097,7 +2119,7 @@ void ort85(void) {
 	char *antworttext = "Brezel";
 	textausgabe("Du stehst in einem Raum, der aus eine einzigen, riesigen Tigerauge geschnitzt zu sein scheint. Du siehst ein Symbol an der Wand.");
 	weiter();
-	color_set(4,0); // Rot darstellen
+	vordergrundfarbe(magenta);
 	textausgabe("*##*");
 	textausgabe(" ##");
 	textausgabe(" ##");
@@ -2106,8 +2128,8 @@ void ort85(void) {
 	textausgabe("  # V");
 	textausgabe("  /");
 	textausgabe(" /");
-	color_set(0,0); // zurück auf Weiß
-	if(!raetsel5) {
+	vordergrundfarbe(weiss);
+    if(!raetsel5) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
 			if(raetsel(raetseltext, antworttext)) {
@@ -2126,7 +2148,7 @@ void ort86(void) {
 	raum = 86;
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Türkis heraus geschnitten.");
 	weiter();
-	color_set(2,0); // Dunkelblau darstellen
+	vordergrundfarbe(zyan);
 	textausgabe("  #");
 	textausgabe("   #");
 	textausgabe("##  #");
@@ -2135,8 +2157,8 @@ void ort86(void) {
 	textausgabe("  #");
 	textausgabe("  #");
 	textausgabe(" \\/");
-	color_set(0,0); // zurück auf Weiß
-	if(!raetsel2) {
+	vordergrundfarbe(weiss);
+    if(!raetsel2) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
 			if(raetsel(raetseltext, antworttext)) {
@@ -3012,8 +3034,11 @@ void ort164(void) {
 	if(!schluessel9 && janeinfrage("Das kleine Männlein sagt: \"Ein Rätsel habe ich für dich, löst du es, dann lohnt es sich! Möchtest du, daß ich dir mein Rätsel stelle (j/n)?\"")) {
 		textausgabe("Der kleine Gnom lächelt dich gutmütig an.\n\"Ich habe mir eine Zahl zwischen 1 und 1000 ausgedacht. Du hast 9 Versuche, die Zahl zu erraten.\"");
 		for(int i=1; i <= 9; ++i) {
-			textausgabe("\"Was denkst du, wie lautet meine Zahl?\"");
-			getnstr(eingabe, 20);
+            vordergrundfarbe(gelb);
+			texteingabe("\"Was denkst du, wie lautet meine Zahl?\"", eingabe, 20);
+            vordergrundfarbe(weiss);
+//            textausgabe("\"Was denkst du, wie lautet meine Zahl?\"");
+//			getnstr(eingabe, 20);
 			geraten = atoi(eingabe);
 			if(zufallszahl == geraten) {
 				schluessel9 = true;
@@ -3963,56 +3988,6 @@ void ort399(void) {
 void ort400(void) {
 }
 
-// ----------------
-// Die Hauptroutine
-// ----------------
-int main(void) {
-	time_t jetzt;
-	bool spielerlebt = true;
-
-	// Zufallszahlen initialisieren
-	jetzt = time((time_t *) NULL);
-	srand((unsigned) jetzt);
-
-	// Umgebungsvariable setzen
-	setlocale(LC_ALL, "");
-
-	initscr(); // beginne ncurses
-	atexit(quit);
-	keypad(stdscr, true); // Keymapping aktivieren
-	cbreak(); // kein Warten bei der Eingabe auf ENTER
-	echo(); // Cursort-Echo
-	scrollok(stdscr, true); // Automatisches Scrollen aktivieren
-	start_color(); // Beginne mit Farben
-	init_pair(1, COLOR_CYAN, COLOR_BLACK);
-	init_pair(2, COLOR_BLUE, COLOR_BLACK);
-	init_pair(3, COLOR_GREEN, COLOR_BLACK);
-	init_pair(4, COLOR_RED, COLOR_BLACK);
-	clear(); // Bildschirm löschen
-	curs_set(0);
-	// atexit(quit); // Routine, die bei der Beendung ausgeführt wird
-
-	color_set(2, 0); // Blaue Schrift auf schwarzem Hintergrund
-	textausgabe("--------------------------");
-	textausgabe("Steampunk FFR - Der Anfang");
-	textausgabe("--------------------------");
-	color_set(0, 0);
-	textausgabe("Ein \"Das-ist-dein-Abenteuer\" Roman\n");
-	color_set(2, 0);
-	textausgabe("Nach einer Geschichte von Sascha Karl (Kochs) Biermanns\n");
-	color_set(0, 0);
-	if(janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?"))
-		laden();
-	intro();
-	vorwort();
-	ort1();
-}
-
-// Implementation x-seitiger Würfel
-int wuerfel(unsigned int maximalzahl) {
-	// aus z.B. 0..5 wird 1..6
-	return (rand() % (maximalzahl - 1)) + 1;
-}
 
 // Implementation Teste dein Glück
 bool tdg(charakter_t *figur) {
@@ -4136,83 +4111,9 @@ void momentane_werte(charakter_t *person) {
 	printw("     Glück: %2d / %2d\n", person->glueck, person->glueck_start);
 }
 
-// Implementation: Taste
-char taste(void) {
-	int puffergroesse;
-	char zeichen;
 
-	noecho();
-	zeichen = getch();
-	echo();
-	return(zeichen);
-}
 
-// Implementation: Textausgabe
-void textausgabe(char *gesamttext) {
-	int zeilenlaenge = COLS; // COLS ist eine ncurses Variable
-	int maxzeilen = LINES; // LINES ist eine ncurses Variable
 
-	char *resttext = gesamttext;
-	char textzeile[zeilenlaenge];
-	int i; // Schleifenzähler
-	int j; // Schleifenzähler
-	int zeile = 0;
-	bool erstausgabe = true;
-	int x, y;
-
-	for(i = 0; i < zeilenlaenge; i++)
-		textzeile[i] = '\0'; // Sicherheitslöschung, sonst gibt es Fehler bei der Leerzeilenausgabe
-	while(strlen(resttext) > (zeilenlaenge - 1)) {
-		for(i = (zeilenlaenge - 1); (*(resttext+i) != ' ') && (i > 0); i--);
-		if(!i)
-			i = (zeilenlaenge - 1); // Das Wort ist so länger als die verdammte Zeile
-		for(j = 0; (*(resttext+j) != '\n') && (j < i); j++);
-		if(j < i)
-			i = j; // Auf das Zeilenendezeichen verkürzen
-		strncpy(textzeile, resttext, i); // Den Textteil kopieren
-		resttext += i+1;
-		while(*resttext == ' ')
-			resttext++;
-		// Prüfen, ob wir in der vorletzten Zeile angekommen sind
-	  	getyx(stdscr, y, x); // Cursorposition feststellen
-		if((erstausgabe == true) && (y >= (maxzeilen - 1))) {
-			weiter();
-			zeile = 0;
-			erstausgabe = false;
-		}
-		if(zeile == (maxzeilen - 1)) {
-				weiter();
-				zeile = 0;
-		}
-		printw("%s\n", textzeile);
-		for(i = 0; i < zeilenlaenge; i++)
-			textzeile[i] = '\0'; // Sicherheitslöschung, sonst gibt es Fehler bei der Leerzeilenausgabe
-		zeile += 1;
-	}
-	// Text ist kürzer als eine Zeile.
-	// Prüfen, ob wir in der vorletzten Zeile angekommen sind
-/*  getyx(stdscr, y, x); // Cursorposition feststellen
-	if((erstausgabe == true) && (y >= (maxzeilen - 2))) {
-		weiter();
-		zeile = 0;
-		erstausgabe = false;
-	}
-*/
-	if(zeile == (maxzeilen - 1)) {
-			weiter();
-			zeile = 0;
-	}
-	printw("%s\n", resttext);
-	refresh();
-}
-
-// Implementation: Weiter
-void weiter(void) {
-	printw("--- Bitte ENTER-Taste drücken um fortzufahren ---");
-	getch();
-	clear(); // Bildschirm löschen
-	curs_set(0);
-}
 
 // Implementation: Auswahl
 void auswahl(char *beschreibung, int maxzahl, ...) {
@@ -4230,7 +4131,7 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
 
 	// Die Zusatzfunktionen
 	while((ergebnis < 1) || (ergebnis > maxzahl)) {
-		color_set(1, 0);
+		vordergrundfarbe(zyan);
 		strcpy(zusatzbeschreibung, " ");
 		if(objekt[gewandheitstrank] > 0)
 			strcat(zusatzbeschreibung, "(44) Gewandheitstrank trinken ");
@@ -4240,10 +4141,13 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
 			strcat(zusatzbeschreibung, "(66) Glückstrank trinken ");
 		strcat(zusatzbeschreibung, "(77) Spielstand laden (88) Spielstand speichern (99) Speichern & beenden");
 		textausgabe(beschreibung);
-		textausgabe(zusatzbeschreibung);
-		getnstr(eingabe, 20);
+        textausgabe(zusatzbeschreibung);
+        vordergrundfarbe(gelb);
+		texteingabe("Du wählst: ", eingabe, 20);
+//        textausgabe(zusatzbeschreibung);
+//		getnstr(eingabe, 20);
 		ergebnis = atoi(eingabe);
-		color_set(0, 0);
+		vordergrundfarbe(weiss);
 		switch(ergebnis) {
 			case 44: gewandheitstrank_trinken();
 					break;
@@ -4256,9 +4160,10 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
 			case 88: speichern();
 					 break;
 			case 99: speichern();
-					 color_set(2, 0);
-					 printw("Bis bald!\n");
-					 color_set(0, 0);
+					 vordergrundfarbe(gruen);
+					 textausgabe("Bis bald!\n");
+					 vordergrundfarbe(weiss);
+                     weiter();
 					 refresh();
 					 exit(EXIT_SUCCESS);
 			default: break;
@@ -4269,11 +4174,11 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
 
 // Funktion: VersucheDeinGlueck
 void versuchedeinglueck(void (*funktion1)(), void (*funktion2)()) {
-	color_set(1, 0);
+	vordergrundfarbe(gruen);
 	textausgabe("--- Versuche dein Glück! - Drücke ENTER ---");
 //	getchar();
 	getch();
-	color_set(0, 0);
+	vordergrundfarbe(weiss);
 	if(tdg(&spieler)) // Glück gehabt
 		funktion1();
 	else 			// Pech gehabt
@@ -4284,36 +4189,25 @@ void versuchedeinglueck(void (*funktion1)(), void (*funktion2)()) {
 void versuchedeinegewandheit(void (*funktion1)(), void (*funktion2)()) {
 	bool gewandheit;
 
-	color_set(1, 0);
+	vordergrundfarbe(gruen);
 	textausgabe("--- Versuche deine Gewandheit! - Drücke ENTER ---");
 	getch();
-	color_set(0, 0);
+	vordergrundfarbe(gelb);
 	gewandheit = wuerfel(6) + wuerfel(6);
 	printw("Deine momentane Gewandheit ist %d, dein Würfelergebnis ist %d\n", spieler.gewandheit, gewandheit);
-	if(gewandheit <= spieler.gewandheit) // Glück gehabt
+	vordergrundfarbe(weiss);
+    if(gewandheit <= spieler.gewandheit) // Glück gehabt
 		funktion1();
 	else 			// Pech gehabt
 		funktion2();
 }
 
-// Implementation: waehle
-int waehle(char* beschreibung, int maxzahl) {
-	int ergebnis;
-	char eingabe[20];
-
-	color_set(1, 0);
-	while((ergebnis < 1) || (ergebnis > maxzahl)) {
-		textausgabe(beschreibung);
-		getnstr(eingabe, 20);
-		ergebnis = atoi(eingabe);
-	}
-	color_set(0, 0);
-	return ergebnis;
-}
 
 // Funktion: Flucht
 void flucht(void (*funktion1)()) {
+    vordergrundfarbe(rot);
 	textausgabe("Du entschließt dich zu fliehen, was dich 2 Stärkepunkte kosten wird.");
+    vordergrundfarbe(weiss);
 	if(spieler.glueck > 0) { // Ist ein Glückstest möglich?
 		textausgabe("Du könntest natürlich auch dein Glück auf die Probe stellen. Hast du Glück, ist es eine geordnete Flucht - und du verlierst nur 1 Stärkepunkt. Wenn du jedoch kein Glück hast, wird es zu einer heilosen Flucht und du verlierst 3 Stärkepunkte.");
 		if(janeinfrage("Möchtest du dein Glück testen (j/n)? ")) {
@@ -4330,16 +4224,16 @@ void flucht(void (*funktion1)()) {
 	}
 	if(spieler.staerke) {
 		funktion1();
-		color_set(4, 0);
-		printw("Fehler! Eine Ortsvariable ist wohl noch leer.");
+		vordergrundfarbe(rot);
+		textausgabe("Fehler!\nEine Ortsvariable ist wohl noch leer.");
 		exit(EXIT_FAILURE);
 	}
 	else {
 		textausgabe("Du bist zu geschwächt, um auch nur einen einzigen weiteren Atemzug zu machen. Unter Schmerzen entweicht dir Atemluft aus deinen Lungen. Die Umgebung wird erst Rot vor deinen Augen und gleitet schließlich ins Schwarze ab. Das ist dein ENDE.");
 		exit(EXIT_SUCCESS);
 	}
-	color_set(4, 0);
-	printw("Fehler! Ich bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
+	vordergrundfarbe(rot);
+	printw("Fehler!\nIch bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
 	exit(EXIT_FAILURE);
 }
 
@@ -4396,33 +4290,25 @@ void objekt_ablegen(void) {
 		if(!(j % 3))
 			printw("\n");
 	}
+	vordergrundfarbe(gruen);
 	while((ergebnis < 0) || (ergebnis >= maximalobjekt)) {
-		textausgabe("Bitte gib die Nummer des abzulegenden Objektes an! ");
-		getnstr(eingabe, 20);
+//        textausgabe("Bitte gib die Nummer des abzulegenden Objektes an! ");
+        texteingabe("Bitte gibt die Nummer des abzulegenden Objektes an: ", eingabe, 20);
+//        getnstr(eingabe, 20);
 		ergebnis = atoi(eingabe);
 	}
-	color_set(1, 0);
+	vordergrundfarbe(gelb);
 	printw("%s wirklich ablegen? ", objektname[ergebnis]);
 	bestaetigung = taste();
-	color_set(0, 0);
+	vordergrundfarbe(weiss);
 	if((bestaetigung == 'j') || (bestaetigung == 'J')) {
-	objekt[ergebnis] -= 1;
+	    objekt[ergebnis] -= 1;
+        vordergrundfarbe(gelb);
 		printw("\n%s abgelegt.\n", objektname[ergebnis]);
+        vordergrundfarbe(weiss);
 	}
 }
 
-// Implementation: Ja-Nein-Frage
-bool janeinfrage(char *frage) {
-	char eingabe;
-	color_set(1, 0);
-	textausgabe(frage);
-	eingabe = taste();
-	color_set(0, 0);
-	if((eingabe == 'j') || (eingabe == 'J'))
-		return true;
-	else
-		return false;
-}
 
 // Implementation: gewandheitssteigerung
 void gewandheitssteigerung(int temporaer, int permanent) {
@@ -4456,9 +4342,9 @@ int speichern(void) {
 	FILE *datei;
 	datei = fopen(DATEINAME, "w");
 	if(ferror(datei)) {
-		color_set(4, 0);
-		printw("Die Datei läßt sich incht speichern. Fahre ohne gespeicherten Spielstand fort.");
-		color_set(0, 0);
+		vordergrundfarbe(rot);
+		textausgabe("Fehler!\nDie Datei läßt sich incht speichern. Fahre ohne gespeicherten Spielstand fort.");
+		vordergrundfarbe(weiss);
 		return 1;
 	}
 
@@ -4517,10 +4403,10 @@ int speichern(void) {
 	fprintf(datei, "%d\n", verloben);
 	fclose(datei);
 
-	color_set(3, 0);
-	printw("Spielstand gespeichert.\n");
-	printw("Raum: %d\n", raum);
-	color_set(0, 0);
+	vordergrundfarbe(gruen);
+	textausgabe("Spielstand gespeichert.\n");
+	// printw("Raum: %d\n", raum);
+	vordergrundfarbe(weiss);
 	return 0;
 }
 
@@ -4534,9 +4420,9 @@ int laden(void) {
 	FILE *datei;
 	datei = fopen(DATEINAME, "r");
 	if(ferror(datei)) {
-		color_set(4, 0);
-		printw("Die Datei ließ sich nicht öffnen. Fahre ohne geladenen Spielstand fort.");
-		color_set(0, 0);
+		vordergrundfarbe(rot);
+		textausgabe("Fehler!\nDie Datei ließ sich nicht öffnen. Fahre ohne geladenen Spielstand fort.");
+		vordergrundfarbe(weiss);
 		return 1;
 	}
 	fgets(eingabe, 100, datei);
@@ -4650,26 +4536,30 @@ int laden(void) {
 	verloben = (int) atoi(eingabe);
 	fclose(datei);
 
-	color_set(3, 0);
-	printw("Spielstand geladen.\n");
+	vordergrundfarbe(gruen);
+	textausgabe("Spielstand geladen.\n");
 	momentane_werte(&spieler);
-	printw("Raum: %d\n", raum);
-	color_set(0, 0);
+	// printw("Raum: %d\n", raum);
+	vordergrundfarbe(weiss);
 	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 	return 0;
 }
 
 // Funktion: quit
-void quit(void) {
+void quit() {
 	endwin();
 }
 
 // Funktion: Rätsel
 bool raetsel(char *raetseltext, char *antworttext) {
 	char eingabe[41];
+    vordergrundfarbe(magenta);
 	textausgabe(raetseltext);
-	textausgabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!");
-	getnstr(eingabe, 40);
+    vordergrundfarbe(gelb);
+    texteingabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!", eingabe, 40);
+//    textausgabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!");
+//	getnstr(eingabe, 40);
+    vordergrundfarbe(weiss);
 	if(0 == strcmp(antworttext, eingabe))
 		return true;
 	else
@@ -4708,4 +4598,31 @@ void zweisamkeit(int wert) {
 			  break;
 		default: break;
 	}
+}
+
+
+// ----------------
+// Die Hauptroutine
+// ----------------
+int main(void) {
+	bool spielerlebt = true;
+
+        zufall_per_zeit();
+        ncurses_init(quit);
+
+
+	vordergrundfarbe(blau); // Blaue Schrift auf schwarzem Hintergrund
+	textausgabe("--------------------------");
+	textausgabe("Steampunk FFR - Der Anfang");
+	textausgabe("--------------------------");
+	vordergrundfarbe(weiss);
+	textausgabe("Ein \"Das-ist-dein-Abenteuer\" Roman\n");
+	vordergrundfarbe(blau);
+	textausgabe("Nach einer Geschichte von Sascha Karl (Kochs) Biermanns\n");
+	vordergrundfarbe(weiss);
+	if(janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?"))
+		laden();
+	intro();
+	vorwort();
+	ort1();
 }
