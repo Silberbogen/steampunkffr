@@ -76,7 +76,7 @@ void ncurses_init(void (*)()); // Initialisierung der ncurses-Umgebung
 
 char taste(void); // Funktion: Taste
 
-void textausgabe(char *); // Funktion: Textausgabe
+void textausgabe(char *, ...); // Funktion: Textausgabe
 
 void texteingabe(char *, char *, unsigned int); // Funktion: Texteingabe
 

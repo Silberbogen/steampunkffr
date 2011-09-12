@@ -178,7 +178,7 @@ extern void ncurses_init(void (*)()); // Initialisierung der ncurses-Umgebung
 
 extern char taste(void); // Funktion: Taste
 
-extern void textausgabe(char *); // Funktion: Textausgabe
+extern void textausgabe(char *, ...); // Funktion: Textausgabe
 
 extern void texteingabe(char *, char *, unsigned int); // Funktion: Texteingabe
 
@@ -4105,10 +4105,10 @@ bool kampf(charakter_t *spieler, charakter_t *gegner, int anzahl, bool trefferve
 
 // Implementation: Momentane Werte
 void momentane_werte(charakter_t *person) {
-	printw("\n      Name: %s\n", person->name);
-	printw("Gewandheit: %2d / %2d\n", person->gewandheit, person->gewandheit_start);
-	printw("    Stärke: %2d / %2d\n", person->staerke, person->staerke_start);
-	printw("     Glück: %2d / %2d\n", person->glueck, person->glueck_start);
+	textausgabe("\n      Name: %s\n", person->name);
+	textausgabe("Gewandheit: %2d / %2d\n", person->gewandheit, person->gewandheit_start);
+	textausgabe("    Stärke: %2d / %2d\n", person->staerke, person->staerke_start);
+	textausgabe("     Glück: %2d / %2d\n", person->glueck, person->glueck_start);
 }
 
 
@@ -4194,7 +4194,7 @@ void versuchedeinegewandheit(void (*funktion1)(), void (*funktion2)()) {
 	getch();
 	vordergrundfarbe(gelb);
 	gewandheit = wuerfel(6) + wuerfel(6);
-	printw("Deine momentane Gewandheit ist %d, dein Würfelergebnis ist %d\n", spieler.gewandheit, gewandheit);
+	textausgabe("Deine momentane Gewandheit ist %d, dein Würfelergebnis ist %d\n", spieler.gewandheit, gewandheit);
 	vordergrundfarbe(weiss);
     if(gewandheit <= spieler.gewandheit) // Glück gehabt
 		funktion1();
@@ -4233,7 +4233,7 @@ void flucht(void (*funktion1)()) {
 		exit(EXIT_SUCCESS);
 	}
 	vordergrundfarbe(rot);
-	printw("Fehler!\nIch bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
+	textausgabe("Fehler!\nIch bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
 	exit(EXIT_FAILURE);
 }
 
@@ -4285,10 +4285,10 @@ void objekt_ablegen(void) {
 	int j=0;
 
 	for(int i=0; (i < maximalobjekt) && (objekt[i] > 0); i++) {
-		printw("(%d) %s ", objekt[i], objektname[i]);
+		textausgabe("(%d) %s ", objekt[i], objektname[i]);
 		j++;
 		if(!(j % 3))
-			printw("\n");
+			textausgabe("\n");
 	}
 	vordergrundfarbe(gruen);
 	while((ergebnis < 0) || (ergebnis >= maximalobjekt)) {
@@ -4298,13 +4298,13 @@ void objekt_ablegen(void) {
 		ergebnis = atoi(eingabe);
 	}
 	vordergrundfarbe(gelb);
-	printw("%s wirklich ablegen? ", objektname[ergebnis]);
+	textausgabe("%s wirklich ablegen? ", objektname[ergebnis]);
 	bestaetigung = taste();
 	vordergrundfarbe(weiss);
 	if((bestaetigung == 'j') || (bestaetigung == 'J')) {
 	    objekt[ergebnis] -= 1;
         vordergrundfarbe(gelb);
-		printw("\n%s abgelegt.\n", objektname[ergebnis]);
+		textausgabe("\n%s abgelegt.\n", objektname[ergebnis]);
         vordergrundfarbe(weiss);
 	}
 }
@@ -4405,7 +4405,7 @@ int speichern(void) {
 
 	vordergrundfarbe(gruen);
 	textausgabe("Spielstand gespeichert.\n");
-	// printw("Raum: %d\n", raum);
+	textausgabe("Raum: %d\n", raum);
 	vordergrundfarbe(weiss);
 	return 0;
 }
@@ -4539,7 +4539,7 @@ int laden(void) {
 	vordergrundfarbe(gruen);
 	textausgabe("Spielstand geladen.\n");
 	momentane_werte(&spieler);
-	// printw("Raum: %d\n", raum);
+	textausgabe("Raum: %d\n", raum);
 	vordergrundfarbe(weiss);
 	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 	return 0;
@@ -4619,7 +4619,7 @@ int main(void) {
 	textausgabe("Ein \"Das-ist-dein-Abenteuer\" Roman\n");
 	vordergrundfarbe(blau);
 	textausgabe("Nach einer Geschichte von Sascha Karl (Kochs) Biermanns\n");
-	vordergrundfarbe(weiss);
+    vordergrundfarbe(weiss);
 	if(janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?"))
 		laden();
 	intro();

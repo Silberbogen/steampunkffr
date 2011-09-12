@@ -7,7 +7,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.002
+ *        Version:  0.003
  *    letzte Beta:  0.000
  *        Created:  12.09.2011 11:52:00
  *          Ended:  00.00.0000 00:00:00
@@ -40,6 +40,7 @@
  *   Letze Änderungen:
  *   - 12.09.2011 Beginn an der Arbeit des Moduls
  *                System zum einfachen Ändern der Farben eingeführt
+ *                textausgabe mit variabler Parameterliste ausgestattet
  *
  * =====================================================================================
  */
@@ -51,7 +52,7 @@
 #include <string.h>
 #include <ncurses.h> // Farbige Grafische Ausgabe
 #include <locale.h>
-// #include <stdarg.h> // Für die VA-Liste
+#include <stdarg.h> // Für die VA-Liste
 #include "toolbox.h" // Die Modul-Beschreibung
 
 static int vfarbe = weiss; // Vordergrundfarbe
@@ -110,17 +111,36 @@ char taste(void) {
 
 
 // Implementation: Textausgabe
-void textausgabe(char *gesamttext) {
+void textausgabe(char *gesamttext, ...) {
 	int zeilenlaenge = COLS; // COLS ist eine ncurses Variable
 	int maxzeilen = LINES; // LINES ist eine ncurses Variable
 
-	char *resttext = gesamttext;
-	char textzeile[zeilenlaenge];
+	char textzeile[zeilenlaenge]; // Ausgabezeile
 	int i; // Schleifenzähler
 	int j; // Schleifenzähler
 	int zeile = 0;
 	bool erstausgabe = true;
-	int x, y;
+	int x, y; // Speichern die Bildschirmkoordinaten (für getyx)
+
+    // Reservierung für den maximalen Speicherplatz, den resttext benötigt
+    // -------------------------------------------------------------------
+    char *sicherheitszeiger = (char*) malloc( (sizeof(gesamttext) + 100) * sizeof(char));
+    if(!sicherheitszeiger) {
+        vordergrundfarbe(rot);
+        printw("Fehler!\nsicherheitszeiger in textausgabe() erhielt keinen Speicher!\n");
+        vordergrundfarbe(weiss);
+        exit(EXIT_FAILURE);
+    }
+    char *resttext = sicherheitszeiger;
+    // -------------------------------------------------------------------
+    
+    // Verarbeitung der Parameterliste und Umwandlung der Parameter + Text zu einem String
+    // -----------------------------------------------------------------------------------
+    va_list par; // Parameterliste
+    va_start(par, gesamttext);
+    vsprintf(resttext, gesamttext, par);
+    va_end(par);
+    // -----------------------------------------------------------------------------------
 
 	for(i = 0; i < zeilenlaenge; i++)
 		textzeile[i] = '\0'; // Sicherheitslöschung, sonst gibt es Fehler bei der Leerzeilenausgabe
@@ -159,6 +179,9 @@ void textausgabe(char *gesamttext) {
 	}
 	printw("%s\n", resttext);
 	refresh();
+    // Sicherheitszeiger löschen, sonst gibt es üble Speicherlöcher ;)
+    if(!sicherheitszeiger)
+        free(sicherheitszeiger);
 }
 
 // Implementation: Texteingabe
