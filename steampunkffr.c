@@ -8,13 +8,13 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.024
+ *        Version:  0.025
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
  *       Revision:  none
  *       Compiler:  clang
- *        compile:  clang -o steampunkffr steampunkffr.c -lncurses
+ *        compile:  clang -o steampunkffr toolbox.c steampunkffr.c -lncurses
  *
  *         Author:  Sascha K. Biermanns (saschakb), saschakb@gmail.com
  *        Company:
