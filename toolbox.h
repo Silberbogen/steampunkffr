@@ -7,7 +7,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.002
+ *        Version:  0.004
  *    letzte Beta:  0.000
  *        Created:  12.09.2011 11:52:00
  *          Ended:  00.00.0000 00:00:00
@@ -39,7 +39,9 @@
  *
  *   Letze Änderungen:
  *   - 12.09.2011 Beginn an der Arbeit des Moduls
- *   - 13.09.2011 texteingabe Prototyp korrigiert
+ *   - 13.09.2011 texteingabe() Prototyp korrigiert
+ *                beenden() Prototyp hinzugefügt
+ *                hinweis() Prototyp hinzugefügt
  *
  * =====================================================================================
  */
@@ -69,7 +71,11 @@ enum farben { schwarz = COLOR_BLACK,
               zyan = COLOR_CYAN,
               weiss = COLOR_WHITE };
 
+void beenden(enum farben f, int status, char* text, ...); // Funktion: Farbige Beenden-Funktion
+
 void hintergrundfarbe(enum farben); // Funktion: Hintergrundfarbe ändern
+
+void hinweis(enum farben f, char* text, ...); // Funktion: Hinweis - für Fehlermeldungen oder ähnliches
 
 bool janeinfrage(char *); // Funktion: Ja-Nein-Frage
 

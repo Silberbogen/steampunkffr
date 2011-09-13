@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.027
+ *        Version:  0.029
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -60,8 +60,10 @@
  *                spielerischen Teil
  *                Optimierung einiger Routinen
  *                Minimierung eingebundener Quellen
- *                Veränderung der Laden-/Speichern-Routinen
+ *                Veränderung der laden()-/speichern()-Routinen
  *   - 13.09.2011 texteingabe() separiert von textausgabe() - Prinzip: Vereinfachung 
+ *                beenden() hinzugefügt - Prinzip: Vereinfachung
+ *                hinweis() hinzugefügt - Prinzip: Vereinfachung
  *
  * =====================================================================================
  */
@@ -153,11 +155,13 @@ static unsigned int rotation = 0; // Rotation ist eine Besonderheit. Hierüber w
 
 static int raum = 0;
 
+/*
 // ----------------
 // Beenden Variable
 // ----------------
 
-bool beenden = false;
+bool spielbeenden = false;
+*/
 
 // -----------------------------------------
 // Spezialmonster (immun außer gegen Silber)
@@ -169,7 +173,11 @@ charakter_t mechanicher_geher = { "mechanicher Geher", 14, 13, 12, 12 };
 // externe Module
 // --------------
 
+extern void beenden(enum farben f, int status, char* text, ...); // Funktion: Farbige Beenden-Funktion
+
 extern void hintergrundfarbe(enum farben); // Funktion: Hintergrundfarbe ändern
+
+extern void hinweis(enum farben f, char* text, ...); // Funktion: Hinweis - für Fehlermeldungen oder ähnliches
 
 extern bool janeinfrage(char *); // Funktion: Ja-Nein-Frage
 
@@ -865,10 +873,8 @@ void ort13(void) {
 		default: kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
 				break;
 	}
-	if(!kampfausgang) {
-		textausgabe("Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
-		exit(EXIT_SUCCESS);
-	}
+	if(!kampfausgang)
+        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
 	getoetetemenschen += 1;
 	if(wuerfel(6) >= 4) {
 		if(objekt[pistole] <= 1)
@@ -1159,10 +1165,8 @@ void ort35(void) {
 	if(raum == 46) {
 		textausgabe("Als du langsam den Abteiberg hinaufsteigst, erblickst du am oberen Ende des Berges drei Gestalten in seltsamen Uniformen. Sie tragen eine Art von Helmen, die an Taucherglocken erinnern, mit großen Filtern daran wie von Gasmasken. Und wie es scheint, haben sie dich gesehen. Als Fluchroute hast du jetzt nur noch den hinter dir liegenden Geroweiher.");
 		charakter_t soldat[3] = { { "1. Soldat", 7, 7, 6, 6 }, { "2. Soldat", 6, 6, 4, 4}, { "3. Soldat", 7, 7, 8, 8} };
-		if(!kampf(&spieler, soldat, 1, false, ort46)) {
-			textausgabe("Sich auf drei kampferprobte Soldaten war einerseits sehr mutig von dir, andererseits aber auch sehr dumm. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du durch das Haus rechts von dir hindurch. Dahinter befindet sich ein Hügel, die Mauer, die zum Münstervorplatz führt, und an dieser Mauer wachsen Ranken herunter. Guido, Marco und du - ihr habt hier früher Verstecken gespielt, und du bist immer klammheimlich an den Ranken  gewesen - hast gewartet, bis sie oben an dir vorbei sind - und dann hinter ihrem Rücken, während sie die Treppen hinunterstiegen, nach oben geklettert. Warum warst du dieses Mal nicht so schlau, diesen Weg zu nehmen. Dann, als die Tritte der Soldaten auf dich einprasseln, naht für dich das ENDE.");
-			exit(EXIT_SUCCESS);
-		}
+		if(!kampf(&spieler, soldat, 1, false, ort46))
+            beenden(rot, EXIT_SUCCESS, "Sich auf drei kampferprobte Soldaten war einerseits sehr mutig von dir, andererseits aber auch sehr dumm. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du durch das Haus rechts von dir hindurch. Dahinter befindet sich ein Hügel, die Mauer, die zum Münstervorplatz führt, und an dieser Mauer wachsen Ranken herunter. Guido, Marco und du - ihr habt hier früher Verstecken gespielt, und du bist immer klammheimlich an den Ranken  gewesen - hast gewartet, bis sie oben an dir vorbei sind - und dann hinter ihrem Rücken, während sie die Treppen hinunterstiegen, nach oben geklettert. Warum warst du dieses Mal nicht so schlau, diesen Weg zu nehmen. Dann, als die Tritte der Soldaten auf dich einprasseln, naht für dich das ENDE.");
 	}
 	raum = 35;
 	if(wuerfel(6) > 4)
@@ -1182,10 +1186,8 @@ void ort36(void) {
 		dreistelzer = true;
 		textausgabe("Der ganze Boden erhebt, und du hörst ein lautes mechanisch Geräusch, als du oben auf dem Alten Markt einen Dreistelzer sehen kannst, der sich in Stellung bringt. Schreie ertönen aus seiner Richtung, dann siehst du zwei fremde Soldaten, die in deine Richtung die Treppe von Mariä Himmelfahrt heruntergelaufen kommen. Ein weitere stürmt aus der Polizeiwache heran, er ist ein richtiger Hühne.");
 		charakter_t soldat[3] = { { "1. Soldat", 6, 6, 7, 7 }, { "2. Soldat", 5, 5, 6, 6}, { "3. Soldat", 8, 8, 7, 7} };
-		if(!kampf(&spieler, soldat, 1, false, ort46)) {
-			textausgabe("Sich auf drei kampferprobte Soldaten war nicht gerade deine klügste Entscheidung. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du hinüber zur Treppe, die von Mariä Himmelfahrt herunterführt. Du erinnerst dich, wie ihr als Kinder auf den Sohlen eurer Sandalen im Stehen das Geländer heruntergerutscht seid, so als wärt ihr Wellenreiter in den Brandungen vor Hawai. Dann landet der Absatz eines Stiefels in deinem Gesicht. Der Schmerz explodiert in deinem Gesicht, alles wird Schwarz. Und dann ist es auch schon vorbei. Dein ENDE ist gekommen.");
-			exit(EXIT_SUCCESS);
-		}
+		if(!kampf(&spieler, soldat, 1, false, ort46))
+            beenden(rot, EXIT_SUCCESS, "Sich auf drei kampferprobte Soldaten war nicht gerade deine klügste Entscheidung. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du hinüber zur Treppe, die von Mariä Himmelfahrt herunterführt. Du erinnerst dich, wie ihr als Kinder auf den Sohlen eurer Sandalen im Stehen das Geländer heruntergerutscht seid, so als wärt ihr Wellenreiter in den Brandungen vor Hawai. Dann landet der Absatz eines Stiefels in deinem Gesicht. Der Schmerz explodiert in deinem Gesicht, alles wird Schwarz. Und dann ist es auch schon vorbei. Dein ENDE ist gekommen.");
 		raum = 36;
 		auswahl("Du bist dir nicht sicher, ob es eine gute Idee ist, zum Alten Markt zu laufen. Immerhin bleibt dir noch der Rückzug in den Innenhof des Münsters (1), du könntest auch den Abteiberg hinunterlaufen, der Hügel sieht zu steil für den Dreistelzer aus (2), oder den Vorplatz des Münsters entlanglaufen (3) in der Hoffnung, es vielleicht zum Geroweiher zu schaffen. Zu guter letzt bleibt dir noch die Flucht durch die Gasse, in der Hoffnung, die Hindenburgstraße zu erreichen (4)", 4, ort41, ort35, ort37, ort51);
 	}
@@ -2348,20 +2350,16 @@ void ort98(void) {
 		textausgabe("Der Drache dreht sich blitzschnell um die eigene Achse. Du siehst noch, wie sein Schwanz heranrast, dann wirst du auch schon von ihm getroffen. Der Schmerz ist fürchterlich. Im weiten Bogen fliegst du rücklinks in die Dunkelheit hinein.");
 		// schwerer Treffer, eventuell tödlich
 		staerkesteigerung(-5,0);
-		if(spieler.staerke <= 0) {
-			textausgabe("Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
-			exit(EXIT_SUCCESS);
-		}
+		if(spieler.staerke <= 0)
+            beenden(rot, EXIT_SUCCESS, "Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
 	}
 	if(dracheverletzt && !drachetot) {
 		drache.gewandheit = 16;
 		drache.staerke = 15;
 	}
 	if(!drachetot) {
-		if(!kampf(&spieler, &drache, 1, false, ort162)) {
-			textausgabe("Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
-			exit(EXIT_SUCCESS);
-		}
+		if(!kampf(&spieler, &drache, 1, false, ort162))
+            beenden(rot, EXIT_SUCCESS, "Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
 		textausgabe("Ein Ruck geht durch den Körper des Drachen, ein letztes Aufbäumen, dann sinkt er tot zusammen. Sein Körper sieht aus, als würde er glühen. Vielleicht verbrennt er ja innerlich, du weißt es nicht. Das hier war der erste Drache, den du in deinem Leben gesehen hast. Und du dachtest immer, Drachen würden in das Reich der Märchen gehören. Die Legende von der Unverwundbarkeit durch Drachenblut jedenfalls hast du wiederlegt. Dein linker Arm ist nur so besudelt von Drachenblut, trotzdem hast du lange Schnittwunden darauf.\nPlötzlich mußt du lachen, als du bemerkst, das jemand ein Wort auf die Unterseite des Drachens gemalt hat: \"Bauch\"\nEin ganz klares Zeichen dafür, das du nicht der erste bist, der sich hier in die Höhle des Drachens gewagt hat.");
 		// Ich denke, an der Legende ist doch ein Körnchen Wahrheit
 		staerkesteigerung(0,1);
@@ -2424,8 +2422,7 @@ void ort103(void) {
 
 void ort104(void) {
 // Im Auto bleiben
-	textausgabe("Du verhältst dich muskmäuschen still. Den Rucksack hast du auf dem Schoß. Du atmest nur gan flach, schluchzt aber auch immer wieder. Du bedauerst deine eigene verzweifelte Lage noch viel mehr, als den Tod der freundlichen Frau, die hier, nur wenige Zentimeter entfernt von dir, unter einem tonnenschweren Stahlfuß zerquetscht wurde. Plötzlich hörst rechts neben dir ein Geräusch. Erschreckt siehst du zur Seite - und starrst in die Mündung eines Automatikgewehres.\nBefriedigt grunzt das Wesen, das gerade seine Waffe in deinem Kopf entladen hat, dann wendet es sich vom Anblick deines Kadavers ab und sucht nach weiteren \"Ausreißern\".");
-	exit(EXIT_SUCCESS);
+    beenden(rot, EXIT_SUCCESS, "Du verhältst dich muskmäuschen still. Den Rucksack hast du auf dem Schoß. Du atmest nur gan flach, schluchzt aber auch immer wieder. Du bedauerst deine eigene verzweifelte Lage noch viel mehr, als den Tod der freundlichen Frau, die hier, nur wenige Zentimeter entfernt von dir, unter einem tonnenschweren Stahlfuß zerquetscht wurde. Plötzlich hörst rechts neben dir ein Geräusch. Erschreckt siehst du zur Seite - und starrst in die Mündung eines Automatikgewehres.\nBefriedigt grunzt das Wesen, das gerade seine Waffe in deinem Kopf entladen hat, dann wendet es sich vom Anblick deines Kadavers ab und sucht nach weiteren \"Ausreißern\".");
 }
 
 void ort105(void) {
@@ -2489,10 +2486,8 @@ void ort113(void) {
 		default: kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
 				break;
 	}
-	if(!kampfausgang) {
-		textausgabe("Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
-		exit(EXIT_SUCCESS);
-	}
+	if(!kampfausgang)
+        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
 	getoetetegegner += 1;
 	if(wuerfel(6) >= 4) {
 		if(objekt[pistole] <= 1)
@@ -2794,10 +2789,8 @@ void ort150(void) {
 	rotation++;
 	if((raum == 149) && (stollentroll == 150)) {
 		charakter_t troll = { "Stollentroll", 9, 9, 10, 10 };
-		if(!kampf(&spieler, &troll, 1, false, NULL)) {
-			textausgabe("Die Fäuste des Stollentrolls hämmern gnadenlos auf deinen Kopf ein. Du spürst das Blut in deine Augen laufen, hörst das Knacken und Krachen deiner berstenden Schädelplatte. Ein heftiger Schmerz durchzuckt dich - dann verschwimmt alles vor deinen Augen, wird blasser, dunkel. Ein Tunnel ... da ist ein Licht am ENDE des Tunnels ...");
-			exit(EXIT_SUCCESS);
-		}
+		if(!kampf(&spieler, &troll, 1, false, NULL))
+            beenden(rot, EXIT_SUCCESS, "Die Fäuste des Stollentrolls hämmern gnadenlos auf deinen Kopf ein. Du spürst das Blut in deine Augen laufen, hörst das Knacken und Krachen deiner berstenden Schädelplatte. Ein heftiger Schmerz durchzuckt dich - dann verschwimmt alles vor deinen Augen, wird blasser, dunkel. Ein Tunnel ... da ist ein Licht am ENDE des Tunnels ...");
 		// Dann platzieren wir mal die Zwerge um
 		if(minenzwerge == 158)
 			minenzwerge = 160;
@@ -2879,10 +2872,8 @@ void ort158(void) {
 	if(minenzwerge == 158) {
 		if(schluessel111_1 && (wuerfel(6) > 4)) {
 			textausgabe("Die Zwerge beäugen dich äußerst mißtrauisch.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt er feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
-			if(!kampf(&spieler, zwerg, 1, false, ort99)) {
-				textausgabe("Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
-				exit(EXIT_SUCCESS);
-			}
+			if(!kampf(&spieler, zwerg, 1, false, ort99))
+                beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
 			// Aus ist's mit den Zwergen
 			minenzwerge = 0;
 		}
@@ -2894,10 +2885,8 @@ void ort158(void) {
 					textausgabe("Gerade, als keiner der Zwerge in deine Richtung schaut, hältst du für einen Moment die Luft an und greifst zu. Es ist ganz leicht, den Knoten zu lösen - und schon hältst du den Schlüssel in der Hand. Mit einer sanft gleitenden Bewegung läßt du ihn in deiner Tasche verschwinden.");
 				}
 				else {
-					if(!kampf(&spieler, zwerg, 1, false, ort99)) {
-						textausgabe("Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
-						exit(EXIT_SUCCESS);
-					}
+					if(!kampf(&spieler, zwerg, 1, false, ort99))
+                        beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
 					// Aus ist's mit den Zwergen
 					minenzwerge = 0;
 				}
@@ -2915,10 +2904,8 @@ void ort159(void) {
 		minenzwerge = 159;
 		charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
 		textausgabe("Die Zwerge sind herangestürmt und beäugen dich äußerst mißtrauisch.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt einer von ihnen feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
-		if(!kampf(&spieler, zwerg, 1, false, ort158)) {
-			textausgabe("Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
-			exit(EXIT_SUCCESS);
-		}
+		if(!kampf(&spieler, zwerg, 1, false, ort158))
+            beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
 		// Aus ist's mit den Zwergen
 		minenzwerge = 0;
 	}
@@ -2954,10 +2941,8 @@ void ort160(void) {
 	if((minenzwerge == 160) && (schluessel111_1 || schluessel111_2)) {
 		charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
 		textausgabe("Erst spät bemerkst du die Zwerge, die zwischen den Gerätschaften im Schatten stehen.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt einer von ihnen feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
-		if(!kampf(&spieler, zwerg, 1, false, ort159)) {
-			textausgabe("Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
-			exit(EXIT_SUCCESS);
-		}
+		if(!kampf(&spieler, zwerg, 1, false, ort159))
+            beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
 		// Aus ist's mit den Zwergen
 		minenzwerge = 0;
 	}
@@ -3331,10 +3316,8 @@ void ort211(void) {
 				kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
 				break;
 	}
-	if(!kampfausgang) {
-		textausgabe("Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
-		exit(EXIT_SUCCESS);
-	}
+	if(!kampfausgang)
+        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
 	getoetetegegner += 1;
 	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 }
@@ -3415,10 +3398,8 @@ void ort213(void) {
 				kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
 				break;
 	}
-	if(!kampfausgang) {
-		textausgabe("Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
-		exit(EXIT_SUCCESS);
-	}
+	if(!kampfausgang)
+        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
 	getoetetegegner += 1;
 	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 }
@@ -4160,12 +4141,7 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
 			case 88: speichern();
 					 break;
 			case 99: speichern();
-					 vordergrundfarbe(gruen);
-					 textausgabe("Bis bald!\n");
-					 vordergrundfarbe(weiss);
-                     weiter();
-					 refresh();
-					 exit(EXIT_SUCCESS);
+                     beenden(gruen, EXIT_SUCCESS, "Bis bald!");
 			default: break;
 		}
 	}
@@ -4224,17 +4200,11 @@ void flucht(void (*funktion1)()) {
 	}
 	if(spieler.staerke) {
 		funktion1();
-		vordergrundfarbe(rot);
-		textausgabe("Fehler!\nEine Ortsvariable ist wohl noch leer.");
-		exit(EXIT_FAILURE);
+        beenden(rot, EXIT_FAILURE, "Fehler!\nEine Ortsvariable ist wohl noch leer.\nDer letzer bekannte Raum war %d.", raum);
 	}
-	else {
-		textausgabe("Du bist zu geschwächt, um auch nur einen einzigen weiteren Atemzug zu machen. Unter Schmerzen entweicht dir Atemluft aus deinen Lungen. Die Umgebung wird erst Rot vor deinen Augen und gleitet schließlich ins Schwarze ab. Das ist dein ENDE.");
-		exit(EXIT_SUCCESS);
-	}
-	vordergrundfarbe(rot);
-	textausgabe("Fehler!\nIch bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
-	exit(EXIT_FAILURE);
+	else 
+        beenden(rot, EXIT_SUCCESS, "Du bist zu geschwächt, um auch nur einen einzigen weiteren Atemzug zu machen. Unter Schmerzen entweicht dir Atemluft aus deinen Lungen. Die Umgebung wird erst Rot vor deinen Augen und gleitet schließlich ins Schwarze ab. Das ist dein ENDE.");
+	beenden(rot, EXIT_FAILURE, "Fehler!\nIch bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
 }
 
 // Implementation: Mahlzeit
@@ -4342,9 +4312,7 @@ int speichern(void) {
 	FILE *datei;
 	datei = fopen(DATEINAME, "w");
 	if(ferror(datei)) {
-		vordergrundfarbe(rot);
-		textausgabe("Fehler!\nDie Datei läßt sich nicht speichern. Fahre ohne gespeicherten Spielstand fort.");
-		vordergrundfarbe(weiss);
+        hinweis(rot, "Fehler!\nDie Datei läßt sich nicht speichern. Fahre ohne gespeicherten Spielstand fort.");
 		return 1;
 	}
 
@@ -4401,11 +4369,8 @@ int speichern(void) {
 	fprintf(datei, "%d\n", elke);
 	fprintf(datei, "%d\n", (int) schluesselarianna);
 	fprintf(datei, "%d\n", verloben);
-	vordergrundfarbe(gruen);
-	textausgabe("Spielstand gespeichert.\n");
-	textausgabe("Raum: %d\n", raum);
-	vordergrundfarbe(weiss);
-    weiter();
+    hinweis(gruen, "Spielstand gespeichert.\nRaum: %d\n", raum);
+    fflush(datei);
     fclose(datei);
 	return 0;
 }
@@ -4536,11 +4501,8 @@ int laden(void) {
 	verloben = (int) atoi(eingabe);
 	fclose(datei);
 
-	vordergrundfarbe(gruen);
-	textausgabe("Spielstand geladen.\n");
+    hinweis(gruen, "Spielstand geladen. Raum: %d\n", raum);
 	momentane_werte(&spieler);
-	textausgabe("Raum: %d\n", raum);
-	vordergrundfarbe(weiss);
 	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 	return 0;
 }
@@ -4613,10 +4575,8 @@ int main(void) {
 	textausgabe("--------------------------");
 	textausgabe("Steampunk FFR - Der Anfang");
 	textausgabe("--------------------------");
-	vordergrundfarbe(gelb);
-	textausgabe("Ein \"Das-ist-dein-Abenteuer\" Roman\n");
-	vordergrundfarbe(magenta);
-	textausgabe("Nach einer Geschichte von Sascha Biermanns\n");
+	hinweis(gelb, "Ein \"Das-ist-dein-Abenteuer\" Roman\n");
+	hinweis(magenta, "Nach einer Geschichte von Sascha Biermanns\n");
     vordergrundfarbe(weiss);
 	if(janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?"))
 		laden();

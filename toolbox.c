@@ -7,7 +7,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.004
+ *        Version:  0.006
  *    letzte Beta:  0.000
  *        Created:  12.09.2011 11:52:00
  *          Ended:  00.00.0000 00:00:00
@@ -40,8 +40,10 @@
  *   Letze Änderungen:
  *   - 12.09.2011 Beginn an der Arbeit des Moduls
  *                System zum einfachen Ändern der Farben eingeführt
- *                textausgabe mit variabler Parameterliste ausgestattet
- *   - 13.09.2011 texteingabe separiert von textausgabe - Prinzip: Vereinfachung
+ *                textausgabe() mit variabler Parameterliste ausgestattet
+ *   - 13.09.2011 texteingabe() separiert von textausgabe() - Prinzip: Vereinfachung
+ *                beenden() Funktion zum kontrollierten Beenden mit farbiger Ausgabe
+ *                hinweis() Funktion für Farbige Statusmeldungen
  *
  * =====================================================================================
  */
@@ -59,10 +61,68 @@
 static int vfarbe = weiss; // Vordergrundfarbe
 static int hfarbe = schwarz; // Hintergrundfarbe
 
+// Funktion: Beenden mit farbiger Statusmeldung
+void beenden(enum farben f, int status, char* text, ...) {
+    // Reservierung für den maximalen Speicherplatz, den resttext benötigt
+    // -------------------------------------------------------------------
+    char *sicherheitszeiger = (char*) malloc( (sizeof(text) + 100) * sizeof(char));
+    if(!sicherheitszeiger) {
+        vordergrundfarbe(rot);
+        printw("Fehler!\nsicherheitszeiger in beenden() erhielt keinen Speicher!\n");
+        vordergrundfarbe(weiss);
+        exit(EXIT_FAILURE);
+    }
+    char *umgewandeltertext = sicherheitszeiger;
+
+    // Verarbeitung der Parameterliste und Umwandlung der Parameter + Text zu einem String
+    // -----------------------------------------------------------------------------------
+    va_list par; // Parameterliste
+    va_start(par, text);
+    vsprintf(umgewandeltertext, text, par);
+    va_end(par);
+    // -----------------------------------------------------------------------------------
+    
+    hinweis(f, umgewandeltertext);
+    // Sicherheitszeiger löschen, sonst gibt es üble Speicherlöcher ;)
+    if(!sicherheitszeiger)
+        free(sicherheitszeiger);
+    exit(status);
+}
+
 // Funktion: Hintergrundfarbe ändern
 void hintergrundfarbe(enum farben hf) {
   hfarbe = hf;
   color_set((8 * vfarbe) + hfarbe + 1, 0);
+}
+
+// Funktion: Hinweis - für Fehlermeldungen oder ähnliches
+void hinweis(enum farben f, char* text, ...) {
+    // Reservierung für den maximalen Speicherplatz, den resttext benötigt
+    // -------------------------------------------------------------------
+    char *sicherheitszeiger = (char*) malloc( (sizeof(text) + 100) * sizeof(char));
+    if(!sicherheitszeiger) {
+        vordergrundfarbe(rot);
+        printw("Fehler!\nsicherheitszeiger in hinweis() erhielt keinen Speicher!\n");
+        vordergrundfarbe(weiss);
+        exit(EXIT_FAILURE);
+    }
+    char *umgewandeltertext = sicherheitszeiger;
+
+    // Verarbeitung der Parameterliste und Umwandlung der Parameter + Text zu einem String
+    // -----------------------------------------------------------------------------------
+    va_list par; // Parameterliste
+    va_start(par, text);
+    vsprintf(umgewandeltertext, text, par);
+    va_end(par);
+    // -----------------------------------------------------------------------------------
+    
+    vordergrundfarbe(f);
+    textausgabe(umgewandeltertext);
+    vordergrundfarbe(weiss);
+    weiter();
+    // Sicherheitszeiger löschen, sonst gibt es üble Speicherlöcher ;)
+    if(!sicherheitszeiger)
+        free(sicherheitszeiger);
 }
 
 // Implementation: Ja-Nein-Frage
