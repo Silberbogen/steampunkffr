@@ -7,7 +7,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.003
+ *        Version:  0.004
  *    letzte Beta:  0.000
  *        Created:  12.09.2011 11:52:00
  *          Ended:  00.00.0000 00:00:00
@@ -41,6 +41,7 @@
  *   - 12.09.2011 Beginn an der Arbeit des Moduls
  *                System zum einfachen Ändern der Farben eingeführt
  *                textausgabe mit variabler Parameterliste ausgestattet
+ *   - 13.09.2011 texteingabe separiert von textausgabe - Prinzip: Vereinfachung
  *
  * =====================================================================================
  */
@@ -185,12 +186,10 @@ void textausgabe(char *gesamttext, ...) {
 }
 
 // Implementation: Texteingabe
-void texteingabe(char *text, char *eingabe, unsigned int laenge) {
-  textausgabe(text);
+void texteingabe(char *eingabe, unsigned int laenge) {
   attrset(A_BOLD);
   getnstr(eingabe, laenge);
   attrset(A_NORMAL);
-  // return eingabe;
 }
 
 // Funktion: Vordergrundfarbe ändern
@@ -204,8 +203,9 @@ int waehle(char* beschreibung, int maxzahl) {
 	int ergebnis;
 	char eingabe[20];
 
-        while((ergebnis < 1) || (ergebnis > maxzahl)) {
-                texteingabe(beschreibung, eingabe, 20);  
+    while((ergebnis < 1) || (ergebnis > maxzahl)) {
+        textausgabe(beschreibung);    
+        texteingabe(eingabe, 20);  
 		ergebnis = atoi(eingabe);
 	}
 	return ergebnis;

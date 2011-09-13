@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.026
+ *        Version:  0.027
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -61,6 +61,7 @@
  *                Optimierung einiger Routinen
  *                Minimierung eingebundener Quellen
  *                Veränderung der Laden-/Speichern-Routinen
+ *   - 13.09.2011 texteingabe() separiert von textausgabe() - Prinzip: Vereinfachung 
  *
  * =====================================================================================
  */
@@ -178,7 +179,7 @@ extern char taste(void); // Funktion: Taste
 
 extern void textausgabe(char *, ...); // Funktion: Textausgabe
 
-extern void texteingabe(char *, char *, unsigned int); // Funktion: Texteingabe
+extern void texteingabe(char *, unsigned int); // Funktion: Texteingabe
 
 extern void vordergrundfarbe(enum farben); // Funktion: Vordergrundfarbe ändern
 
@@ -681,7 +682,9 @@ void intro(void) {
     vordergrundfarbe(blau);
     textausgabe("Sascha\n");
 	vordergrundfarbe(zyan);
-    texteingabe("Welchen Namen möchtest du deinem Abenteurer geben? ", spieler.name, 30);
+    textausgabe("Welchen Namen möchtest du deinem Abenteurer geben? ");
+    vordergrundfarbe(gelb);
+    texteingabe(spieler.name, 30);
     vordergrundfarbe(weiss);
 	spieler.gewandheit_start = wuerfel(6) + 6;
 	spieler.gewandheit = spieler.gewandheit_start;
@@ -3032,10 +3035,10 @@ void ort164(void) {
 		textausgabe("Der kleine Gnom lächelt dich gutmütig an.\n\"Ich habe mir eine Zahl zwischen 1 und 1000 ausgedacht. Du hast 9 Versuche, die Zahl zu erraten.\"");
 		for(int i=1; i <= 9; ++i) {
             vordergrundfarbe(gelb);
-			texteingabe("\"Was denkst du, wie lautet meine Zahl?\"", eingabe, 20);
+			textausgabe("\"Was denkst du, wie lautet meine Zahl?\"");
+            vordergrundfarbe(magenta);
+            texteingabe(eingabe, 20);
             vordergrundfarbe(weiss);
-//            textausgabe("\"Was denkst du, wie lautet meine Zahl?\"");
-//			getnstr(eingabe, 20);
 			geraten = atoi(eingabe);
 			if(zufallszahl == geraten) {
 				schluessel9 = true;
@@ -4140,9 +4143,9 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
 		textausgabe(beschreibung);
         textausgabe(zusatzbeschreibung);
         vordergrundfarbe(gelb);
-		texteingabe("Du wählst: ", eingabe, 20);
-//        textausgabe(zusatzbeschreibung);
-//		getnstr(eingabe, 20);
+		textausgabe("Du wählst: ");
+        vordergrundfarbe(gruen);
+        texteingabe(eingabe, 20);
 		ergebnis = atoi(eingabe);
 		vordergrundfarbe(weiss);
 		switch(ergebnis) {
@@ -4287,11 +4290,11 @@ void objekt_ablegen(void) {
 		if(!(j % 3))
 			textausgabe("\n");
 	}
-	vordergrundfarbe(gruen);
 	while((ergebnis < 0) || (ergebnis >= maximalobjekt)) {
-//        textausgabe("Bitte gib die Nummer des abzulegenden Objektes an! ");
-        texteingabe("Bitte gibt die Nummer des abzulegenden Objektes an: ", eingabe, 20);
-//        getnstr(eingabe, 20);
+	    vordergrundfarbe(gruen);
+        textausgabe("Bitte gib die Nummer des abzulegenden Objektes an! ");
+        vordergrundfarbe(rot);
+        texteingabe(eingabe, 20);
 		ergebnis = atoi(eingabe);
 	}
 	vordergrundfarbe(gelb);
@@ -4553,7 +4556,9 @@ bool raetsel(char *raetseltext, char *antworttext) {
     vordergrundfarbe(magenta);
 	textausgabe(raetseltext);
     vordergrundfarbe(gelb);
-    texteingabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!", eingabe, 40);
+    textausgabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!");
+    vordergrundfarbe(zyan);
+    texteingabe(eingabe, 40);
     vordergrundfarbe(weiss);
 	if(0 == strcmp(antworttext, eingabe))
 		return true;

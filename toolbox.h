@@ -7,7 +7,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.001
+ *        Version:  0.002
  *    letzte Beta:  0.000
  *        Created:  12.09.2011 11:52:00
  *          Ended:  00.00.0000 00:00:00
@@ -39,6 +39,7 @@
  *
  *   Letze Änderungen:
  *   - 12.09.2011 Beginn an der Arbeit des Moduls
+ *   - 13.09.2011 texteingabe Prototyp korrigiert
  *
  * =====================================================================================
  */
@@ -78,7 +79,7 @@ char taste(void); // Funktion: Taste
 
 void textausgabe(char *, ...); // Funktion: Textausgabe
 
-void texteingabe(char *, char *, unsigned int); // Funktion: Texteingabe
+void texteingabe(char *, unsigned int); // Funktion: Texteingabe
 
 void vordergrundfarbe(enum farben); // Funktion: Vordergrundfarbe ändern
 
