@@ -8,13 +8,13 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.029
+ *        Version:  0.030
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
  *       Revision:  none
  *       Compiler:  clang
- *        compile:  clang -o steampunkffr toolbox.c steampunkffr.c -lncurses
+ *        compile:  clang -o steampunkffr skbtools.c steampunkffr.c -lncurses
  *
  *         Author:  Sascha K. Biermanns (saschakb), saschakb@gmail.com
  *        Company:
@@ -64,6 +64,7 @@
  *   - 13.09.2011 texteingabe() separiert von textausgabe() - Prinzip: Vereinfachung 
  *                beenden() hinzugefügt - Prinzip: Vereinfachung
  *                hinweis() hinzugefügt - Prinzip: Vereinfachung
+ *   - 17.09.2011 Verwendung wird von toolbox auf skbtools geändert
  *
  * =====================================================================================
  */
@@ -73,7 +74,9 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdarg.h> // Für die VA-Liste
-#include "toolbox.h"
+#include <ncurses.h>
+#include <locale.h>
+#include "skbtools.h"
 
 #define DATEINAME ".steampunkffrsicherung.txt"
 
@@ -4093,9 +4096,6 @@ void momentane_werte(charakter_t *person) {
 }
 
 
-
-
-
 // Implementation: Auswahl
 void auswahl(char *beschreibung, int maxzahl, ...) {
 	char eingabe[20];
@@ -4575,8 +4575,10 @@ int main(void) {
 	textausgabe("--------------------------");
 	textausgabe("Steampunk FFR - Der Anfang");
 	textausgabe("--------------------------");
-	hinweis(gelb, "Ein \"Das-ist-dein-Abenteuer\" Roman\n");
-	hinweis(magenta, "Nach einer Geschichte von Sascha Biermanns\n");
+	vordergrundfarbe(gelb);
+    textausgabe("Ein \"Das-ist-dein-Abenteuer\" Roman\n");
+	vordergrundfarbe(magenta);
+    textausgabe("Nach einer Geschichte von Sascha Biermanns\n");
     vordergrundfarbe(weiss);
 	if(janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?"))
 		laden();
