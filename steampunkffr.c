@@ -4384,9 +4384,9 @@ int laden(void) {
 	char eingabe[100];
 	FILE *datei;
 	datei = fopen(DATEINAME, "r");
-	if(ferror(datei)) {
+	if(!datei) {
 		vordergrundfarbe(rot);
-		textausgabe("Fehler!\nDie Datei ließ sich nicht öffnen. Fahre ohne geladenen Spielstand fort.");
+		textausgabe("\nFehler!\nDie Datei ließ sich nicht öffnen. Fahre ohne geladenen Spielstand fort.\n");
 		vordergrundfarbe(weiss);
 		return 1;
 	}
