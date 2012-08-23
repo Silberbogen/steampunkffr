@@ -13,8 +13,8 @@
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
  *       Revision:  none
- *       Compiler:  clang
- *        compile:  clang -o steampunkffr skbtools.c steampunkffr.c -lncurses
+ *       Compiler:  C99 compatible or better
+ *        compile:  cc -o steampunkffr skbtools.c steampunkffr.c -lncurses -std=c99
  *
  *         Author:  Sascha K. Biermanns (saschakb), saschakb@gmail.com
  *        Company:
