@@ -76,7 +76,7 @@ void beenden(enum farben f, int status, char* text, ...) {
     char *cp = (char*) malloc( (sizeof(text) + 100) * sizeof(char));
     if(!cp) {
         vordergrundfarbe(rot);
-        printw("Fehler!\nsicherheitszeiger in beenden() erhielt keinen Speicher!\n");
+        printw("Fehler!\nSicherheitszeiger in beenden() erhielt keinen Speicher!\n");
         vordergrundfarbe(weiss);
         exit(EXIT_FAILURE);
     }
