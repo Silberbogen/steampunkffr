@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.001
+ *        Version:  0.002
  *    letzte Beta:  0.000
  *        Created:  28.08.2012 02:05:00
  *          Ended:  00.00.0000 00:00:00
@@ -44,6 +44,8 @@
  *
  * =====================================================================================
  */
+
+#include "skbtools.h"
 
 // Neuer Typ: charakter_t & npc_t
 // Zur Speicherung der Kampfwerte
@@ -535,3 +537,113 @@ void ort400();
 // Zeigerliste aller ort-Funktionen
 // --------------------------------
 void (*raumptr[401]) (void) = {vorwort, ort1, ort2, ort3, ort4, ort5, ort6, ort7, ort8, ort9, ort10, ort11, ort12, ort13, ort14, ort15, ort16, ort17, ort18, ort19, ort20, ort21, ort22, ort23, ort24, ort25, ort26, ort27, ort28, ort29, ort30, ort31, ort32, ort33, ort34, ort35, ort36, ort37, ort38, ort39, ort40, ort41, ort42, ort43, ort44, ort45, ort46, ort47, ort48, ort49, ort50, ort51, ort52, ort53, ort54, ort55, ort56, ort57, ort58, ort59, ort60, ort61, ort62, ort63, ort64, ort65, ort66, ort67, ort68, ort69, ort70, ort71, ort72, ort73, ort74, ort75, ort76, ort77, ort78, ort79, ort80, ort81, ort82, ort83, ort84, ort85, ort86, ort87, ort88, ort89, ort90, ort91, ort92, ort93, ort94, ort95, ort96, ort97, ort98, ort99, ort100, ort101, ort102, ort103, ort104, ort105, ort106, ort107, ort108, ort109, ort110, ort111, ort112, ort113, ort114, ort115, ort116, ort117, ort118, ort119, ort120, ort121, ort122, ort123, ort124, ort125, ort126, ort127, ort128, ort129, ort130, ort131, ort132, ort133, ort134, ort135, ort136, ort137, ort138, ort139, ort140, ort141, ort142, ort143, ort144, ort145, ort146, ort147, ort148, ort149, ort150, ort151, ort152, ort153, ort154, ort155, ort156, ort157, ort158, ort159, ort160, ort161, ort162, ort163, ort164, ort165, ort166, ort167, ort168, ort169, ort170, ort171, ort172, ort173, ort174, ort175, ort176, ort177, ort178, ort179, ort180, ort181, ort182, ort183, ort184, ort185, ort186, ort187, ort188, ort189, ort190, ort191, ort192, ort193, ort194, ort195, ort196, ort197, ort198, ort199, ort200, ort201, ort202, ort203, ort204, ort205, ort206, ort207, ort208, ort209, ort210, ort211, ort212, ort213, ort214, ort215, ort216, ort217, ort218, ort219, ort220, ort221, ort222, ort223, ort224, ort225, ort226, ort227, ort228, ort229, ort230, ort231, ort232, ort233, ort234, ort235, ort236, ort237, ort238, ort239, ort240, ort241, ort242, ort243, ort244, ort245, ort246, ort247, ort248, ort249, ort250, ort251, ort252, ort253, ort254, ort255, ort256, ort257, ort258, ort259, ort260, ort261, ort262, ort263, ort264, ort265, ort266, ort267, ort268, ort269, ort270, ort271, ort272, ort273, ort274, ort275, ort276, ort277, ort278, ort279, ort280, ort281, ort282, ort283, ort284, ort285, ort286, ort287, ort288, ort289, ort290, ort291, ort292, ort293, ort294, ort295, ort296, ort297, ort298, ort299, ort300, ort301, ort302, ort303, ort304, ort305, ort306, ort307, ort308, ort309, ort310, ort311, ort312, ort313, ort314, ort315, ort316, ort317, ort318, ort319, ort320, ort321, ort322, ort323, ort324, ort325, ort326, ort327, ort328, ort329, ort330, ort331, ort332, ort333, ort334, ort335, ort336, ort337, ort338, ort339, ort340, ort341, ort342, ort343, ort344, ort345, ort346, ort347, ort348, ort349, ort350, ort351, ort352, ort353, ort354, ort355, ort356, ort357, ort358, ort359, ort360, ort361, ort362, ort363, ort364, ort365, ort366, ort367, ort368, ort369, ort370, ort371, ort372, ort373, ort374, ort375, ort376, ort377, ort378, ort379, ort380, ort381, ort382, ort383, ort384, ort385, ort386, ort387, ort388, ort389, ort390, ort391, ort392, ort393, ort394, ort395, ort396, ort397, ort398, ort399, ort400 };
+
+// -----------
+// Der Spieler
+// -----------
+static charakter_t spieler;
+
+// ----------------------
+// Variablen des Spielers
+// ----------------------
+
+enum objektsynonyme { nichts, adamantpickel, bogensilberpfeil, buch, drachenfeuerzauber, gewandheitstrank, gewehr, glueckstrank, goldstuecke, handschuh, helm, holzhammer, holzpflock, holzschild, juwelenauge, kaese, kerze, laterne, lederruestung, lederruestung2, ohrringe, patrone, pergament, pistole, proviant, rucksack, schild, schwert, schwert2, silberkreuz, silbersichel, staerketrank, taschenlampe, taschenmesser, unsichtbarkeitstrank, verbandskasten, verwuenschterhelm, warndreieck, wunderwasser, zombiegold ,maximalobjekt };
+
+static int objekt[maximalobjekt] = { [laterne] = 1, [lederruestung] = 1, [proviant] = 10, [rucksack] = 1, [schwert] = 1 };
+static char *objektname[maximalobjekt] = { "Nichts", "Adamantpickel", "Bogen und Silberpfeil", "Buch", "Drachenfeuerzauber", "Gewandheitstrank", "Gewehr", "Glückstrank", "Goldstücke", "Handschuh", "Helm", "Holzhammer", "Holzpflock", "Holzschild", "Juwelenauge", "Käse", "blaue Kerze", "Laterne", "Lederrüstung", "Lederrüstung", "Ohrringe", "Patronen", "Pergament", "Pistole", "Proviant", "Rucksack", "Schild", "Schwert", "Zauberschwert +2", "Silberkreuz", "Silbersichel", "Stärketrank", "Pumptaschenlampe", "Taschenmesser", "Unsichtbarkeitstrank", "Verbandskasten", "Verwuenschter Helm", "Warndreieck",  "Wunderwasser", "Zombiegold" };
+
+static int angriffsbonus = 0;
+static int fuenfwahl = 0;
+static bool nursilbertrifft = false;
+static int paralysiert = 0;
+static int preis = 0;
+static int schluessel = 0;
+static bool schluessel9 = false;
+static bool schluessel66 = false;
+static bool schluessel99 = false;
+static bool schluessel111_1 = false;
+static bool schluessel111_2 = false;
+static bool schluessel125 = false;
+static bool schluesselbootshaus = false;
+static bool schummeln = false;
+static bool silberwaffe = false;
+static bool unsichtbar = false;
+static bool tripodgesehen = false;
+static int getoetetemenschen = 0;
+static int getoetetegegner = 0;
+static bool agartha = false;
+static bool verzeichnisgelesen = false;
+static bool buchgefunden = false;
+static bool kartegefunden = false;
+static bool sargverschoben = false;
+static bool durchganggeoeffnet = false;
+static bool schluesselgefunden = false;
+static bool dreistelzer = false;
+static bool dracheverletzt = false;
+static bool drachetot = false;
+static int minenzwerge = 158;
+static int stollentroll = 150;
+static bool gitteroffen = false;
+static bool raetsel1 = false;
+static bool raetsel2 = false;
+static bool raetsel3 = false;
+static bool raetsel4 = false;
+static bool raetsel5 = false;
+static bool dwellmer = false;
+static int arianna = 0;
+static int elke = 0;
+static bool schluesselarianna = false;
+static int verloben = 0;
+
+static unsigned int rotation = 0; // Rotation ist eine Besonderheit. Hierüber werden die beiden Drehraumsegmente gesteuert. ^.^
+
+// -------------
+// Raum Variable
+// -------------
+
+static int raum = 0;
+
+/*
+// ----------------
+// Beenden Variable
+// ----------------
+
+bool spielbeenden = false;
+*/
+
+// -----------------------------------------
+// Spezialmonster (immun außer gegen Silber)
+// -----------------------------------------
+
+charakter_t mechanicher_geher = { "mechanicher Geher", 14, 13, 12, 12 };
+
+// --------------
+// externe Module
+// --------------
+
+extern void beenden(enum farben f, int status, char* text, ...); // Funktion: Farbige Beenden-Funktion
+
+extern void hintergrundfarbe(enum farben); // Funktion: Hintergrundfarbe ändern
+
+extern void hinweis(enum farben f, char* text, ...); // Funktion: Hinweis - für Fehlermeldungen oder ähnliches
+
+extern bool janeinfrage(char *); // Funktion: Ja-Nein-Frage
+
+extern void ncurses_init(void (*)()); // Initialisierung der ncurses-Umgebung
+
+extern char taste(void); // Funktion: Taste
+
+extern void textausgabe(char *, ...); // Funktion: Textausgabe
+
+extern void texteingabe(char *, unsigned int); // Funktion: Texteingabe
+
+extern void vordergrundfarbe(enum farben); // Funktion: Vordergrundfarbe ändern
+
+extern int waehle(char*, int); // Funktion: waehle
+
+extern void weiter(void); // Funktion: Weiter
+
+extern int wuerfel(unsigned int); // Funktion: Wuerfel
+
+extern void zufall_per_zeit(void); // Initialisierung der Zufallszahlen
+

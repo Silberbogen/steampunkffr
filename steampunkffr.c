@@ -8,7 +8,7 @@
  *    				Dieser Quelltext versucht die Fähigkeiten von C auszuschöpfen, daher
  *    				ist C99 oder neuer notwendig, um ihn zu kompilieren.
  *
- *        Version:  0.030
+ *        Version:  0.031
  *    letzte Beta:  0.000
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
@@ -76,122 +76,9 @@
 #include <stdarg.h> // Für die VA-Liste
 #include <ncurses.h>
 #include <locale.h>
-#include "skbtools.h"
 #include "steampunkffr.h"
 
 #define DATEINAME ".steampunkffrsicherung.txt"
-
-
-
-// -----------
-// Der Spieler
-// -----------
-static charakter_t spieler;
-
-// ----------------------
-// Variablen des Spielers
-// ----------------------
-
-enum objektsynonyme { nichts, adamantpickel, bogensilberpfeil, buch, drachenfeuerzauber, gewandheitstrank, gewehr, glueckstrank, goldstuecke, handschuh, helm, holzhammer, holzpflock, holzschild, juwelenauge, kaese, kerze, laterne, lederruestung, lederruestung2, ohrringe, patrone, pergament, pistole, proviant, rucksack, schild, schwert, schwert2, silberkreuz, silbersichel, staerketrank, taschenlampe, taschenmesser, unsichtbarkeitstrank, verbandskasten, verwuenschterhelm, warndreieck, wunderwasser, zombiegold ,maximalobjekt };
-
-static int objekt[maximalobjekt] = { [laterne] = 1, [lederruestung] = 1, [proviant] = 10, [rucksack] = 1, [schwert] = 1 };
-static char *objektname[maximalobjekt] = { "Nichts", "Adamantpickel", "Bogen und Silberpfeil", "Buch", "Drachenfeuerzauber", "Gewandheitstrank", "Gewehr", "Glückstrank", "Goldstücke", "Handschuh", "Helm", "Holzhammer", "Holzpflock", "Holzschild", "Juwelenauge", "Käse", "blaue Kerze", "Laterne", "Lederrüstung", "Lederrüstung", "Ohrringe", "Patronen", "Pergament", "Pistole", "Proviant", "Rucksack", "Schild", "Schwert", "Zauberschwert +2", "Silberkreuz", "Silbersichel", "Stärketrank", "Pumptaschenlampe", "Taschenmesser", "Unsichtbarkeitstrank", "Verbandskasten", "Verwuenschter Helm", "Warndreieck",  "Wunderwasser", "Zombiegold" };
-
-static int angriffsbonus = 0;
-static int fuenfwahl = 0;
-static bool nursilbertrifft = false;
-static int paralysiert = 0;
-static int preis = 0;
-static int schluessel = 0;
-static bool schluessel9 = false;
-static bool schluessel66 = false;
-static bool schluessel99 = false;
-static bool schluessel111_1 = false;
-static bool schluessel111_2 = false;
-static bool schluessel125 = false;
-static bool schluesselbootshaus = false;
-static bool schummeln = false;
-static bool silberwaffe = false;
-static bool unsichtbar = false;
-static bool tripodgesehen = false;
-static int getoetetemenschen = 0;
-static int getoetetegegner = 0;
-static bool agartha = false;
-static bool verzeichnisgelesen = false;
-static bool buchgefunden = false;
-static bool kartegefunden = false;
-static bool sargverschoben = false;
-static bool durchganggeoeffnet = false;
-static bool schluesselgefunden = false;
-static bool dreistelzer = false;
-static bool dracheverletzt = false;
-static bool drachetot = false;
-static int minenzwerge = 158;
-static int stollentroll = 150;
-static bool gitteroffen = false;
-static bool raetsel1 = false;
-static bool raetsel2 = false;
-static bool raetsel3 = false;
-static bool raetsel4 = false;
-static bool raetsel5 = false;
-static bool dwellmer = false;
-static int arianna = 0;
-static int elke = 0;
-static bool schluesselarianna = false;
-static int verloben = 0;
-
-static unsigned int rotation = 0; // Rotation ist eine Besonderheit. Hierüber werden die beiden Drehraumsegmente gesteuert. ^.^
-
-// -------------
-// Raum Variable
-// -------------
-
-static int raum = 0;
-
-/*
-// ----------------
-// Beenden Variable
-// ----------------
-
-bool spielbeenden = false;
-*/
-
-// -----------------------------------------
-// Spezialmonster (immun außer gegen Silber)
-// -----------------------------------------
-
-charakter_t mechanicher_geher = { "mechanicher Geher", 14, 13, 12, 12 };
-
-// --------------
-// externe Module
-// --------------
-
-extern void beenden(enum farben f, int status, char* text, ...); // Funktion: Farbige Beenden-Funktion
-
-extern void hintergrundfarbe(enum farben); // Funktion: Hintergrundfarbe ändern
-
-extern void hinweis(enum farben f, char* text, ...); // Funktion: Hinweis - für Fehlermeldungen oder ähnliches
-
-extern bool janeinfrage(char *); // Funktion: Ja-Nein-Frage
-
-extern void ncurses_init(void (*)()); // Initialisierung der ncurses-Umgebung
-
-extern char taste(void); // Funktion: Taste
-
-extern void textausgabe(char *, ...); // Funktion: Textausgabe
-
-extern void texteingabe(char *, unsigned int); // Funktion: Texteingabe
-
-extern void vordergrundfarbe(enum farben); // Funktion: Vordergrundfarbe ändern
-
-extern int waehle(char*, int); // Funktion: waehle
-
-extern void weiter(void); // Funktion: Weiter
-
-extern int wuerfel(unsigned int); // Funktion: Wuerfel
-
-extern void zufall_per_zeit(void); // Initialisierung der Zufallszahlen
-
 
 // -------------------------
 // Das eigentliche Abenteuer
