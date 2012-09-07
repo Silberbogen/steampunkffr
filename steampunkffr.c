@@ -80,9 +80,629 @@
 
 #define DATEINAME ".steampunkffrsicherung.txt"
 
+// ----------------
+// Die Hauptroutine
+// ----------------
+
+int main(void) {
+	bool spielerlebt = true;
+
+    zufall_per_zeit();
+    ncurses_init(quit);
+	vordergrundfarbe(blau);
+	textausgabe("--------------------------");
+	textausgabe("Steampunk FFR - Der Anfang");
+	textausgabe("--------------------------");
+	vordergrundfarbe(gelb);
+    textausgabe("Ein \"Das-ist-dein-Abenteuer\" Roman\n");
+	vordergrundfarbe(magenta);
+    textausgabe("Nach einer Geschichte von Sascha Biermanns\n");
+    vordergrundfarbe(weiss);
+	if(janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?"))
+		laden();
+	intro();
+	vorwort();
+	ort1();
+}
+
+// ----------------------------------------
+// Implementation der äußeren Spielroutinen
+// ----------------------------------------
+
+// Implementation Teste dein Glück
+bool tdg(charakter_t *figur) {
+	if(figur->glueck <= 0)
+
+		return false; // Da kann man nur noch Pech haben!
+	if((wuerfel(6) + wuerfel(6)) <= figur->glueck--)
+		return true; // Glück gehabt
+	return false; // Pech gehabt
+}
+
+// Implementation: Kampfrunde
+bool kampfrunde(charakter_t *angreifer, charakter_t *verteidiger, void (*fluchtpunkt)()) {
+	int testgewandheit[2];
+	bool glueckstest = false;
+	bool wirklichglueck;
+	int schildbonus = 0;
+
+	testgewandheit[0] = angreifer->gewandheit + wuerfel(6) + wuerfel(6) + angriffsbonus + paralysiert;
+	testgewandheit[1] = verteidiger->gewandheit + wuerfel(6) + wuerfel(6);
+	if(unsichtbar) // Falls du unsichtbar bist
+		testgewandheit[0] += 2;
+	if(testgewandheit[0] == testgewandheit[1])
+		return true; // Unentschieden, das heißt - nicht getroffen
+	momentane_werte(angreifer);
+	momentane_werte(verteidiger);
+	// Möchte der Spieler fliehen?
+	if(fluchtpunkt != NULL)
+		if(janeinfrage("Möchtest du fliehen (j/n)? "))
+			flucht(fluchtpunkt);
+	// Möchte der Spieler sein Glück versuchen?
+	if(angreifer->glueck > 0) {
+		if(janeinfrage("Möchtest du dein Glück testen (j/n)? ")) {
+			glueckstest = true;
+			wirklichglueck = tdg(angreifer);
+		}
+	}
+	// Die Auswertung des Kampfes
+	if(testgewandheit[0] > testgewandheit[1]) { // Der Spieler geht als Sieger hervor
+		if((nursilbertrifft == true) && (silberwaffe == false)) // Nur falls das Monster imun ist gegen Silber
+			return true; // Kein Treffer abbekommen
+		if(unsichtbar) // Unsichtbare treffen besser
+			verteidiger->staerke -= 2;
+		if(((objekt[gewehr] > 0) || (objekt[pistole] > 0)) && (objekt[patrone] > 0)) { // Schusswaffe = + 1 Punkt, solange Patrone vorhanden
+			verteidiger->staerke -= 1;
+			objekt[patrone] -= 1;
+		}
+		if(glueckstest) {
+			if(wirklichglueck)
+				verteidiger->staerke -= 4;
+			else
+				verteidiger->staerke -= 1;
+			return true; // Kein Treffer abbekommen
+		}
+		verteidiger->staerke -= 2;
+		return true; // Kein Treffer abbekommen
+	}
+	else if (testgewandheit[0] < testgewandheit[1]) { // Der Spieler verliert die Runde
+		if((objekt[schild] >= 0) && (wuerfel(6) == 6)) // Der Schild fängt den Schlag ab
+			schildbonus = 1;
+		if(unsichtbar) // Der Unsichtbarkeitsbonus
+			switch(wuerfel(6)) {
+				case 2:
+				case 4:
+					angreifer->staerke += 1;
+					break;
+				case 6:
+					return true; // Kein Treffer erhalten, dank Unsichtbarkeit
+				default:
+					break;
+			}
+		if(glueckstest) {
+			if(wirklichglueck)
+				angreifer->staerke -= 1 - schildbonus;
+			else
+				angreifer->staerke -= 4 - schildbonus;
+			return false; // Treffer abbekommen
+		}
+		angreifer->staerke -= 2 - schildbonus;
+		return false; // Treffer abbekommen
+	}
+	return true; // Unentschieden, das heißt - nicht getroffen
+}
+
+// Implementation: Kampf
+bool kampf(charakter_t *spieler, charakter_t *gegner, int anzahl, bool trefferverboten, void (*fluchtpunkt)()) {
+	int gesamtstaerke = 0;
+	bool keintreffererhalten = true;
+
+	for(int i=0; i < anzahl; i++)
+		gesamtstaerke += gegner[i].staerke;
+	while((spieler->staerke > 0) && (gesamtstaerke > 0)) {
+		for(int i=0; i < anzahl; i++)
+			if(spieler->staerke > 0) {
+				if(gegner[i].staerke > 0)
+					keintreffererhalten = kampfrunde(spieler, &gegner[i], fluchtpunkt);
+				if(trefferverboten)
+					if(!keintreffererhalten)
+						return false;
+			}
+			else
+				return false;
+		// Leben die Gegner noch?
+		gesamtstaerke = 0;
+		for(int i=0; i < anzahl; i++) {
+			if(gegner[i].staerke < 0)
+				gegner[i].staerke = 0;
+			gesamtstaerke += gegner[i].staerke;
+		}
+	}
+	if(spieler->staerke > 0)
+		return true; // Sieger im Kampf ^.^
+	return false; // Der Spieler ist tot v.v
+}
+
+// Implementation: Momentane Werte
+void momentane_werte(charakter_t *person) {
+	textausgabe("\n      Name: %s\n", person->name);
+	textausgabe("Gewandheit: %2d / %2d\n", person->gewandheit, person->gewandheit_start);
+	textausgabe("    Stärke: %2d / %2d\n", person->staerke, person->staerke_start);
+	textausgabe("     Glück: %2d / %2d\n", person->glueck, person->glueck_start);
+}
+
+
+// Implementation: Auswahl
+void auswahl(char *beschreibung, int maxzahl, ...) {
+	char eingabe[20];
+	int ergebnis = 0;
+	char zusatzbeschreibung[300];
+	va_list zeiger;
+	// reserviere Platz für alle Auswahlmöglichkeiten
+	void (*fptr[maxzahl]) (void);
+	// Werte der VA-Liste in die Funktionszeiger kopieren
+	va_start(zeiger, maxzahl); // Die maxzahl Zeiger auslesen
+	for(int i=0; i < maxzahl; ++i)
+		fptr[i] = va_arg(zeiger, void*);
+	va_end(zeiger);
+
+	// Die Zusatzfunktionen
+	while((ergebnis < 1) || (ergebnis > maxzahl)) {
+		vordergrundfarbe(zyan);
+		strcpy(zusatzbeschreibung, " ");
+		if(objekt[gewandheitstrank] > 0)
+			strcat(zusatzbeschreibung, "(44) Gewandheitstrank trinken ");
+		if(objekt[staerketrank] > 0)
+			strcat(zusatzbeschreibung, "(55) Stärketrank trinken ");
+		if(objekt[glueckstrank] > 0)
+			strcat(zusatzbeschreibung, "(66) Glückstrank trinken ");
+		strcat(zusatzbeschreibung, "(77) Spielstand laden (88) Spielstand speichern (99) Speichern & beenden");
+		textausgabe(beschreibung);
+        textausgabe(zusatzbeschreibung);
+        vordergrundfarbe(gelb);
+		textausgabe("Du wählst: ");
+        vordergrundfarbe(gruen);
+        texteingabe(eingabe, 20);
+		ergebnis = atoi(eingabe);
+		vordergrundfarbe(weiss);
+		switch(ergebnis) {
+			case 44: gewandheitstrank_trinken();
+					break;
+			case 55: staerketrank_trinken();
+					break;
+			case 66: glueckstrank_trinken();
+					break;
+			case 77: laden();
+					 break;
+			case 88: speichern();
+					 break;
+			case 99: speichern();
+                     beenden(gruen, EXIT_SUCCESS, "Bis bald!");
+			default: break;
+		}
+	}
+	fptr[ergebnis-1](); // Umwandlung menschliche Nummerierung in Arraynummerierung
+}
+
+// Funktion: VersucheDeinGlueck
+void versuchedeinglueck(void (*funktion1)(), void (*funktion2)()) {
+	vordergrundfarbe(gruen);
+	textausgabe("--- Versuche dein Glück! - Drücke ENTER ---");
+//	getchar();
+	getch();
+	vordergrundfarbe(weiss);
+	if(tdg(&spieler)) // Glück gehabt
+		funktion1();
+	else 			// Pech gehabt
+		funktion2();
+}
+
+// Funktion: VersucheDeineGewandheit
+void versuchedeinegewandheit(void (*funktion1)(), void (*funktion2)()) {
+	bool gewandheit;
+
+	vordergrundfarbe(gruen);
+	textausgabe("--- Versuche deine Gewandheit! - Drücke ENTER ---");
+	getch();
+	vordergrundfarbe(gelb);
+	gewandheit = wuerfel(6) + wuerfel(6);
+	textausgabe("Deine momentane Gewandheit ist %d, dein Würfelergebnis ist %d\n", spieler.gewandheit, gewandheit);
+	vordergrundfarbe(weiss);
+    if(gewandheit <= spieler.gewandheit) // Glück gehabt
+		funktion1();
+	else 			// Pech gehabt
+		funktion2();
+}
+
+
+// Funktion: Flucht
+void flucht(void (*funktion1)()) {
+    vordergrundfarbe(rot);
+	textausgabe("Du entschließt dich zu fliehen, was dich 2 Stärkepunkte kosten wird.");
+    vordergrundfarbe(weiss);
+	if(spieler.glueck > 0) { // Ist ein Glückstest möglich?
+		textausgabe("Du könntest natürlich auch dein Glück auf die Probe stellen. Hast du Glück, ist es eine geordnete Flucht - und du verlierst nur 1 Stärkepunkt. Wenn du jedoch kein Glück hast, wird es zu einer heilosen Flucht und du verlierst 3 Stärkepunkte.");
+		if(janeinfrage("Möchtest du dein Glück testen (j/n)? ")) {
+			if(tdg(&spieler)) // Glück gehabt
+				spieler.staerke -= 1;
+			else // Pech gehabt
+				spieler.staerke -= 3;
+		}
+		else
+			spieler.staerke -= 2;
+	}
+	else {
+		spieler.staerke -= 2;
+	}
+	if(spieler.staerke) {
+		funktion1();
+        beenden(rot, EXIT_FAILURE, "Fehler!\nEine Ortsvariable ist wohl noch leer.\nDer letzer bekannte Raum war %d.", raum);
+	}
+	else 
+        beenden(rot, EXIT_SUCCESS, "Du bist zu geschwächt, um auch nur einen einzigen weiteren Atemzug zu machen. Unter Schmerzen entweicht dir Atemluft aus deinen Lungen. Die Umgebung wird erst Rot vor deinen Augen und gleitet schließlich ins Schwarze ab. Das ist dein ENDE.");
+	beenden(rot, EXIT_FAILURE, "Fehler!\nIch bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
+}
+
+// Implementation: Mahlzeit
+void mahlzeit(void) {
+	if(janeinfrage("Möchtest du eine Mahlzeit zu dir nehmen (j/n)? "))
+		if(objekt[proviant] > 0) {
+			textausgabe("Nachdem du dich versichert hast, das niemand in der Nähe ist, entnimmst du ein Proviantpaket aus deinem Rucksack. Genüsslich und so leise wie möglich verzehrst du es. Du kannst spüren, wie etwas Kraft in deinen müden Körper zurückkehrt.");
+			objekt[proviant] -= 1;
+			staerkesteigerung(4, 0);
+		}
+		else
+			textausgabe("Nachdem du dich versichert hast, das niemand in der Nähe ist, durchwühlst du deinen Rucksack auf der Suche nach einem Proviantpaket. Nach einigen Minuten und mehrfachen aus- und einpacken des Rucksacks gibst du verzweifelt auf. Es ist tatsächlich kein einziger Brotkrummen mehr übrig.");
+}
+
+// Funktion: Gewandheitstrank trinken
+void gewandheitstrank_trinken() {
+	if(objekt[gewandheitstrank] > 0) {
+		objekt[gewandheitstrank] -= 1;
+		spieler.gewandheit = spieler.gewandheit_start;
+		textausgabe("Du trinkst den Gewandheitstrank. Deine Gewandheit könnte nicht besser sein.");
+	}
+}
+
+// Funktion: Stärketrank trinken
+void staerketrank_trinken() {
+	if(objekt[staerketrank]) {
+		objekt[staerketrank] -= 1;
+		spieler.staerke = spieler.staerke_start;
+		textausgabe("Du trinkst den Stärketrank. Deine Stärke könnte nicht besser sein.");
+	}
+}
+
+// Funktion Glückstrank trinken
+void glueckstrank_trinken() {
+	if(objekt[glueckstrank]) {
+		objekt[glueckstrank] -= 1;
+		spieler.glueck_start += 1;
+		spieler.glueck = spieler.glueck_start;
+		textausgabe("Du trinkst den Glückstrank. Deine Glück ist besser als jemals zuvor.");
+	}
+}
+
+// Implementation: Objkekt ablegen
+void objekt_ablegen(void) {
+	char eingabe[21];
+	int ergebnis = -1;
+	char bestaetigung;
+	int j=0;
+
+	for(int i=0; (i < maximalobjekt) && (objekt[i] > 0); i++) {
+		textausgabe("(%d) %s ", objekt[i], objektname[i]);
+		j++;
+		if(!(j % 3))
+			textausgabe("\n");
+	}
+	while((ergebnis < 0) || (ergebnis >= maximalobjekt)) {
+	    vordergrundfarbe(gruen);
+        textausgabe("Bitte gib die Nummer des abzulegenden Objektes an! ");
+        vordergrundfarbe(rot);
+        texteingabe(eingabe, 20);
+		ergebnis = atoi(eingabe);
+	}
+	vordergrundfarbe(gelb);
+	textausgabe("%s wirklich ablegen? ", objektname[ergebnis]);
+	bestaetigung = taste();
+	vordergrundfarbe(weiss);
+	if((bestaetigung == 'j') || (bestaetigung == 'J')) {
+	    objekt[ergebnis] -= 1;
+        vordergrundfarbe(gelb);
+		textausgabe("\n%s abgelegt.\n", objektname[ergebnis]);
+        vordergrundfarbe(weiss);
+	}
+}
+
+
+// Implementation: gewandheitssteigerung
+void gewandheitssteigerung(int temporaer, int permanent) {
+	spieler.gewandheit_start += permanent;
+	spieler.gewandheit += temporaer;
+	if(spieler.gewandheit > spieler.gewandheit_start)
+		spieler.gewandheit = spieler.gewandheit_start;
+}
+
+// Implementation: staerkesteigerung
+void staerkesteigerung(int temporaer, int permanent) {
+	spieler.staerke_start += permanent;
+	spieler.staerke+= temporaer;
+	if(spieler.staerke > spieler.staerke_start)
+		spieler.staerke = spieler.staerke_start;
+}
+
+// Implementation: glueckssteigerung
+void glueckssteigerung(int temporaer, int permanent) {
+	spieler.glueck_start += permanent;
+	spieler.glueck += temporaer;
+	if(spieler.glueck > spieler.glueck_start)
+		spieler.glueck = spieler.glueck_start;
+}
+
+// -------------------------
+// Implementation: Speichern
+// -------------------------
+
+int speichern(void) {
+	FILE *datei;
+	datei = fopen(DATEINAME, "w");
+	if(ferror(datei)) {
+        hinweis(rot, "Fehler!\nDie Datei läßt sich nicht speichern. Fahre ohne gespeicherten Spielstand fort.");
+		return 1;
+	}
+
+	fprintf(datei, "%s\n", spieler.name);
+	fprintf(datei, "%d\n", spieler.gewandheit);
+	fprintf(datei, "%d\n", spieler.gewandheit_start);
+	fprintf(datei, "%d\n", spieler.glueck);
+	fprintf(datei, "%d\n", spieler.glueck_start);
+	fprintf(datei, "%d\n", spieler.staerke);
+	fprintf(datei, "%d\n", spieler.staerke_start);
+	fprintf(datei, "%d\n", raum);
+	for(int i=0; i<maximalobjekt; i++)
+		fprintf(datei, "%d\n", objekt[i]);
+	fprintf(datei, "%d\n", angriffsbonus);
+	fprintf(datei, "%d\n", fuenfwahl);
+	fprintf(datei, "%d\n", (int) nursilbertrifft);
+	fprintf(datei, "%d\n", paralysiert);
+	fprintf(datei, "%d\n", preis);
+	fprintf(datei, "%d\n", schluessel);
+	fprintf(datei, "%d\n", (int) schluessel9);
+	fprintf(datei, "%d\n", (int) schluessel66);
+	fprintf(datei, "%d\n", (int) schluessel99);
+	fprintf(datei, "%d\n", (int) schluessel111_1);
+	fprintf(datei, "%d\n", (int) schluessel111_2);
+	fprintf(datei, "%d\n", (int) schluessel125);
+	fprintf(datei, "%d\n", (int) schluesselbootshaus);
+	fprintf(datei, "%d\n", (int) schummeln);
+	fprintf(datei, "%d\n", (int) silberwaffe);
+	fprintf(datei, "%d\n", (int) unsichtbar);
+	fprintf(datei, "%d\n", (int) tripodgesehen);
+	fprintf(datei, "%d\n", getoetetemenschen);
+	fprintf(datei, "%d\n", getoetetegegner);
+	fprintf(datei, "%d\n", (int) agartha);
+	fprintf(datei, "%d\n", (int) verzeichnisgelesen);
+	fprintf(datei, "%d\n", (int) buchgefunden);
+	fprintf(datei, "%d\n", (int) kartegefunden);
+	fprintf(datei, "%d\n", (int) sargverschoben);
+	fprintf(datei, "%d\n", (int) durchganggeoeffnet);
+	fprintf(datei, "%d\n", (int) schluesselgefunden);
+	fprintf(datei, "%d\n", (int) dreistelzer);
+	fprintf(datei, "%d\n", rotation);
+	fprintf(datei, "%d\n", (int) dracheverletzt);
+	fprintf(datei, "%d\n", (int) drachetot);
+	fprintf(datei, "%d\n", minenzwerge);
+	fprintf(datei, "%d\n", stollentroll);
+	fprintf(datei, "%d\n", (int) gitteroffen);
+	fprintf(datei, "%d\n", (int) raetsel1);
+	fprintf(datei, "%d\n", (int) raetsel2);
+	fprintf(datei, "%d\n", (int) raetsel3);
+	fprintf(datei, "%d\n", (int) raetsel4);
+	fprintf(datei, "%d\n", (int) raetsel5);
+	fprintf(datei, "%d\n", (int) dwellmer);
+	fprintf(datei, "%d\n", arianna);
+	fprintf(datei, "%d\n", elke);
+	fprintf(datei, "%d\n", (int) schluesselarianna);
+	fprintf(datei, "%d\n", verloben);
+    hinweis(gruen, "Spielstand gespeichert.\nRaum: %d\n", raum);
+    fflush(datei);
+    fclose(datei);
+	return 0;
+}
+
+
+// -------------------------
+// Implementation: Laden
+// -------------------------
+
+int laden(void) {
+	char eingabe[100];
+	FILE *datei;
+	datei = fopen(DATEINAME, "r");
+	if(!datei) {
+		vordergrundfarbe(rot);
+		textausgabe("\nFehler!\nDie Datei ließ sich nicht öffnen. Fahre ohne geladenen Spielstand fort.\n");
+		vordergrundfarbe(weiss);
+		return 1;
+	}
+	fgets(eingabe, 100, datei);
+	for(int i=0; i < strlen(eingabe); i++)
+		if(eingabe[i] == '\n')
+			eingabe[i] = '\0';
+	strcpy(spieler.name, eingabe);
+	fgets(eingabe, 100, datei);
+	spieler.gewandheit = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	spieler.gewandheit_start = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	spieler.glueck = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	spieler.glueck_start = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	spieler.staerke = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	spieler.staerke_start = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raum = atoi(eingabe);
+	for(int i=0; i<maximalobjekt; i++) {
+		fgets(eingabe, 100, datei);
+		objekt[i] = atoi(eingabe);
+	}
+	fgets(eingabe, 100, datei);
+	angriffsbonus = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	fuenfwahl = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	nursilbertrifft = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	paralysiert = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	preis = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluessel = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluessel9 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluessel66 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluessel99 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluessel111_1 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluessel111_2 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluessel125 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluesselbootshaus = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schummeln = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	silberwaffe = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	unsichtbar = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	tripodgesehen = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	getoetetemenschen = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	getoetetegegner = atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	agartha = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	verzeichnisgelesen = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	buchgefunden = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	kartegefunden = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	sargverschoben = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	durchganggeoeffnet = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluesselgefunden = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	dreistelzer = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	rotation = (unsigned int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	dracheverletzt = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	drachetot = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	minenzwerge = (int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	stollentroll = (int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	gitteroffen = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel1 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel2 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel3 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel4 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	raetsel5 = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	dwellmer = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	arianna = (int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	elke = (int) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	schluesselarianna = (bool) atoi(eingabe);
+	fgets(eingabe, 100, datei);
+	verloben = (int) atoi(eingabe);
+	fclose(datei);
+
+    hinweis(gruen, "Spielstand geladen. Raum: %d\n", raum);
+	momentane_werte(&spieler);
+	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
+	return 0;
+}
+
+// Funktion: quit
+void quit() {
+	endwin();
+}
+
+// Funktion: Rätsel
+bool raetsel(char *raetseltext, char *antworttext) {
+	char eingabe[41];
+    vordergrundfarbe(magenta);
+	textausgabe(raetseltext);
+    vordergrundfarbe(gelb);
+    textausgabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!");
+    vordergrundfarbe(zyan);
+    texteingabe(eingabe, 40);
+    vordergrundfarbe(weiss);
+	if(0 == strcmp(antworttext, eingabe))
+		return true;
+	else
+		return false;
+}
+
+// Funktion: Zweisamkeit
+void zweisamkeit(int wert) {
+	arianna += wert;
+	switch(arianna) {
+		case 20: textausgabe("Euch beiden gefällt es, zusammen etwas zu unternehmen, tatsächlich könnte man sagen, das ihr echte Freunde geworden seid.");
+			 break;
+		case 40: textausgabe("In der letzten Zeit wurde es euch immer bewußter, daß die gemeinsame Zeit für euch beide die beste Zeit des Tages ist. Nach einem ausführlichen Gespräch seid ihr zu dem Ergebnis gekommen, das es nicht verkehrt werde, den Großteil der Zeit ab sofort gemeinsam zu verbringen.");
+			 break;
+		case 60: textausgabe("Arianna sieht dich verstohlen an. Sie gibt dir verschmitzt einen Kuss auf den Mund und läßt einen Schlüssel in deine Hand gleiten. \"Mein Heim soll ab jetzt auch dein Heim sein!\" sagt sie dabei und errötet kräftig unter dem Flaum ihres Backenbarts.");
+			 schluesselarianna = true;
+			 break;
+		case 80: textausgabe("Arianna druckst etwas herum, schließlich aber bringt sie auf den Punkt, was sie sagen möchte: \"Was hältst du davon, wenn wir den Ewigen Bund der Schmiede eingehen?\" Sie sieht jetzt irgendwie schüchtern aus.");
+			 if(janeinfrage("Willst du dich mit Arianna verloben (j/n)?")) {
+				textausgabe("Du mußt nicht einen Augenblick lang nachdenken, sondern grinst frech zurück: \"Na klar!\" und erhältst von ihr einen Knuff der dich zu Boden schickt, dann liegt sie auch schon auf dir und bedeckt dein Gesicht mit Küssen. Und dann wird sie plötzlich wieder ernst: \"Dann wirst du dich mit meinen Eltern treffen müssen - sie müssen dem Bund zustimmen!\"\nIrgendwie war es klar, das nichts im Leben besonders einfach isti");
+				verloben = 1;
+			 } else {
+				 textausgabe("Ganz liebevoll sagst du ihr, daß du das zum jetzigen Zeitpunkt nicht für eine gute Idee hältst - und erhältst dafür ein Schmollgesicht von ihr, wie du es noch nie zuvor gesehen hast.");
+				 arianna = 61;
+			 }
+			 break;
+		case 99: if(verloben < 6)
+				 arianna = 98;
+			 else
+				 textausgabe("Jetzt ist alles perfekt! Ihr beide solltet so bald als möglich in die große Schmiede gehen!");
+			 break;
+		case 100: if((verloben >= 6) && (raum == 96))
+				textausgabe("Jetzt ist der große Tag da, an dem du mit Arianna den Bund eingehen wirst!");
+			  else
+				  arianna = 99;
+			  break;
+		default: break;
+	}
+}
+
+
 // -------------------------
 // Das eigentliche Abenteuer
 // -------------------------
+
 void intro(void) {
 	int eingabe = 0;
 
@@ -3372,617 +3992,3 @@ void ort399(void) {
 void ort400(void) {
 }
 
-
-// Implementation Teste dein Glück
-bool tdg(charakter_t *figur) {
-	if(figur->glueck <= 0)
-
-		return false; // Da kann man nur noch Pech haben!
-	if((wuerfel(6) + wuerfel(6)) <= figur->glueck--)
-		return true; // Glück gehabt
-	return false; // Pech gehabt
-}
-
-// Implementation: Kampfrunde
-bool kampfrunde(charakter_t *angreifer, charakter_t *verteidiger, void (*fluchtpunkt)()) {
-	int testgewandheit[2];
-	bool glueckstest = false;
-	bool wirklichglueck;
-	int schildbonus = 0;
-
-	testgewandheit[0] = angreifer->gewandheit + wuerfel(6) + wuerfel(6) + angriffsbonus + paralysiert;
-	testgewandheit[1] = verteidiger->gewandheit + wuerfel(6) + wuerfel(6);
-	if(unsichtbar) // Falls du unsichtbar bist
-		testgewandheit[0] += 2;
-	if(testgewandheit[0] == testgewandheit[1])
-		return true; // Unentschieden, das heißt - nicht getroffen
-	momentane_werte(angreifer);
-	momentane_werte(verteidiger);
-	// Möchte der Spieler fliehen?
-	if(fluchtpunkt != NULL)
-		if(janeinfrage("Möchtest du fliehen (j/n)? "))
-			flucht(fluchtpunkt);
-	// Möchte der Spieler sein Glück versuchen?
-	if(angreifer->glueck > 0) {
-		if(janeinfrage("Möchtest du dein Glück testen (j/n)? ")) {
-			glueckstest = true;
-			wirklichglueck = tdg(angreifer);
-		}
-	}
-	// Die Auswertung des Kampfes
-	if(testgewandheit[0] > testgewandheit[1]) { // Der Spieler geht als Sieger hervor
-		if((nursilbertrifft == true) && (silberwaffe == false)) // Nur falls das Monster imun ist gegen Silber
-			return true; // Kein Treffer abbekommen
-		if(unsichtbar) // Unsichtbare treffen besser
-			verteidiger->staerke -= 2;
-		if(((objekt[gewehr] > 0) || (objekt[pistole] > 0)) && (objekt[patrone] > 0)) { // Schusswaffe = + 1 Punkt, solange Patrone vorhanden
-			verteidiger->staerke -= 1;
-			objekt[patrone] -= 1;
-		}
-		if(glueckstest) {
-			if(wirklichglueck)
-				verteidiger->staerke -= 4;
-			else
-				verteidiger->staerke -= 1;
-			return true; // Kein Treffer abbekommen
-		}
-		verteidiger->staerke -= 2;
-		return true; // Kein Treffer abbekommen
-	}
-	else if (testgewandheit[0] < testgewandheit[1]) { // Der Spieler verliert die Runde
-		if((objekt[schild] >= 0) && (wuerfel(6) == 6)) // Der Schild fängt den Schlag ab
-			schildbonus = 1;
-		if(unsichtbar) // Der Unsichtbarkeitsbonus
-			switch(wuerfel(6)) {
-				case 2:
-				case 4:
-					angreifer->staerke += 1;
-					break;
-				case 6:
-					return true; // Kein Treffer erhalten, dank Unsichtbarkeit
-				default:
-					break;
-			}
-		if(glueckstest) {
-			if(wirklichglueck)
-				angreifer->staerke -= 1 - schildbonus;
-			else
-				angreifer->staerke -= 4 - schildbonus;
-			return false; // Treffer abbekommen
-		}
-		angreifer->staerke -= 2 - schildbonus;
-		return false; // Treffer abbekommen
-	}
-	return true; // Unentschieden, das heißt - nicht getroffen
-}
-
-// Implementation: Kampf
-bool kampf(charakter_t *spieler, charakter_t *gegner, int anzahl, bool trefferverboten, void (*fluchtpunkt)()) {
-	int gesamtstaerke = 0;
-	bool keintreffererhalten = true;
-
-	for(int i=0; i < anzahl; i++)
-		gesamtstaerke += gegner[i].staerke;
-	while((spieler->staerke > 0) && (gesamtstaerke > 0)) {
-		for(int i=0; i < anzahl; i++)
-			if(spieler->staerke > 0) {
-				if(gegner[i].staerke > 0)
-					keintreffererhalten = kampfrunde(spieler, &gegner[i], fluchtpunkt);
-				if(trefferverboten)
-					if(!keintreffererhalten)
-						return false;
-			}
-			else
-				return false;
-		// Leben die Gegner noch?
-		gesamtstaerke = 0;
-		for(int i=0; i < anzahl; i++) {
-			if(gegner[i].staerke < 0)
-				gegner[i].staerke = 0;
-			gesamtstaerke += gegner[i].staerke;
-		}
-	}
-	if(spieler->staerke > 0)
-		return true; // Sieger im Kampf ^.^
-	return false; // Der Spieler ist tot v.v
-}
-
-// Implementation: Momentane Werte
-void momentane_werte(charakter_t *person) {
-	textausgabe("\n      Name: %s\n", person->name);
-	textausgabe("Gewandheit: %2d / %2d\n", person->gewandheit, person->gewandheit_start);
-	textausgabe("    Stärke: %2d / %2d\n", person->staerke, person->staerke_start);
-	textausgabe("     Glück: %2d / %2d\n", person->glueck, person->glueck_start);
-}
-
-
-// Implementation: Auswahl
-void auswahl(char *beschreibung, int maxzahl, ...) {
-	char eingabe[20];
-	int ergebnis = 0;
-	char zusatzbeschreibung[300];
-	va_list zeiger;
-	// reserviere Platz für alle Auswahlmöglichkeiten
-	void (*fptr[maxzahl]) (void);
-	// Werte der VA-Liste in die Funktionszeiger kopieren
-	va_start(zeiger, maxzahl); // Die maxzahl Zeiger auslesen
-	for(int i=0; i < maxzahl; ++i)
-		fptr[i] = va_arg(zeiger, void*);
-	va_end(zeiger);
-
-	// Die Zusatzfunktionen
-	while((ergebnis < 1) || (ergebnis > maxzahl)) {
-		vordergrundfarbe(zyan);
-		strcpy(zusatzbeschreibung, " ");
-		if(objekt[gewandheitstrank] > 0)
-			strcat(zusatzbeschreibung, "(44) Gewandheitstrank trinken ");
-		if(objekt[staerketrank] > 0)
-			strcat(zusatzbeschreibung, "(55) Stärketrank trinken ");
-		if(objekt[glueckstrank] > 0)
-			strcat(zusatzbeschreibung, "(66) Glückstrank trinken ");
-		strcat(zusatzbeschreibung, "(77) Spielstand laden (88) Spielstand speichern (99) Speichern & beenden");
-		textausgabe(beschreibung);
-        textausgabe(zusatzbeschreibung);
-        vordergrundfarbe(gelb);
-		textausgabe("Du wählst: ");
-        vordergrundfarbe(gruen);
-        texteingabe(eingabe, 20);
-		ergebnis = atoi(eingabe);
-		vordergrundfarbe(weiss);
-		switch(ergebnis) {
-			case 44: gewandheitstrank_trinken();
-					break;
-			case 55: staerketrank_trinken();
-					break;
-			case 66: glueckstrank_trinken();
-					break;
-			case 77: laden();
-					 break;
-			case 88: speichern();
-					 break;
-			case 99: speichern();
-                     beenden(gruen, EXIT_SUCCESS, "Bis bald!");
-			default: break;
-		}
-	}
-	fptr[ergebnis-1](); // Umwandlung menschliche Nummerierung in Arraynummerierung
-}
-
-// Funktion: VersucheDeinGlueck
-void versuchedeinglueck(void (*funktion1)(), void (*funktion2)()) {
-	vordergrundfarbe(gruen);
-	textausgabe("--- Versuche dein Glück! - Drücke ENTER ---");
-//	getchar();
-	getch();
-	vordergrundfarbe(weiss);
-	if(tdg(&spieler)) // Glück gehabt
-		funktion1();
-	else 			// Pech gehabt
-		funktion2();
-}
-
-// Funktion: VersucheDeineGewandheit
-void versuchedeinegewandheit(void (*funktion1)(), void (*funktion2)()) {
-	bool gewandheit;
-
-	vordergrundfarbe(gruen);
-	textausgabe("--- Versuche deine Gewandheit! - Drücke ENTER ---");
-	getch();
-	vordergrundfarbe(gelb);
-	gewandheit = wuerfel(6) + wuerfel(6);
-	textausgabe("Deine momentane Gewandheit ist %d, dein Würfelergebnis ist %d\n", spieler.gewandheit, gewandheit);
-	vordergrundfarbe(weiss);
-    if(gewandheit <= spieler.gewandheit) // Glück gehabt
-		funktion1();
-	else 			// Pech gehabt
-		funktion2();
-}
-
-
-// Funktion: Flucht
-void flucht(void (*funktion1)()) {
-    vordergrundfarbe(rot);
-	textausgabe("Du entschließt dich zu fliehen, was dich 2 Stärkepunkte kosten wird.");
-    vordergrundfarbe(weiss);
-	if(spieler.glueck > 0) { // Ist ein Glückstest möglich?
-		textausgabe("Du könntest natürlich auch dein Glück auf die Probe stellen. Hast du Glück, ist es eine geordnete Flucht - und du verlierst nur 1 Stärkepunkt. Wenn du jedoch kein Glück hast, wird es zu einer heilosen Flucht und du verlierst 3 Stärkepunkte.");
-		if(janeinfrage("Möchtest du dein Glück testen (j/n)? ")) {
-			if(tdg(&spieler)) // Glück gehabt
-				spieler.staerke -= 1;
-			else // Pech gehabt
-				spieler.staerke -= 3;
-		}
-		else
-			spieler.staerke -= 2;
-	}
-	else {
-		spieler.staerke -= 2;
-	}
-	if(spieler.staerke) {
-		funktion1();
-        beenden(rot, EXIT_FAILURE, "Fehler!\nEine Ortsvariable ist wohl noch leer.\nDer letzer bekannte Raum war %d.", raum);
-	}
-	else 
-        beenden(rot, EXIT_SUCCESS, "Du bist zu geschwächt, um auch nur einen einzigen weiteren Atemzug zu machen. Unter Schmerzen entweicht dir Atemluft aus deinen Lungen. Die Umgebung wird erst Rot vor deinen Augen und gleitet schließlich ins Schwarze ab. Das ist dein ENDE.");
-	beenden(rot, EXIT_FAILURE, "Fehler!\nIch bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
-}
-
-// Implementation: Mahlzeit
-void mahlzeit(void) {
-	if(janeinfrage("Möchtest du eine Mahlzeit zu dir nehmen (j/n)? "))
-		if(objekt[proviant] > 0) {
-			textausgabe("Nachdem du dich versichert hast, das niemand in der Nähe ist, entnimmst du ein Proviantpaket aus deinem Rucksack. Genüsslich und so leise wie möglich verzehrst du es. Du kannst spüren, wie etwas Kraft in deinen müden Körper zurückkehrt.");
-			objekt[proviant] -= 1;
-			staerkesteigerung(4, 0);
-		}
-		else
-			textausgabe("Nachdem du dich versichert hast, das niemand in der Nähe ist, durchwühlst du deinen Rucksack auf der Suche nach einem Proviantpaket. Nach einigen Minuten und mehrfachen aus- und einpacken des Rucksacks gibst du verzweifelt auf. Es ist tatsächlich kein einziger Brotkrummen mehr übrig.");
-}
-
-// Funktion: Gewandheitstrank trinken
-void gewandheitstrank_trinken() {
-	if(objekt[gewandheitstrank] > 0) {
-		objekt[gewandheitstrank] -= 1;
-		spieler.gewandheit = spieler.gewandheit_start;
-		textausgabe("Du trinkst den Gewandheitstrank. Deine Gewandheit könnte nicht besser sein.");
-	}
-}
-
-// Funktion: Stärketrank trinken
-void staerketrank_trinken() {
-	if(objekt[staerketrank]) {
-		objekt[staerketrank] -= 1;
-		spieler.staerke = spieler.staerke_start;
-		textausgabe("Du trinkst den Stärketrank. Deine Stärke könnte nicht besser sein.");
-	}
-}
-
-// Funktion Glückstrank trinken
-void glueckstrank_trinken() {
-	if(objekt[glueckstrank]) {
-		objekt[glueckstrank] -= 1;
-		spieler.glueck_start += 1;
-		spieler.glueck = spieler.glueck_start;
-		textausgabe("Du trinkst den Glückstrank. Deine Glück ist besser als jemals zuvor.");
-	}
-}
-
-// Implementation: Objkekt ablegen
-void objekt_ablegen(void) {
-	char eingabe[21];
-	int ergebnis = -1;
-	char bestaetigung;
-	int j=0;
-
-	for(int i=0; (i < maximalobjekt) && (objekt[i] > 0); i++) {
-		textausgabe("(%d) %s ", objekt[i], objektname[i]);
-		j++;
-		if(!(j % 3))
-			textausgabe("\n");
-	}
-	while((ergebnis < 0) || (ergebnis >= maximalobjekt)) {
-	    vordergrundfarbe(gruen);
-        textausgabe("Bitte gib die Nummer des abzulegenden Objektes an! ");
-        vordergrundfarbe(rot);
-        texteingabe(eingabe, 20);
-		ergebnis = atoi(eingabe);
-	}
-	vordergrundfarbe(gelb);
-	textausgabe("%s wirklich ablegen? ", objektname[ergebnis]);
-	bestaetigung = taste();
-	vordergrundfarbe(weiss);
-	if((bestaetigung == 'j') || (bestaetigung == 'J')) {
-	    objekt[ergebnis] -= 1;
-        vordergrundfarbe(gelb);
-		textausgabe("\n%s abgelegt.\n", objektname[ergebnis]);
-        vordergrundfarbe(weiss);
-	}
-}
-
-
-// Implementation: gewandheitssteigerung
-void gewandheitssteigerung(int temporaer, int permanent) {
-	spieler.gewandheit_start += permanent;
-	spieler.gewandheit += temporaer;
-	if(spieler.gewandheit > spieler.gewandheit_start)
-		spieler.gewandheit = spieler.gewandheit_start;
-}
-
-// Implementation: staerkesteigerung
-void staerkesteigerung(int temporaer, int permanent) {
-	spieler.staerke_start += permanent;
-	spieler.staerke+= temporaer;
-	if(spieler.staerke > spieler.staerke_start)
-		spieler.staerke = spieler.staerke_start;
-}
-
-// Implementation: glueckssteigerung
-void glueckssteigerung(int temporaer, int permanent) {
-	spieler.glueck_start += permanent;
-	spieler.glueck += temporaer;
-	if(spieler.glueck > spieler.glueck_start)
-		spieler.glueck = spieler.glueck_start;
-}
-
-// -------------------------
-// Implementation: Speichern
-// -------------------------
-
-int speichern(void) {
-	FILE *datei;
-	datei = fopen(DATEINAME, "w");
-	if(ferror(datei)) {
-        hinweis(rot, "Fehler!\nDie Datei läßt sich nicht speichern. Fahre ohne gespeicherten Spielstand fort.");
-		return 1;
-	}
-
-	fprintf(datei, "%s\n", spieler.name);
-	fprintf(datei, "%d\n", spieler.gewandheit);
-	fprintf(datei, "%d\n", spieler.gewandheit_start);
-	fprintf(datei, "%d\n", spieler.glueck);
-	fprintf(datei, "%d\n", spieler.glueck_start);
-	fprintf(datei, "%d\n", spieler.staerke);
-	fprintf(datei, "%d\n", spieler.staerke_start);
-	fprintf(datei, "%d\n", raum);
-	for(int i=0; i<maximalobjekt; i++)
-		fprintf(datei, "%d\n", objekt[i]);
-	fprintf(datei, "%d\n", angriffsbonus);
-	fprintf(datei, "%d\n", fuenfwahl);
-	fprintf(datei, "%d\n", (int) nursilbertrifft);
-	fprintf(datei, "%d\n", paralysiert);
-	fprintf(datei, "%d\n", preis);
-	fprintf(datei, "%d\n", schluessel);
-	fprintf(datei, "%d\n", (int) schluessel9);
-	fprintf(datei, "%d\n", (int) schluessel66);
-	fprintf(datei, "%d\n", (int) schluessel99);
-	fprintf(datei, "%d\n", (int) schluessel111_1);
-	fprintf(datei, "%d\n", (int) schluessel111_2);
-	fprintf(datei, "%d\n", (int) schluessel125);
-	fprintf(datei, "%d\n", (int) schluesselbootshaus);
-	fprintf(datei, "%d\n", (int) schummeln);
-	fprintf(datei, "%d\n", (int) silberwaffe);
-	fprintf(datei, "%d\n", (int) unsichtbar);
-	fprintf(datei, "%d\n", (int) tripodgesehen);
-	fprintf(datei, "%d\n", getoetetemenschen);
-	fprintf(datei, "%d\n", getoetetegegner);
-	fprintf(datei, "%d\n", (int) agartha);
-	fprintf(datei, "%d\n", (int) verzeichnisgelesen);
-	fprintf(datei, "%d\n", (int) buchgefunden);
-	fprintf(datei, "%d\n", (int) kartegefunden);
-	fprintf(datei, "%d\n", (int) sargverschoben);
-	fprintf(datei, "%d\n", (int) durchganggeoeffnet);
-	fprintf(datei, "%d\n", (int) schluesselgefunden);
-	fprintf(datei, "%d\n", (int) dreistelzer);
-	fprintf(datei, "%d\n", rotation);
-	fprintf(datei, "%d\n", (int) dracheverletzt);
-	fprintf(datei, "%d\n", (int) drachetot);
-	fprintf(datei, "%d\n", minenzwerge);
-	fprintf(datei, "%d\n", stollentroll);
-	fprintf(datei, "%d\n", (int) gitteroffen);
-	fprintf(datei, "%d\n", (int) raetsel1);
-	fprintf(datei, "%d\n", (int) raetsel2);
-	fprintf(datei, "%d\n", (int) raetsel3);
-	fprintf(datei, "%d\n", (int) raetsel4);
-	fprintf(datei, "%d\n", (int) raetsel5);
-	fprintf(datei, "%d\n", (int) dwellmer);
-	fprintf(datei, "%d\n", arianna);
-	fprintf(datei, "%d\n", elke);
-	fprintf(datei, "%d\n", (int) schluesselarianna);
-	fprintf(datei, "%d\n", verloben);
-    hinweis(gruen, "Spielstand gespeichert.\nRaum: %d\n", raum);
-    fflush(datei);
-    fclose(datei);
-	return 0;
-}
-
-
-// -------------------------
-// Implementation: Laden
-// -------------------------
-
-int laden(void) {
-	char eingabe[100];
-	FILE *datei;
-	datei = fopen(DATEINAME, "r");
-	if(!datei) {
-		vordergrundfarbe(rot);
-		textausgabe("\nFehler!\nDie Datei ließ sich nicht öffnen. Fahre ohne geladenen Spielstand fort.\n");
-		vordergrundfarbe(weiss);
-		return 1;
-	}
-	fgets(eingabe, 100, datei);
-	for(int i=0; i < strlen(eingabe); i++)
-		if(eingabe[i] == '\n')
-			eingabe[i] = '\0';
-	strcpy(spieler.name, eingabe);
-	fgets(eingabe, 100, datei);
-	spieler.gewandheit = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	spieler.gewandheit_start = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	spieler.glueck = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	spieler.glueck_start = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	spieler.staerke = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	spieler.staerke_start = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	raum = atoi(eingabe);
-	for(int i=0; i<maximalobjekt; i++) {
-		fgets(eingabe, 100, datei);
-		objekt[i] = atoi(eingabe);
-	}
-	fgets(eingabe, 100, datei);
-	angriffsbonus = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	fuenfwahl = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	nursilbertrifft = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	paralysiert = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	preis = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluessel = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluessel9 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluessel66 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluessel99 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluessel111_1 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluessel111_2 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluessel125 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluesselbootshaus = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schummeln = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	silberwaffe = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	unsichtbar = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	tripodgesehen = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	getoetetemenschen = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	getoetetegegner = atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	agartha = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	verzeichnisgelesen = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	buchgefunden = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	kartegefunden = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	sargverschoben = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	durchganggeoeffnet = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluesselgefunden = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	dreistelzer = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	rotation = (unsigned int) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	dracheverletzt = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	drachetot = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	minenzwerge = (int) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	stollentroll = (int) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	gitteroffen = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	raetsel1 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	raetsel2 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	raetsel3 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	raetsel4 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	raetsel5 = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	dwellmer = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	arianna = (int) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	elke = (int) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	schluesselarianna = (bool) atoi(eingabe);
-	fgets(eingabe, 100, datei);
-	verloben = (int) atoi(eingabe);
-	fclose(datei);
-
-    hinweis(gruen, "Spielstand geladen. Raum: %d\n", raum);
-	momentane_werte(&spieler);
-	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
-	return 0;
-}
-
-// Funktion: quit
-void quit() {
-	endwin();
-}
-
-// Funktion: Rätsel
-bool raetsel(char *raetseltext, char *antworttext) {
-	char eingabe[41];
-    vordergrundfarbe(magenta);
-	textausgabe(raetseltext);
-    vordergrundfarbe(gelb);
-    textausgabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!");
-    vordergrundfarbe(zyan);
-    texteingabe(eingabe, 40);
-    vordergrundfarbe(weiss);
-	if(0 == strcmp(antworttext, eingabe))
-		return true;
-	else
-		return false;
-}
-
-// Funktion: Zweisamkeit
-void zweisamkeit(int wert) {
-	arianna += wert;
-	switch(arianna) {
-		case 20: textausgabe("Euch beiden gefällt es, zusammen etwas zu unternehmen, tatsächlich könnte man sagen, das ihr echte Freunde geworden seid.");
-			 break;
-		case 40: textausgabe("In der letzten Zeit wurde es euch immer bewußter, daß die gemeinsame Zeit für euch beide die beste Zeit des Tages ist. Nach einem ausführlichen Gespräch seid ihr zu dem Ergebnis gekommen, das es nicht verkehrt werde, den Großteil der Zeit ab sofort gemeinsam zu verbringen.");
-			 break;
-		case 60: textausgabe("Arianna sieht dich verstohlen an. Sie gibt dir verschmitzt einen Kuss auf den Mund und läßt einen Schlüssel in deine Hand gleiten. \"Mein Heim soll ab jetzt auch dein Heim sein!\" sagt sie dabei und errötet kräftig unter dem Flaum ihres Backenbarts.");
-			 schluesselarianna = true;
-			 break;
-		case 80: textausgabe("Arianna druckst etwas herum, schließlich aber bringt sie auf den Punkt, was sie sagen möchte: \"Was hältst du davon, wenn wir den Ewigen Bund der Schmiede eingehen?\" Sie sieht jetzt irgendwie schüchtern aus.");
-			 if(janeinfrage("Willst du dich mit Arianna verloben (j/n)?")) {
-				textausgabe("Du mußt nicht einen Augenblick lang nachdenken, sondern grinst frech zurück: \"Na klar!\" und erhältst von ihr einen Knuff der dich zu Boden schickt, dann liegt sie auch schon auf dir und bedeckt dein Gesicht mit Küssen. Und dann wird sie plötzlich wieder ernst: \"Dann wirst du dich mit meinen Eltern treffen müssen - sie müssen dem Bund zustimmen!\"\nIrgendwie war es klar, das nichts im Leben besonders einfach isti");
-				verloben = 1;
-			 } else {
-				 textausgabe("Ganz liebevoll sagst du ihr, daß du das zum jetzigen Zeitpunkt nicht für eine gute Idee hältst - und erhältst dafür ein Schmollgesicht von ihr, wie du es noch nie zuvor gesehen hast.");
-				 arianna = 61;
-			 }
-			 break;
-		case 99: if(verloben < 6)
-				 arianna = 98;
-			 else
-				 textausgabe("Jetzt ist alles perfekt! Ihr beide solltet so bald als möglich in die große Schmiede gehen!");
-			 break;
-		case 100: if((verloben >= 6) && (raum == 96))
-				textausgabe("Jetzt ist der große Tag da, an dem du mit Arianna den Bund eingehen wirst!");
-			  else
-				  arianna = 99;
-			  break;
-		default: break;
-	}
-}
-
-
-// ----------------
-// Die Hauptroutine
-// ----------------
-int main(void) {
-	bool spielerlebt = true;
-
-    zufall_per_zeit();
-    ncurses_init(quit);
-	vordergrundfarbe(blau);
-	textausgabe("--------------------------");
-	textausgabe("Steampunk FFR - Der Anfang");
-	textausgabe("--------------------------");
-	vordergrundfarbe(gelb);
-    textausgabe("Ein \"Das-ist-dein-Abenteuer\" Roman\n");
-	vordergrundfarbe(magenta);
-    textausgabe("Nach einer Geschichte von Sascha Biermanns\n");
-    vordergrundfarbe(weiss);
-	if(janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?"))
-		laden();
-	intro();
-	vorwort();
-	ort1();
-}
