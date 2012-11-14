@@ -1,4 +1,4 @@
-CFLAGS  = -Wall -g -std=c99
+CFLAGS  = -Wall -g -O3 -std=gnu11 
 LDFLAGS = -lncursesw
 
 OBJ = steampunkffr.o skbtools.o

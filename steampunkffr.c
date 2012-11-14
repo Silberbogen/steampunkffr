@@ -13,8 +13,8 @@
  *        Created:  22.05.2011 09:35:00
  *          Ended:  00.00.0000 00:00:00
  *       Revision:  none
- *       Compiler:  C99 compatible or better
- *        compile:  cc -o steampunkffr skbtools.c steampunkffr.c -lncurses -std=c99
+ *       Compiler:  c99/c11
+ *        compile:  make
  *
  *         Author:  Sascha K. Biermanns (saschakb), saschakb@gmail.com
  *        Company:
@@ -66,6 +66,7 @@
  *                hinweis() hinzugefügt - Prinzip: Vereinfachung
  *   - 17.09.2011 Verwendung wird von toolbox auf skbtools geändert
  *	 - 28.08.2012 steampunkffr.h hinzugefügt, teile aus der .c-Datei ausgelagert.
+ *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen
  * =====================================================================================
  */
 
@@ -76,6 +77,7 @@
 #include <stdarg.h> // Für die VA-Liste
 #include <ncurses.h>
 #include <locale.h>
+#include "skbtools.h"
 #include "steampunkffr.h"
 
 #define DATEINAME ".steampunkffrsicherung.txt"
@@ -85,9 +87,7 @@
 // ----------------
 
 int main(void) {
-	bool spielerlebt = true;
-
-    zufall_per_zeit();
+	zufall_per_zeit();
     ncurses_init(quit);
 	vordergrundfarbe(blau);
 	textausgabe("--------------------------");
@@ -110,7 +110,7 @@ int main(void) {
 // ----------------------------------------
 
 // Implementation Teste dein Glück
-bool tdg(charakter_t *figur) {
+bool tdg(charakter_s *figur) {
 	if(figur->glueck <= 0)
 
 		return false; // Da kann man nur noch Pech haben!
@@ -120,10 +120,10 @@ bool tdg(charakter_t *figur) {
 }
 
 // Implementation: Kampfrunde
-bool kampfrunde(charakter_t *angreifer, charakter_t *verteidiger, void (*fluchtpunkt)()) {
+bool kampfrunde(charakter_s *angreifer, charakter_s *verteidiger, void (*fluchtpunkt)()) {
 	int testgewandheit[2];
 	bool glueckstest = false;
-	bool wirklichglueck;
+	bool wirklichglueck = false;
 	int schildbonus = 0;
 
 	testgewandheit[0] = angreifer->gewandheit + wuerfel(6) + wuerfel(6) + angriffsbonus + paralysiert;
@@ -193,7 +193,7 @@ bool kampfrunde(charakter_t *angreifer, charakter_t *verteidiger, void (*fluchtp
 }
 
 // Implementation: Kampf
-bool kampf(charakter_t *spieler, charakter_t *gegner, int anzahl, bool trefferverboten, void (*fluchtpunkt)()) {
+bool kampf(charakter_s *spieler, charakter_s *gegner, int anzahl, bool trefferverboten, void (*fluchtpunkt)()) {
 	int gesamtstaerke = 0;
 	bool keintreffererhalten = true;
 
@@ -224,7 +224,7 @@ bool kampf(charakter_t *spieler, charakter_t *gegner, int anzahl, bool trefferve
 }
 
 // Implementation: Momentane Werte
-void momentane_werte(charakter_t *person) {
+void momentane_werte(charakter_s *person) {
 	textausgabe("\n      Name: %s\n", person->name);
 	textausgabe("Gewandheit: %2d / %2d\n", person->gewandheit, person->gewandheit_start);
 	textausgabe("    Stärke: %2d / %2d\n", person->staerke, person->staerke_start);
@@ -345,7 +345,7 @@ void flucht(void (*funktion1)()) {
 
 // Implementation: Mahlzeit
 void mahlzeit(void) {
-	if(janeinfrage("Möchtest du eine Mahlzeit zu dir nehmen (j/n)? "))
+	if(janeinfrage("Möchtest du eine Mahlzeit zu dir nehmen (j/n)? ")) {
 		if(objekt[proviant] > 0) {
 			textausgabe("Nachdem du dich versichert hast, das niemand in der Nähe ist, entnimmst du ein Proviantpaket aus deinem Rucksack. Genüsslich und so leise wie möglich verzehrst du es. Du kannst spüren, wie etwas Kraft in deinen müden Körper zurückkehrt.");
 			objekt[proviant] -= 1;
@@ -353,6 +353,8 @@ void mahlzeit(void) {
 		}
 		else
 			textausgabe("Nachdem du dich versichert hast, das niemand in der Nähe ist, durchwühlst du deinen Rucksack auf der Suche nach einem Proviantpaket. Nach einigen Minuten und mehrfachen aus- und einpacken des Rucksacks gibst du verzweifelt auf. Es ist tatsächlich kein einziger Brotkrummen mehr übrig.");
+
+	}
 }
 
 // Funktion: Gewandheitstrank trinken
@@ -873,13 +875,13 @@ void ort13(void) {
 	// Begegnung mit einem Zufallsgegner der "Zivilseite"
 	int zufallsgegner = wuerfel(6);
 	bool kampfausgang;
-	charakter_t gegner1 = { "verängstigte Frau", 2, 2, 3, 3 };
-	charakter_t gegner2 = { "Plünderer", 6, 6, 3, 3 };
-	charakter_t gegner3 = { "aggressiver Jugendlicher", 6, 6, 4, 4 };
-	charakter_t gegner4 = { "Polizist", 5, 5, 4, 4 };
-	charakter_t gegner5 = { "Gutbürger", 6, 6, 5, 5 };
-	charakter_t gegner6 = { "Heckenschütze", 8, 8, 4, 4 };
-	charakter_t gegner7 = { "wahnsinniger Polizist", 6, 6, 4, 4 };
+	charakter_s gegner1 = { "verängstigte Frau", 2, 2, 3, 3 };
+	charakter_s gegner2 = { "Plünderer", 6, 6, 3, 3 };
+	charakter_s gegner3 = { "aggressiver Jugendlicher", 6, 6, 4, 4 };
+	charakter_s gegner4 = { "Polizist", 5, 5, 4, 4 };
+	charakter_s gegner5 = { "Gutbürger", 6, 6, 5, 5 };
+	charakter_s gegner6 = { "Heckenschütze", 8, 8, 4, 4 };
+	charakter_s gegner7 = { "wahnsinniger Polizist", 6, 6, 4, 4 };
 	switch(zufallsgegner) {
 		case 1: kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
 				break;
@@ -1187,7 +1189,7 @@ void ort35(void) {
 	// Abteiberg
 	if(raum == 46) {
 		textausgabe("Als du langsam den Abteiberg hinaufsteigst, erblickst du am oberen Ende des Berges drei Gestalten in seltsamen Uniformen. Sie tragen eine Art von Helmen, die an Taucherglocken erinnern, mit großen Filtern daran wie von Gasmasken. Und wie es scheint, haben sie dich gesehen. Als Fluchroute hast du jetzt nur noch den hinter dir liegenden Geroweiher.");
-		charakter_t soldat[3] = { { "1. Soldat", 7, 7, 6, 6 }, { "2. Soldat", 6, 6, 4, 4}, { "3. Soldat", 7, 7, 8, 8} };
+		charakter_s soldat[3] = { { "1. Soldat", 7, 7, 6, 6 }, { "2. Soldat", 6, 6, 4, 4}, { "3. Soldat", 7, 7, 8, 8} };
 		if(!kampf(&spieler, soldat, 1, false, ort46))
             beenden(rot, EXIT_SUCCESS, "Sich auf drei kampferprobte Soldaten war einerseits sehr mutig von dir, andererseits aber auch sehr dumm. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du durch das Haus rechts von dir hindurch. Dahinter befindet sich ein Hügel, die Mauer, die zum Münstervorplatz führt, und an dieser Mauer wachsen Ranken herunter. Guido, Marco und du - ihr habt hier früher Verstecken gespielt, und du bist immer klammheimlich an den Ranken  gewesen - hast gewartet, bis sie oben an dir vorbei sind - und dann hinter ihrem Rücken, während sie die Treppen hinunterstiegen, nach oben geklettert. Warum warst du dieses Mal nicht so schlau, diesen Weg zu nehmen. Dann, als die Tritte der Soldaten auf dich einprasseln, naht für dich das ENDE.");
 	}
@@ -1208,7 +1210,7 @@ void ort36(void) {
 	if((raum == 41) && durchganggeoeffnet) {
 		dreistelzer = true;
 		textausgabe("Der ganze Boden erhebt, und du hörst ein lautes mechanisch Geräusch, als du oben auf dem Alten Markt einen Dreistelzer sehen kannst, der sich in Stellung bringt. Schreie ertönen aus seiner Richtung, dann siehst du zwei fremde Soldaten, die in deine Richtung die Treppe von Mariä Himmelfahrt heruntergelaufen kommen. Ein weitere stürmt aus der Polizeiwache heran, er ist ein richtiger Hühne.");
-		charakter_t soldat[3] = { { "1. Soldat", 6, 6, 7, 7 }, { "2. Soldat", 5, 5, 6, 6}, { "3. Soldat", 8, 8, 7, 7} };
+		charakter_s soldat[3] = { { "1. Soldat", 6, 6, 7, 7 }, { "2. Soldat", 5, 5, 6, 6}, { "3. Soldat", 8, 8, 7, 7} };
 		if(!kampf(&spieler, soldat, 1, false, ort46))
             beenden(rot, EXIT_SUCCESS, "Sich auf drei kampferprobte Soldaten war nicht gerade deine klügste Entscheidung. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du hinüber zur Treppe, die von Mariä Himmelfahrt herunterführt. Du erinnerst dich, wie ihr als Kinder auf den Sohlen eurer Sandalen im Stehen das Geländer heruntergerutscht seid, so als wärt ihr Wellenreiter in den Brandungen vor Hawai. Dann landet der Absatz eines Stiefels in deinem Gesicht. Der Schmerz explodiert in deinem Gesicht, alles wird Schwarz. Und dann ist es auch schon vorbei. Dein ENDE ist gekommen.");
 		raum = 36;
@@ -2022,12 +2024,13 @@ void ort81(void) {
 	vordergrundfarbe(weiss);
     if(!raetsel1) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
-		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?")) {
 			if(raetsel(raetseltext, antworttext)) {
 				raetsel1 = true;
 				textausgabe("Deine Antwort war ... weise!");
 			} else
 				textausgabe("Deine Antwort war ... unwissend!");
+		}
 	}
 	switch(rotation % 8) {
 		case 1: auswahl(text, 2, ort67, ort82);
@@ -2099,12 +2102,13 @@ void ort83(void) {
     vordergrundfarbe(weiss);
 	if(!raetsel3) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
-		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?")) {
 			if(raetsel(raetseltext, antworttext)) {
 				raetsel3 = true;
 				textausgabe("Deine Antwort war ... weise!");
 			} else
 				textausgabe("Deine Antwort war ... unwissend!");
+		}
 	}
 	auswahl("Du kannst den Weg zurück nach Südwesten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212);
 }
@@ -2127,12 +2131,13 @@ void ort84(void) {
     vordergrundfarbe(weiss);
 	if(!raetsel4) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
-		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?")) {
 			if(raetsel(raetseltext, antworttext)) {
 				raetsel4 = true;
 				textausgabe("Deine Antwort war ... weise!");
 			} else
 				textausgabe("Deine Antwort war ... unwissend!");
+		}
 	}
 	auswahl("Du kannst den Weg zurück nach Westen gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212);
 }
@@ -2156,12 +2161,13 @@ void ort85(void) {
 	vordergrundfarbe(weiss);
     if(!raetsel5) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
-		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?")) {
 			if(raetsel(raetseltext, antworttext)) {
 				raetsel5 = true;
 				textausgabe("Deine Antwort war ... weise!");
 			} else
 				textausgabe("Deine Antwort war ... unwissend!");
+		}
 	}
 	auswahl("Du kannst den Weg zurück nach Nordwesten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212);
 }
@@ -2185,12 +2191,13 @@ void ort86(void) {
 	vordergrundfarbe(weiss);
     if(!raetsel2) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
-		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?"))
+		if(janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?")) {
 			if(raetsel(raetseltext, antworttext)) {
 				raetsel2 = true;
 				textausgabe("Deine Antwort war ... weise!");
 			} else
 				textausgabe("Deine Antwort war ... unwissend!");
+		}
 	}
 	auswahl("Du kannst den Weg zurück nach Nordosten gehen (1) oder die Wände nach Geheimgängen absuchen (2)", 2, ort82, ort212);
 }
@@ -2340,7 +2347,7 @@ void ort97(void) {
 }
 
 void ort98(void) {
-	static charakter_t drache = { "Drache", 20, 20, 20, 20 };
+	static charakter_s drache = { "Drache", 20, 20, 20, 20 };
 	rotation++;
 	if((raum == 99) || (raum == 74))
 		textausgabe("Du findest eine Spalte im Schatten der Wand. Sie ist äußerst schmal, aber es gelingt dir, dich hineinzuquetschen. So kriechst du auf Händen und Füßen weiter - und plötzlich wird dir klar, das nach all den kleinen Windungen, du dich ja gar nicht umdrehen kannst. Zeitweise mußt du sogar flach auf den Boden gepreßt, die Arme vorausgestreckt, weiterkriechen um nicht steckenzubleiben. Die Minuten werden für dich zu kleinen Ewigkeiten, die Sekunden dehnen sich zu Stunden aus. Und endlich - sind deine Arme frei, du kriechst schneller, kletterst aus dem beengenden Gang heraus und richtest dich auf, wobei deine Glieder heftig maulend über die vorhergehende Position reagieren. Du reckst und streckst dich, so gut es eben geht. Es ist immer noch so dunkel wie in dem endlosen Gang um dich herum, aber du spürst trotzdem eine Veränderung. Es fühlt sich an, als wäre die Luft wärmer geworden. Aber vermutlich ist daß nur Einbildung. Tatsächlich war der Kriechgang anstrengend und du bist ganz schön ins Schwitzen gekommen.");
@@ -2486,13 +2493,13 @@ void ort113(void) {
 	// Begegnung mit einem Zufallsgegner der "Militärseite"
 	int zufallsgegner = wuerfel(6);
 	bool kampfausgang;
-	charakter_t gegner1 = { "Uniformierter", 2, 2, 3, 3 };
-	charakter_t gegner2 = { "Besatzer", 6, 6, 3, 3 };
-	charakter_t gegner3 = { "aggressiver Uniformträger", 6, 6, 4, 4 };
-	charakter_t gegner4 = { "Soldat einer fremden Armee", 5, 5, 4, 4 };
-	charakter_t gegner5 = { "gutgläubiger Mitläufer", 6, 6, 5, 5 };
-	charakter_t gegner6 = { "Heckenschütze", 8, 8, 4, 4 };
-	charakter_t gegner7 = { "gepanzerter Beserker", 6, 6, 8, 8 };
+	charakter_s gegner1 = { "Uniformierter", 2, 2, 3, 3 };
+	charakter_s gegner2 = { "Besatzer", 6, 6, 3, 3 };
+	charakter_s gegner3 = { "aggressiver Uniformträger", 6, 6, 4, 4 };
+	charakter_s gegner4 = { "Soldat einer fremden Armee", 5, 5, 4, 4 };
+	charakter_s gegner5 = { "gutgläubiger Mitläufer", 6, 6, 5, 5 };
+	charakter_s gegner6 = { "Heckenschütze", 8, 8, 4, 4 };
+	charakter_s gegner7 = { "gepanzerter Beserker", 6, 6, 8, 8 };
 	switch(zufallsgegner) {
 		case 1: kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
 				break;
@@ -2712,7 +2719,7 @@ void ort142(void) {
 
 	}
 	if((schluessel9 + schluessel66 + schluessel99 + schluessel111_1 + schluessel111_2 + schluessel125) > 3) {
-		if(janeinfrage("Du hast genügend Schlüssel bei dir. Möchtest du versuchen die Türe zu öffnen (j/n)?"))
+		if(janeinfrage("Du hast genügend Schlüssel bei dir. Möchtest du versuchen die Türe zu öffnen (j/n)?")) {
 			if(schluessel9 && schluessel66 && schluessel99 && schluessel125) {
 				textausgabe("Du probierst die Schlüssel aus. Sie passen. Ein Schlüssel nach dem anderen läßt sich in eines der Schlüssellöcher nach dem anderen einsetzen und umdrehen. Nachdem der vierte Schlüssel eingeführt worden ist, gibt es ein klickendes Geräusch. Dieses Geräusch ist das letzte, was du wahrnimmst. Du erhältst einen Schlag auf den Kopf, dann wird alles dunkel um dich.");
 				// Jetzt geht es weiter -> ins Zwergendorf
@@ -2720,6 +2727,7 @@ void ort142(void) {
 			}
 			else
 				textausgabe("Leider hast du nicht die passenden Schlüssel bei dir.");
+		}
 	}
 	else
 		textausgabe("Du probierst erst gar nicht, die Schlüssel in die Schlösser zu stecken, da du deutlich zu wenige davon hast.");
@@ -2811,7 +2819,7 @@ void ort149(void) {
 void ort150(void) {
 	rotation++;
 	if((raum == 149) && (stollentroll == 150)) {
-		charakter_t troll = { "Stollentroll", 9, 9, 10, 10 };
+		charakter_s troll = { "Stollentroll", 9, 9, 10, 10 };
 		if(!kampf(&spieler, &troll, 1, false, NULL))
             beenden(rot, EXIT_SUCCESS, "Die Fäuste des Stollentrolls hämmern gnadenlos auf deinen Kopf ein. Du spürst das Blut in deine Augen laufen, hörst das Knacken und Krachen deiner berstenden Schädelplatte. Ein heftiger Schmerz durchzuckt dich - dann verschwimmt alles vor deinen Augen, wird blasser, dunkel. Ein Tunnel ... da ist ein Licht am ENDE des Tunnels ...");
 		// Dann platzieren wir mal die Zwerge um
@@ -2888,7 +2896,7 @@ void ort157(void) {
 }
 
 void ort158(void) {
-	charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
+	charakter_s zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
 	rotation++;
 	raum = 158;
 	textausgabe("Schon als du dich dem Raum näherst, bemerkst du die Veränderung der Helligkeit. Als du ihn schließlich betrittst, ist er taghell erleuchtet. Eine Art von Käfern krabbeln hier auf den Wänden entlang, ihre Panzer schimmern in hellem weißlichen Licht.");
@@ -2925,7 +2933,7 @@ void ort159(void) {
 	rotation++;
 	if((raum == 155) && ((minenzwerge == 158) || (minenzwerge == 160))) {
 		minenzwerge = 159;
-		charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
+		charakter_s zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
 		textausgabe("Die Zwerge sind herangestürmt und beäugen dich äußerst mißtrauisch.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt einer von ihnen feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
 		if(!kampf(&spieler, zwerg, 1, false, ort158))
             beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
@@ -2962,7 +2970,7 @@ void ort160(void) {
 		if(janeinfrage("An einem Haken neben der Eingangstüre hängt ein Kupferschlüssel. Deutlich kannst du darauf die Schriftzeichen \"111\" ausmachen. Möchtest du den Schlüssel an dich nehmen (j/n)?"))
 			schluessel111_2 = true;
 	if((minenzwerge == 160) && (schluessel111_1 || schluessel111_2)) {
-		charakter_t zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
+		charakter_s zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
 		textausgabe("Erst spät bemerkst du die Zwerge, die zwischen den Gerätschaften im Schatten stehen.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt einer von ihnen feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
 		if(!kampf(&spieler, zwerg, 1, false, ort159))
             beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
@@ -3298,13 +3306,13 @@ void ort211(void) {
 	// Begegnung mit einem Zufallsgegner der oberen Hohlwelt
 	int zufallsgegner = wuerfel(7);
 	bool kampfausgang;
-	charakter_t gegner1 = { "gefiederte Schnecke", 6, 6, 3, 3 };
-	charakter_t gegner2 = { "Riesenborkenkäfer", 6, 6, 3, 3 };
-	charakter_t gegner3 = { "gigantische Pilzlaus", 3, 3, 4, 4 };
-	charakter_t gegner4 = { "wandernder Riesensteinpilz", 5, 5, 4, 4 };
-	charakter_t gegner5 = { "Sporenkrabbe", 6, 6, 9, 9 };
-	charakter_t gegner6 = { "fleischfressender Pilzaal", 7, 7, 4, 4 };
-	charakter_t gegner7 = { "zu groß geratenes Frettchen", 9, 9, 8, 8 };
+	charakter_s gegner1 = { "gefiederte Schnecke", 6, 6, 3, 3 };
+	charakter_s gegner2 = { "Riesenborkenkäfer", 6, 6, 3, 3 };
+	charakter_s gegner3 = { "gigantische Pilzlaus", 3, 3, 4, 4 };
+	charakter_s gegner4 = { "wandernder Riesensteinpilz", 5, 5, 4, 4 };
+	charakter_s gegner5 = { "Sporenkrabbe", 6, 6, 9, 9 };
+	charakter_s gegner6 = { "fleischfressender Pilzaal", 7, 7, 4, 4 };
+	charakter_s gegner7 = { "zu groß geratenes Frettchen", 9, 9, 8, 8 };
 	switch(zufallsgegner) {
 		case 1: textausgabe("Um einen Pilzstamm herum kommt eine Schnecke gekrochen, eine Schnecke, die den Hut eines Pilzes als Haus auf dem Rücken trägt. Plötzlich richtet sie sich auf. Ihr Rücken hat ein Gefieder, das sie ausbreitet, während hier Mund sich weit öffnet, rasiermesserscharfe Zähne zeigt - und ihre Augen sich dir zuwenden.");
 				kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
@@ -3382,13 +3390,13 @@ void ort213(void) {
 	// Begegnung mit einem Zufallsgegner der oberen Hohlwelt
 	int zufallsgegner = wuerfel(7);
 	bool kampfausgang;
-	charakter_t gegner1 = { "wandernder Pilz", 2, 2, 3, 3 };
-	charakter_t gegner2 = { "Riesenraupe", 6, 6, 3, 3 };
-	charakter_t gegner3 = { "Feuerschmetterling", 6, 6, 4, 4 };
-	charakter_t gegner4 = { "verschreckte Fledermaus", 5, 5, 4, 4 };
-	charakter_t gegner5 = { "Geröllnatter", 6, 6, 5, 5 };
-	charakter_t gegner6 = { "Felsegel", 8, 8, 4, 4 };
-	charakter_t gegner7 = { "Felsenkrebs", 6, 6, 8, 8 };
+	charakter_s gegner1 = { "wandernder Pilz", 2, 2, 3, 3 };
+	charakter_s gegner2 = { "Riesenraupe", 6, 6, 3, 3 };
+	charakter_s gegner3 = { "Feuerschmetterling", 6, 6, 4, 4 };
+	charakter_s gegner4 = { "verschreckte Fledermaus", 5, 5, 4, 4 };
+	charakter_s gegner5 = { "Geröllnatter", 6, 6, 5, 5 };
+	charakter_s gegner6 = { "Felsegel", 8, 8, 4, 4 };
+	charakter_s gegner7 = { "Felsenkrebs", 6, 6, 8, 8 };
 	switch(zufallsgegner) {
 		case 1: textausgabe("Du hast einen wandernden Riesenpilz angelockt.");
 				kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);

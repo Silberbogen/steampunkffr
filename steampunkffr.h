@@ -41,13 +41,17 @@
  *   Letze Änderungen:
  *   - 22.05.2011 Beginn an der Arbeit des Spiels
  *	 - 28.08.2012 steampunkffr.h hinzugefügt, teile aus der .c-Datei ausgelagert.
+ *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen
  *
  * =====================================================================================
  */
 
+#ifndef _STEAMPUNKFFR_H_
+#define _STEAMPUNKFFR_H_
+
 #include "skbtools.h"
 
-// Neuer Typ: charakter_t & npc_t
+// Neuer Typ: charakter_s
 // Zur Speicherung der Kampfwerte
 
 typedef struct _charakter {
@@ -58,23 +62,23 @@ typedef struct _charakter {
 	int staerke_start;
 	int glueck;
 	int glueck_start;
-} charakter_t;
+} charakter_s;
 
 // -------------------
 // Funktionsprototypen
 // -------------------
 
 // Funktion: Teste dein Glück
-bool tdg(charakter_t *);
+bool tdg(charakter_s *);
 
 // Funktion: Kampfrunde
-bool kampfrunde(charakter_t *, charakter_t *, void (*)());
+bool kampfrunde(charakter_s *, charakter_s *, void (*)());
 
 // Funktion: Kampf
-bool kampf(charakter_t *, charakter_t *, int, bool, void (*)());
+bool kampf(charakter_s *, charakter_s *, int, bool, void (*)());
 
 // Funktion: Momentane Werte
-void momentane_werte(charakter_t *);
+void momentane_werte(charakter_s *);
 
 // Funktion: Auswahl
 void auswahl(char *, int, ...);
@@ -132,6 +136,7 @@ void zweisamkeit(int);
 // ---------------------------------
 
 void vorwort();
+void intro();
 void ort1();
 void ort2();
 void ort3();
@@ -541,7 +546,7 @@ void (*raumptr[401]) (void) = {vorwort, ort1, ort2, ort3, ort4, ort5, ort6, ort7
 // -----------
 // Der Spieler
 // -----------
-static charakter_t spieler;
+static charakter_s spieler;
 
 // ----------------------
 // Variablen des Spielers
@@ -615,7 +620,7 @@ bool spielbeenden = false;
 // Spezialmonster (immun außer gegen Silber)
 // -----------------------------------------
 
-charakter_t mechanicher_geher = { "mechanicher Geher", 14, 13, 12, 12 };
+charakter_s mechanicher_geher = { "mechanicher Geher", 14, 13, 12, 12 };
 
 // --------------
 // externe Module
@@ -647,3 +652,4 @@ extern int wuerfel(unsigned int); // Funktion: Wuerfel
 
 extern void zufall_per_zeit(void); // Initialisierung der Zufallszahlen
 
+#endif // _STEAMPUNKFFR_H_

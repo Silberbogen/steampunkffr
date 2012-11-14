@@ -12,7 +12,7 @@
  *        Created:  14.09.2011 11:42:00
  *          Ended:  00.00.0000 00:00:00
  *       Revision:  none
- *       Compiler:  clang
+ *       Compiler:  c99/c11
  *        compile:  Nicht zur eigenständigen Verwendung
  *
  *         Author:  Sascha K. Biermanns (saschakb), http://privacybox.de/saschakb.msg
@@ -47,6 +47,7 @@
  *                neu aufgenommen
  *   - 17.09.2011 Textausgabe wurde vereinfacht
  *                Diverse Funktionen haben keine vordefinierte Farbwahl mehr
+ *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen
  *
  * =====================================================================================
  */
@@ -303,18 +304,18 @@ void zufall_per_zeit(void) {
 }
 
 // --------------------------------
-// Implementation des nstr-Bereichs
+// Implementation des nstr_s-Bereichs
 // --------------------------------
 
-char* nstring(const nstr t) {
+char* nstring(const nstr_s t) {
     return(t.str);
 }
 
-int nstrlen(const nstr t) {
+int nstrlen(const nstr_s t) {
     return(t.len);
 }
 
-bool nstrlencorr(nstr* t) {
+bool nstrlencorr(nstr_s* t) {
     if(t->len != (strlen(t->str) + 1)) {
         t->len = strlen(t->str) + 1;
         return false;
@@ -322,7 +323,7 @@ bool nstrlencorr(nstr* t) {
     return true;
 }
 
-bool nstrcorr(nstr* t) {
+bool nstrcorr(nstr_s* t) {
     if(t->len == (strlen(t->str) + 1)) // Alles okay
         return true;
     if(t->len > (strlen(t->str) + 1)) { // Es ist Information verloren gegangen, die Länge wird gekürzt.
@@ -334,8 +335,8 @@ bool nstrcorr(nstr* t) {
     return false;
 }
 
-nstr *nstrnew(const char *t) {
-	nstr *r = malloc(sizeof(nstr));
+nstr_s *nstrnew(const char *t) {
+	nstr_s *r = malloc(sizeof(nstr_s));
     if(!r) // NULL-Zeiger?
         return(r); // Abbruch - und NULL-Zeiger zurückgeben
     r->len = strlen(t) + 1; // Länge von t + 1 für das abschließende \0
@@ -350,7 +351,7 @@ nstr *nstrnew(const char *t) {
 	return(r);
 }
 
-bool nstrdel(nstr *t) {
+bool nstrdel(nstr_s *t) {
 	if(!t)	// NULL-Pointer-Behandlung
 		return false;
 	if(!t->str) {	// Zeiger ist verlorengegangen
@@ -362,16 +363,16 @@ bool nstrdel(nstr *t) {
 	return true;
 }
 
-nstr *nstradd(nstr *t,  const char *c) {
+nstr_s *nstradd(nstr_s *t,  const char *c) {
 	int l = strlen(c);
 	char *cp;
 	
     cp = realloc(t->str, t->len + l);
 	if(!cp) {
-		fputs("Fehler in Funktion nstradd(nstr *,  const char *), Bibliothek nstr.c: Reallokation von t endete in einem NULL-Zeiger, es konnte also kein Speicher alloziert werden!\n",  stderr);
+		fputs("Fehler in Funktion nstradd(nstr_s *,  const char *), Bibliothek nstr_s.c: Reallokation von t endete in einem NULL-Zeiger, es konnte also kein Speicher alloziert werden!\n",  stderr);
 		return(t);
 	}
-    // Zuweisen des neuen nstr und kopieren des alten Inhalts
+    // Zuweisen des neuen nstr_s und kopieren des alten Inhalts
 	t->str = cp;
 	t->str = strncat(t->str, c, l);
 	t->str[t->len + l - 1] = '\0';
@@ -379,25 +380,25 @@ nstr *nstradd(nstr *t,  const char *c) {
 	return(t);
 }
 
-int nstrcmp(const nstr *s1, const nstr *s2) {
+int nstrcmp(const nstr_s *s1, const nstr_s *s2) {
 	return(strcmp(s1->str, s2->str));
 }
 
-int nstrcoll(const nstr *s1, const nstr *s2) {
+int nstrcoll(const nstr_s *s1, const nstr_s *s2) {
 	return(strcoll(s1->str, s2->str));
 }
 
-nstr *nstrset(nstr *t,  const char *c) {
+nstr_s *nstrset(nstr_s *t,  const char *c) {
 	int l = strlen(c);
 	char *cp;
 	// Reallocates the memory
 	// If there isn't enough memory anymore, we get a NULL pointer
 	cp = realloc(t->str,  l + 1);
 	if(!cp) {
-		fputs("Fehler in Funktion nstrset(nstr *,  const char *), Bibliothek nstr.c: Reallokation von t endete in einem NULL-Zeiger, es konnte also kein Speicher alloziert werden!\n",  stderr);
+		fputs("Fehler in Funktion nstrset(nstr_s *,  const char *), Bibliothek nstr_s.c: Reallokation von t endete in einem NULL-Zeiger, es konnte also kein Speicher alloziert werden!\n",  stderr);
 		return(t);
 	}
-    // Zuweisen des neuen nstr und kopieren des neuen Inhalts
+    // Zuweisen des neuen nstr_s und kopieren des neuen Inhalts
 	t->str = cp;
 	t->str = strncpy(t->str, c, l);
 	t->str[l] = '\0';
@@ -405,28 +406,28 @@ nstr *nstrset(nstr *t,  const char *c) {
 	return(t);
 }
 
-char *nstrpbrk(nstr *t, const char *searchchars) {
+char *nstrpbrk(nstr_s *t, const char *searchchars) {
 	return(strpbrk(t->str, searchchars));
 }
 
-char *nstrrchr(nstr *t, const int searchchar) {
+char *nstrrchr(nstr_s *t, const int searchchar) {
 	return(strrchr(t->str, searchchar));
 }
 
 // --------------------------------
-// Implementation des narr-Bereichs
+// Implementation des narr_s-Bereichs
 // --------------------------------
 
-narr *narrnew(const unsigned int n) {
-	narr *r = malloc(sizeof(narr));
+narr_s *narrnew(const unsigned int n) {
+	narr_s *r = malloc(sizeof(narr_s));
 	if(!r) {
-		fputs("Fehler: r konnte nicht erstellt werden in Funktion narrnew, Bibliothek nstr.c\n",  stderr);
+		fputs("Fehler: r konnte nicht erstellt werden in Funktion narrnew, Bibliothek nstr_s.c\n",  stderr);
 		return(r);
 	}
 	// That was the arraystructure - now to the array of elements
-	r->elm = malloc(sizeof(nstr) * n);
+	r->elm = malloc(sizeof(nstr_s) * n);
 	if(!r) {
-		fputs("Fehler: r->elm[] konnte nicht erstellt werden in Funktion narrnew, Bibliothek nstr.c\n",  stderr);
+		fputs("Fehler: r->elm[] konnte nicht erstellt werden in Funktion narrnew, Bibliothek nstr_s.c\n",  stderr);
 		return(r);
 	}
 	r->cnt = n;
@@ -434,7 +435,7 @@ narr *narrnew(const unsigned int n) {
 	for(unsigned int i = 0;  i < n;  ++i) {
 		r->elm[i] = nstrnew("");
 		if(!r->elm[i]) {
-			fprintf(stderr, "Fehler: r->elm[%d] konnte nicht erstellt werden in Funktion narrnew, Bibliothek nstr.c\n", i);
+			fprintf(stderr, "Fehler: r->elm[%d] konnte nicht erstellt werden in Funktion narrnew, Bibliothek nstr_s.c\n", i);
 			return(r);
 		}
 	}
@@ -442,7 +443,7 @@ narr *narrnew(const unsigned int n) {
 	return(r);
 }
 
-bool narrdel(narr *t) {
+bool narrdel(narr_s *t) {
 	bool ok = true; // Hält fest, ob alles glatt gegangen ist
 	if(!t) // NULL-Zeiger = Abbruch
 		return false;
@@ -456,18 +457,18 @@ bool narrdel(narr *t) {
 	return(ok);
 }
 
-narr *narradd(narr *t,  const unsigned int n) {
-	nstr **cp; // for realloc
+narr_s *narradd(narr_s *t,  const unsigned int n) {
+	nstr_s **cp; // for realloc
 
 	// Ist der geforderte Index größer als die Anzahl an Elementen?
 	if((t->cnt + n) < (t->cnt || n)) {
-		fputs("Fehler: n ist größer als die mögliche Anzahl an Elementen in Funktion narradd, Bibliothek nstr.c\n",  stdout);
+		fputs("Fehler: n ist größer als die mögliche Anzahl an Elementen in Funktion narradd, Bibliothek nstr_s.c\n",  stdout);
 		return(t);
 	}
 	// Speicher neu zuweisen
-	cp = realloc(t->elm, t->cnt * sizeof(nstr));
+	cp = realloc(t->elm, t->cnt * sizeof(nstr_s));
 	if(!cp) {
-		fputs("Fehler: cp ist ein NULL-Zeiger in Funktion narradd, Bibliothek nstr.c\n",  stderr);
+		fputs("Fehler: cp ist ein NULL-Zeiger in Funktion narradd, Bibliothek nstr_s.c\n",  stderr);
 		return(t);
 	}
 	t->elm = cp;
@@ -475,7 +476,7 @@ narr *narradd(narr *t,  const unsigned int n) {
 	for(unsigned int i = t->cnt;  i < (t->cnt + n);  ++i) {
 		t->elm[i] = nstrnew("");
 		if(!t->elm[i]) {
-			fprintf(stderr, "Fehler: t->elm[%d] konnte nicht erstellt werden in Funktion narradd, Bibliothek nstr.c\n", i);
+			fprintf(stderr, "Fehler: t->elm[%d] konnte nicht erstellt werden in Funktion narradd, Bibliothek nstr_s.c\n", i);
 			return(t);
 		}
 	}
@@ -485,8 +486,8 @@ narr *narradd(narr *t,  const unsigned int n) {
 	return(t);
 }
 
-bool narrrmv(narr *t,  const unsigned int n) {
-	nstr *cp;
+bool narrrmv(narr_s *t,  const unsigned int n) {
+	nstr_s *cp;
 
 	if(n > t->cnt) {
 			fprintf(stderr, "Fehler: n to remove from t was outside the stringarrays range in function strinarrayremove,  library nstringarray.c\n");
@@ -496,7 +497,7 @@ bool narrrmv(narr *t,  const unsigned int n) {
 	for(int i=n;   i < (t->cnt - 1); ++i)
 		t->elm[i] = t->elm[i+1];
 	if(!nstrdel(cp)) {
-			fprintf(stderr, "Error: Couldn't remove nstr from safetypt in function strinarrayremove,  library nstringarray.c\n");
+			fprintf(stderr, "Error: Couldn't remove nstr_s from safetypt in function strinarrayremove,  library nstringarray.c\n");
 			return(false);
 	}
 	t->cnt -= 1;
