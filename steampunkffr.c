@@ -136,7 +136,7 @@ bool kampfrunde(charakter_s *angreifer, charakter_s *verteidiger, void (*fluchtp
 	momentane_werte(verteidiger);
 	// Möchte der Spieler fliehen?
 	if(fluchtpunkt != NULL)
-		if(janeinfrage("Möchtest du fliehen (j/n)? "))
+		if(janeinfrage("Du hast die Möglichkeit zu fliehen. Möchtest du sie nutzen (j/n)? "))
 			flucht(fluchtpunkt);
 	// Möchte der Spieler sein Glück versuchen?
 	if(angreifer->glueck > 0) {
@@ -168,17 +168,11 @@ bool kampfrunde(charakter_s *angreifer, charakter_s *verteidiger, void (*fluchtp
 	else if (testgewandheit[0] < testgewandheit[1]) { // Der Spieler verliert die Runde
 		if((objekt[schild] >= 0) && (wuerfel(6) == 6)) // Der Schild fängt den Schlag ab
 			schildbonus = 1;
-		if(unsichtbar) // Der Unsichtbarkeitsbonus
-			switch(wuerfel(6)) {
-				case 2:
-				case 4:
-					angreifer->staerke += 1;
-					break;
-				case 6:
-					return true; // Kein Treffer erhalten, dank Unsichtbarkeit
-				default:
-					break;
-			}
+		if(unsichtbar) { // Der Unsichtbarkeitsbonus
+			int wurf = wuerfel(6); // Auswürfeln des Unsichtbarkeitseffekts
+			if ( wurf == 2 || wurf == 4 ) angreifer->staerke += 1;
+			else if ( wurf == 6 ) return true; // Kein Treffer erhalten, dank Unsichtbarkeit
+		}
 		if(glueckstest) {
 			if(wirklichglueck)
 				angreifer->staerke -= 1 - schildbonus;
@@ -265,21 +259,12 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
         texteingabe(eingabe, 20);
 		ergebnis = atoi(eingabe);
 		vordergrundfarbe(weiss);
-		switch(ergebnis) {
-			case 44: gewandheitstrank_trinken();
-					break;
-			case 55: staerketrank_trinken();
-					break;
-			case 66: glueckstrank_trinken();
-					break;
-			case 77: laden();
-					 break;
-			case 88: speichern();
-					 break;
-			case 99: speichern();
-                     beenden(gruen, EXIT_SUCCESS, "Bis bald!");
-			default: break;
-		}
+		if ( ergebnis == 44 ) gewandheitstrank_trinken();
+		else if ( ergebnis == 55 ) staerketrank_trinken();
+		else if ( ergebnis == 66 ) glueckstrank_trinken();
+		else if ( ergebnis == 77 ) laden();
+		else if ( ergebnis == 88 ) speichern();
+		else if ( ergebnis == 99 ) beenden(gruen, EXIT_SUCCESS, "Bis bald!");
 	}
 	fptr[ergebnis-1](); // Umwandlung menschliche Nummerierung in Arraynummerierung
 }
@@ -669,34 +654,29 @@ bool raetsel(char *raetseltext, char *antworttext) {
 // Funktion: Zweisamkeit
 void zweisamkeit(int wert) {
 	arianna += wert;
-	switch(arianna) {
-		case 20: textausgabe("Euch beiden gefällt es, zusammen etwas zu unternehmen, tatsächlich könnte man sagen, das ihr echte Freunde geworden seid.");
-			 break;
-		case 40: textausgabe("In der letzten Zeit wurde es euch immer bewußter, daß die gemeinsame Zeit für euch beide die beste Zeit des Tages ist. Nach einem ausführlichen Gespräch seid ihr zu dem Ergebnis gekommen, das es nicht verkehrt werde, den Großteil der Zeit ab sofort gemeinsam zu verbringen.");
-			 break;
-		case 60: textausgabe("Arianna sieht dich verstohlen an. Sie gibt dir verschmitzt einen Kuss auf den Mund und läßt einen Schlüssel in deine Hand gleiten. \"Mein Heim soll ab jetzt auch dein Heim sein!\" sagt sie dabei und errötet kräftig unter dem Flaum ihres Backenbarts.");
-			 schluesselarianna = true;
-			 break;
-		case 80: textausgabe("Arianna druckst etwas herum, schließlich aber bringt sie auf den Punkt, was sie sagen möchte: \"Was hältst du davon, wenn wir den Ewigen Bund der Schmiede eingehen?\" Sie sieht jetzt irgendwie schüchtern aus.");
-			 if(janeinfrage("Willst du dich mit Arianna verloben (j/n)?")) {
-				textausgabe("Du mußt nicht einen Augenblick lang nachdenken, sondern grinst frech zurück: \"Na klar!\" und erhältst von ihr einen Knuff der dich zu Boden schickt, dann liegt sie auch schon auf dir und bedeckt dein Gesicht mit Küssen. Und dann wird sie plötzlich wieder ernst: \"Dann wirst du dich mit meinen Eltern treffen müssen - sie müssen dem Bund zustimmen!\"\nIrgendwie war es klar, das nichts im Leben besonders einfach isti");
-				verloben = 1;
-			 } else {
-				 textausgabe("Ganz liebevoll sagst du ihr, daß du das zum jetzigen Zeitpunkt nicht für eine gute Idee hältst - und erhältst dafür ein Schmollgesicht von ihr, wie du es noch nie zuvor gesehen hast.");
-				 arianna = 61;
-			 }
-			 break;
-		case 99: if(verloben < 6)
-				 arianna = 98;
-			 else
-				 textausgabe("Jetzt ist alles perfekt! Ihr beide solltet so bald als möglich in die große Schmiede gehen!");
-			 break;
-		case 100: if((verloben >= 6) && (raum == 96))
-				textausgabe("Jetzt ist der große Tag da, an dem du mit Arianna den Bund eingehen wirst!");
-			  else
-				  arianna = 99;
-			  break;
-		default: break;
+	if ( arianna == 20 ) textausgabe("Euch beiden gefällt es, zusammen etwas zu unternehmen, tatsächlich könnte man sagen, das ihr echte Freunde geworden seid.");
+	else if ( arianna == 40 ) textausgabe("In der letzten Zeit wurde es euch immer bewußter, daß die gemeinsame Zeit für euch beide die beste Zeit des Tages ist. Nach einem ausführlichen Gespräch seid ihr zu dem Ergebnis gekommen, das es nicht verkehrt werde, den Großteil der Zeit ab sofort gemeinsam zu verbringen.");
+	else if ( arianna == 60 ) {
+		textausgabe("Arianna sieht dich verstohlen an. Sie gibt dir verschmitzt einen Kuss auf den Mund und läßt einen Schlüssel in deine Hand gleiten. \"Mein Heim soll ab jetzt auch dein Heim sein!\" sagt sie dabei und errötet kräftig unter dem Flaum ihres Backenbarts.");
+		schluesselarianna = true;
+	}
+	else if ( arianna == 80 ) {
+		textausgabe("Arianna druckst etwas herum, schließlich aber bringt sie auf den Punkt, was sie sagen möchte: \"Was hältst du davon, wenn wir den Ewigen Bund der Schmiede eingehen?\" Sie sieht jetzt irgendwie schüchtern aus.");
+		if(janeinfrage("Willst du dich mit Arianna verloben (j/n)?")) {
+			textausgabe("Du mußt nicht einen Augenblick lang nachdenken, sondern grinst frech zurück: \"Na klar!\" und erhältst von ihr einen Knuff der dich zu Boden schickt, dann liegt sie auch schon auf dir und bedeckt dein Gesicht mit Küssen. Und dann wird sie plötzlich wieder ernst: \"Dann wirst du dich mit meinen Eltern treffen müssen - sie müssen dem Bund zustimmen!\"\nIrgendwie war es klar, das nichts im Leben besonders einfach isti");
+			verloben = 1;
+		} else {
+			textausgabe("Ganz liebevoll sagst du ihr, daß du das zum jetzigen Zeitpunkt nicht für eine gute Idee hältst - und erhältst dafür ein Schmollgesicht von ihr, wie du es noch nie zuvor gesehen hast.");
+			arianna = 61;
+		}
+	}
+	else if ( arianna == 99 ) {
+		if(verloben < 6) arianna = 98;
+		else textausgabe("Jetzt ist alles perfekt! Ihr beide solltet so bald als möglich in die große Schmiede gehen!");
+	}
+	else if ( arianna == 100 ) {
+		if ( verloben >= 6 && raum == 96 ) textausgabe("Jetzt ist der große Tag da, an dem du mit Arianna den Bund eingehen wirst!");
+		else arianna = 99;
 	}
 }
 
@@ -727,21 +707,17 @@ void intro(void) {
 	spieler.glueck = spieler.glueck_start;
     vordergrundfarbe(gruen);
 	textausgabe("\nZu Beginn dieses Abenteuer wirst du nur ein absolutes Minimum an Objekten bei dir führen, als da wären ein Rucksack, ein Multifunktionstaschenmesser, eine Pumptaschenlampe und etwas Proviant. Außerdem ein Engergydrink, den du dir selber auswählen kannst. Welchen der Energydrinks wählst du?\n(1) den Gewandheitstrank - er stellt die anfängliche Gewandheitspunktzahl wieder her\n(2) den Stärketrank - er stellt die anfängliche Stärkepunktzahl wieder her\n(3) den Glückstrank - er stellt die anfängliche Glückspunktzahl wieder her und verbesser sie zusätzlich um einen Punkt");
-	while((eingabe < 1) || (eingabe > 3)) {
+	while ( eingabe < 1 || eingabe > 3 ) {
         vordergrundfarbe(zyan);
 		eingabe = waehle("Für welchen Energydrink entscheidest du dich? ", 3);
         vordergrundfarbe(weiss);
-		switch(eingabe) {
-			case 1: objekt[gewandheitstrank] += 2;
-					break;
-			case 2: objekt[staerketrank] += 2;
-					break;
-			case 3: objekt[glueckstrank] += 2;
-					break;
-			default: vordergrundfarbe(rot);
-					 textausgabe("Unerklärbarer Fehler!\nIn der Energydrink-Auswahl,  in Funktion intro().");
-					 vordergrundfarbe(weiss);
-					 break;
+        if ( eingabe == 1 ) objekt[gewandheitstrank] += 2;
+        else if ( eingabe == 2 ) objekt[staerketrank] += 2;
+        else if ( eingabe == 3 ) objekt[glueckstrank] += 2;
+        else {
+			vordergrundfarbe(rot);
+			textausgabe("Unerklärbarer Fehler!\nIn der Energydrink-Auswahl,  in Funktion intro().");
+			vordergrundfarbe(weiss);
 		}
 	}
     vordergrundfarbe(gruen);
@@ -779,7 +755,7 @@ void ort3(void) {
 	if(janeinfrage("Möchtest du die Pistole einstecken (j/n)?"))
 		objekt[pistole] += 1;
 	textausgabe("Es war zwar Notwehr, dennoch hockst du jetzt hier neben einer Leiche. Dein Gefühl sagt dir, daß es wohl das beste wäre, dich so schnell wie möglich aus dem Staub zu machen, Unwetter hin oder her.");
-	auswahl("Möchtest du den Lichthof nach Norden verlassen in Richtung Kaisterstraße (1), oder nach Süden in Richtung Hindernburgstraße (2)?", 2, ort50, ort51);
+	auswahl("Möchtest du den Lichthof nach Norden in Richtung Kaiserstraße verlassen (1), oder nach Süden in Richtung Hindernburgstraße (2)?", 2, ort50, ort51);
 }
 
 void ort4(void) {
@@ -874,7 +850,7 @@ void ort12(void) {
 void ort13(void) {
 	// Begegnung mit einem Zufallsgegner der "Zivilseite"
 	int zufallsgegner = wuerfel(6);
-	bool kampfausgang;
+	bool kampfausgang = false;
 	charakter_s gegner1 = { "verängstigte Frau", 2, 2, 3, 3 };
 	charakter_s gegner2 = { "Plünderer", 6, 6, 3, 3 };
 	charakter_s gegner3 = { "aggressiver Jugendlicher", 6, 6, 4, 4 };
@@ -882,36 +858,28 @@ void ort13(void) {
 	charakter_s gegner5 = { "Gutbürger", 6, 6, 5, 5 };
 	charakter_s gegner6 = { "Heckenschütze", 8, 8, 4, 4 };
 	charakter_s gegner7 = { "wahnsinniger Polizist", 6, 6, 4, 4 };
-	switch(zufallsgegner) {
-		case 1: kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
-				break;
-		case 2: kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
-				break;
-		case 3: kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
-				break;
-		case 4: kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
-				break;
-		case 5: kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
-				break;
-		case 6: kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
-				break;
-		default: kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
-				break;
+	if ( zufallsgegner == 1 ) kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
+	else if ( zufallsgegner == 2 ) kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
+	else if ( zufallsgegner == 3 ) kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
+	else if ( zufallsgegner == 4 ) kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
+	else if ( zufallsgegner == 5 ) kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
+	else if ( zufallsgegner == 6 ) kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
+	else kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
+	if( kampfausgang ) {
+		getoetetemenschen += 1;
+		if(wuerfel(6) >= 4) {
+			if(objekt[pistole] <= 1)
+				if(janeinfrage("Willst du die Pistole deines Gegners an dich nehmen (j/n)?"))
+					objekt[pistole] += 1;
+		}
+		else {
+			if(objekt[gewehr] <= 0)
+				if(janeinfrage("Willst du das Gewehr deines Gegners an dich nehmen (j/n)?"))
+					objekt[gewehr] += 1;
+		}
+		objekt[patrone] += wuerfel(8);
 	}
-	if(!kampfausgang)
-        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
-	getoetetemenschen += 1;
-	if(wuerfel(6) >= 4) {
-		if(objekt[pistole] <= 1)
-			if(janeinfrage("Willst du die Pistole deines Gegners an dich nehmen (j/n)?"))
-				objekt[pistole] += 1;
-	}
-	else {
-		if(objekt[gewehr] <= 0)
-			if(janeinfrage("Willst du das Gewehr deines Gegners an dich nehmen (j/n)?"))
-				objekt[gewehr] += 1;
-	}
-	objekt[patrone] += wuerfel(8);
+	else beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");	
 }
 
 void ort14(void) {
