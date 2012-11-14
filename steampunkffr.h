@@ -51,10 +51,15 @@
 
 #include "skbtools.h"
 
+// Prototyp für Funktionszeiger
+// Da er vom Typ void funktion(void) ist, kann er sämtliche Funktionen
+// mit Namen ortXXX abbilden, wobei XXX für die Raumnummer steht.
+typedef void funktion_s(void);
+
 // Neuer Typ: charakter_s
 // Zur Speicherung der Kampfwerte
 
-typedef struct _charakter {
+typedef struct charakter_s {
 	char name[30];
 	int gewandheit;
 	int gewandheit_start;

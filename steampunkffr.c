@@ -66,7 +66,8 @@
  *                hinweis() hinzugefügt - Prinzip: Vereinfachung
  *   - 17.09.2011 Verwendung wird von toolbox auf skbtools geändert
  *	 - 28.08.2012 steampunkffr.h hinzugefügt, teile aus der .c-Datei ausgelagert.
- *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen
+ *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen, Beginn der
+ *                Entfernung von switch und ähnlichen Strukturen
  * =====================================================================================
  */
 
@@ -111,73 +112,57 @@ int main(void) {
 
 // Implementation Teste dein Glück
 bool tdg(charakter_s *figur) {
-	if(figur->glueck <= 0)
-
-		return false; // Da kann man nur noch Pech haben!
-	if((wuerfel(6) + wuerfel(6)) <= figur->glueck--)
-		return true; // Glück gehabt
-	return false; // Pech gehabt
+	if(figur->glueck <= 0) return false; // Da kann man nur noch Pech haben!
+	if( (wuerfel(6) + wuerfel(6)) <= figur->glueck-- ) return true; // Glück gehabt
+	else return false; // Pech gehabt
 }
 
 // Implementation: Kampfrunde
 bool kampfrunde(charakter_s *angreifer, charakter_s *verteidiger, void (*fluchtpunkt)()) {
 	int testgewandheit[2];
-	bool glueckstest = false;
-	bool wirklichglueck = false;
-	int schildbonus = 0;
-
 	testgewandheit[0] = angreifer->gewandheit + wuerfel(6) + wuerfel(6) + angriffsbonus + paralysiert;
 	testgewandheit[1] = verteidiger->gewandheit + wuerfel(6) + wuerfel(6);
 	if(unsichtbar) // Falls du unsichtbar bist
 		testgewandheit[0] += 2;
-	if(testgewandheit[0] == testgewandheit[1])
-		return true; // Unentschieden, das heißt - nicht getroffen
+	if(testgewandheit[0] == testgewandheit[1]) return true; // Unentschieden, das heißt - nicht getroffen
 	momentane_werte(angreifer);
 	momentane_werte(verteidiger);
 	// Möchte der Spieler fliehen?
-	if(fluchtpunkt != NULL)
-		if(janeinfrage("Du hast die Möglichkeit zu fliehen. Möchtest du sie nutzen (j/n)? "))
-			flucht(fluchtpunkt);
+	if ( fluchtpunkt && janeinfrage("Du hast die Möglichkeit zu fliehen. Möchtest du sie nutzen (j/n)? ") )
+		flucht(fluchtpunkt);
 	// Möchte der Spieler sein Glück versuchen?
-	if(angreifer->glueck > 0) {
-		if(janeinfrage("Möchtest du dein Glück testen (j/n)? ")) {
-			glueckstest = true;
-			wirklichglueck = tdg(angreifer);
-		}
+	bool glueckstest = false;
+	bool wirklichglueck = false;
+	if ( angreifer->glueck > 0 && janeinfrage("Möchtest du dein Glück testen (j/n)? ") ) {
+		glueckstest = true;
+		wirklichglueck = tdg(angreifer);
 	}
 	// Die Auswertung des Kampfes
-	if(testgewandheit[0] > testgewandheit[1]) { // Der Spieler geht als Sieger hervor
-		if((nursilbertrifft == true) && (silberwaffe == false)) // Nur falls das Monster imun ist gegen Silber
-			return true; // Kein Treffer abbekommen
-		if(unsichtbar) // Unsichtbare treffen besser
-			verteidiger->staerke -= 2;
+	if ( testgewandheit[0] > testgewandheit[1] ) { // Der Spieler geht als Sieger hervor
+		if ( (nursilbertrifft == true) && (silberwaffe == false) ) return true; // Nur falls das Monster imun ist gegen Silber
+		if ( unsichtbar ) verteidiger->staerke -= 2; // Unsichtbare treffen besser
 		if(((objekt[gewehr] > 0) || (objekt[pistole] > 0)) && (objekt[patrone] > 0)) { // Schusswaffe = + 1 Punkt, solange Patrone vorhanden
 			verteidiger->staerke -= 1;
 			objekt[patrone] -= 1;
 		}
 		if(glueckstest) {
-			if(wirklichglueck)
-				verteidiger->staerke -= 4;
-			else
-				verteidiger->staerke -= 1;
+			if(wirklichglueck) verteidiger->staerke -= 4;
+			else verteidiger->staerke -= 1;
 			return true; // Kein Treffer abbekommen
 		}
 		verteidiger->staerke -= 2;
 		return true; // Kein Treffer abbekommen
-	}
-	else if (testgewandheit[0] < testgewandheit[1]) { // Der Spieler verliert die Runde
-		if((objekt[schild] >= 0) && (wuerfel(6) == 6)) // Der Schild fängt den Schlag ab
-			schildbonus = 1;
-		if(unsichtbar) { // Der Unsichtbarkeitsbonus
+	} else if (testgewandheit[0] < testgewandheit[1]) { // Der Spieler verliert die Runde
+		int schildbonus = 0;
+		if ( (objekt[schild] >= 0) && (wuerfel(6) == 6) ) schildbonus =1; // Der Schild fängt den Schlag ab
+		if ( unsichtbar ) { // Der Unsichtbarkeitsbonus
 			int wurf = wuerfel(6); // Auswürfeln des Unsichtbarkeitseffekts
 			if ( wurf == 2 || wurf == 4 ) angreifer->staerke += 1;
 			else if ( wurf == 6 ) return true; // Kein Treffer erhalten, dank Unsichtbarkeit
 		}
-		if(glueckstest) {
-			if(wirklichglueck)
-				angreifer->staerke -= 1 - schildbonus;
-			else
-				angreifer->staerke -= 4 - schildbonus;
+		if ( glueckstest ) {
+			if ( wirklichglueck ) angreifer->staerke -= 1 - schildbonus;
+			else angreifer->staerke -= 4 - schildbonus;
 			return false; // Treffer abbekommen
 		}
 		angreifer->staerke -= 2 - schildbonus;
@@ -189,32 +174,24 @@ bool kampfrunde(charakter_s *angreifer, charakter_s *verteidiger, void (*fluchtp
 // Implementation: Kampf
 bool kampf(charakter_s *spieler, charakter_s *gegner, int anzahl, bool trefferverboten, void (*fluchtpunkt)()) {
 	int gesamtstaerke = 0;
-	bool keintreffererhalten = true;
-
-	for(int i=0; i < anzahl; i++)
+	for (int i=0; i < anzahl; i++)
 		gesamtstaerke += gegner[i].staerke;
-	while((spieler->staerke > 0) && (gesamtstaerke > 0)) {
-		for(int i=0; i < anzahl; i++)
-			if(spieler->staerke > 0) {
-				if(gegner[i].staerke > 0)
-					keintreffererhalten = kampfrunde(spieler, &gegner[i], fluchtpunkt);
-				if(trefferverboten)
-					if(!keintreffererhalten)
-						return false;
-			}
-			else
-				return false;
+	while ( (spieler->staerke > 0) && (gesamtstaerke > 0) ) {		
+		bool keintreffererhalten = true;
+		for (int i=0; i < anzahl; i++)	
+			if ( spieler->staerke > 0 ) {
+				if ( gegner[i].staerke > 0) keintreffererhalten = kampfrunde(spieler, &gegner[i], fluchtpunkt);
+				if ( trefferverboten &&  !keintreffererhalten ) return false;
+			} else return false;
 		// Leben die Gegner noch?
 		gesamtstaerke = 0;
 		for(int i=0; i < anzahl; i++) {
-			if(gegner[i].staerke < 0)
-				gegner[i].staerke = 0;
+			if(gegner[i].staerke < 0) gegner[i].staerke = 0;
 			gesamtstaerke += gegner[i].staerke;
 		}
 	}
-	if(spieler->staerke > 0)
-		return true; // Sieger im Kampf ^.^
-	return false; // Der Spieler ist tot v.v
+	if(spieler->staerke > 0) return true; // Sieger im Kampf ^.^
+	else return false; // Der Spieler ist tot v.v
 }
 
 // Implementation: Momentane Werte
@@ -1623,24 +1600,8 @@ void ort66(void) {
 		textausgabe("Du gelangst an eine Abzweigung im Tunnel. Zu deiner großen Verblüffung funktioniert dein Kompass hier wieder.");
 	raum = 66;
 	char *text = "Du kannst dem Tunnel nach Norden (1) oder nach Süden folgen (2). Du kannst aber auch die Abzweigung nach Osten nehmen (3)";
-	switch(rotation % 8) {
-		case 1: auswahl(text, 3, ort65, ort74, ort140);
-				break;
-		case 2: auswahl(text, 3, ort65, ort73, ort140);
-				break;
-		case 3: auswahl(text, 3, ort65, ort72, ort140);
-				break;
-		case 4: auswahl(text, 3, ort65, ort71, ort140);
-				break;
-		case 5: auswahl(text, 3, ort65, ort70, ort140);
-				break;
-		case 6: auswahl(text, 3, ort65, ort69, ort140);
-				break;
-		case 7: auswahl(text, 3, ort65, ort68, ort140);
-				break;
-		default: auswahl(text, 3, ort65, ort67, ort140);
-				break;
-	}
+	funktion_s *fn[] = { ort74, ort73, ort72, ort71, ort70, ort69, ort68, ort67 };
+	auswahl( text, 3, ort65, fn[rotation % 8], ort140);
 }
 
 void ort67(void) {
@@ -1927,16 +1888,8 @@ void ort79(void) {
 			textausgabe("Du läßt die Hände in das Becken gleiten. Das Wasser fühlt sich seltsam warm an, so daß es beinahe deine Sinne betäubt. Du gleitest mit deinen Händen über die Wände des Beckens und plötzlich fühlst du, daß da ein Gegenstand ist. Du tastest danach und bekommst ihn zu greifen. Als du die Hände aus dem Becken herausholst, hälst du deinen Kristallschlüssel in der Hand, der vollkommen durchsichtig ist. Die Zinken scheinen die Zahl 66 zu formen.");
 		}
 	char *text = "Willst du den Raum wieder verlassen (1)? Du kannst auch nach Geheimtüren suchen (2) oder warten (3)";
-	switch(rotation % 4) {
-		case 1: auswahl(text, 3, ort78, ort152, ort79);
-				break;
-		case 2: auswahl(text, 3, ort77, ort152, ort79);
-				break;
-		case 3: auswahl(text, 3, ort76, ort152, ort79);
-				break;
-		default: auswahl(text, 3, ort75, ort152, ort79);
-				break;
-	}
+	funktion_s *fn[] = { ort78, ort77, ort76, ort75 };
+	auswahl( text, 3, fn[rotation % 4], ort152, ort79);
 }
 
 void ort80(void) {
@@ -1953,24 +1906,8 @@ void ort80(void) {
 	}
 	textausgabe("Der Raum, in dem du dich jetzt befindet, scheint eine große natürliche Höhle zu sein. Sie ist bewachsen von exotischen Pflanzen. Grün ist hier eine weniger dominierende Farbe, als es sie an der Erdoberfläche zu sein scheint. Der Raum ist viel stickiger, als die Tunnel, durch die du dich seit einiger Zeit bewegst. Im nördlichen Teil der Höhle befindet sich ein großer Teich, in den ein Wasserfall hineinstürzt.");
 	char *text = "Willst du in den Teich hineinwaten und dich in die herabfallenden Wasser des Wasserfalls stellen (1) oder die Höhle durch ihren Ausgang im Osten verlassen (2)?";
-	switch(rotation % 8) {
-		case 1: auswahl(text, 2, ort143, ort72);
-				break;
-		case 2: auswahl(text, 2, ort143, ort71);
-				break;
-		case 3: auswahl(text, 2, ort143, ort70);
-				break;
-		case 4: auswahl(text, 2, ort143, ort69);
-				break;
-		case 5: auswahl(text, 2, ort143, ort68);
-				break;
-		case 6: auswahl(text, 2, ort143, ort67);
-				break;
-		case 7: auswahl(text, 2, ort143, ort74);
-				break;
-		default: auswahl(text, 2, ort143, ort73);
-				break;
-	}
+	funktion_s *fn[] = { ort72, ort71, ort70, ort69, ort68, ort67, ort74, ort73 };
+	auswahl( text, 2, ort143, fn[rotation % 8]);
 }
 
 void ort81(void) {
@@ -2000,24 +1937,8 @@ void ort81(void) {
 				textausgabe("Deine Antwort war ... unwissend!");
 		}
 	}
-	switch(rotation % 8) {
-		case 1: auswahl(text, 2, ort67, ort82);
-				break;
-		case 2: auswahl(text, 2, ort74, ort82);
-				break;
-		case 3: auswahl(text, 2, ort73, ort82);
-				break;
-		case 4: auswahl(text, 2, ort72, ort82);
-				break;
-		case 5: auswahl(text, 2, ort71, ort82);
-				break;
-		case 6: auswahl(text, 2, ort70, ort82);
-				break;
-		case 7: auswahl(text, 2, ort69, ort82);
-				break;
-		default: auswahl(text, 2, ort68, ort82);
-				break;
-	}
+	funktion_s *fn[] = { ort67, ort74, ort73, ort72, ort71, ort70, ort69, ort68 };
+	auswahl( text, 2, fn[rotation % 8], ort82);
 }
 
 void ort82(void) {
@@ -2032,24 +1953,8 @@ void ort82(void) {
 			textausgabe("Du nimmst den moosgrünen Schlüssel an dich, der offensichtlich aus Jade geschnitzt wurde. Sein kurzes Griffstück erscheint, als wäre es eine kunstvolle Darstellung der Ziffern 1, 2 & 5. Kaum daß du den Schlüssel an dich genommen hast, schraubt sich der Sockel ebenso leise wieder in den Boden, wie er sich zuvor herausgeschraubt hatte.");
 		}
 	}
-	switch(rotation % 8) {
-		case 1: auswahl(text, 6, ort68, ort81, ort83, ort84, ort85, ort86);
-				break;
-		case 2: auswahl(text, 6, ort67, ort81, ort83, ort84, ort85, ort86);
-				break;
-		case 3: auswahl(text, 6, ort74, ort81, ort83, ort84, ort85, ort86);
-				break;
-		case 4: auswahl(text, 6, ort73, ort81, ort83, ort84, ort85, ort86);
-				break;
-		case 5: auswahl(text, 6, ort72, ort81, ort83, ort84, ort85, ort86);
-				break;
-		case 6: auswahl(text, 6, ort71, ort81, ort83, ort84, ort85, ort86);
-				break;
-		case 7: auswahl(text, 6, ort70, ort81, ort83, ort84, ort85, ort86);
-				break;
-		default: auswahl(text, 6, ort69, ort81, ort83, ort84, ort85, ort86);
-				break;
-	}
+	funktion_s *fn[] = { ort68, ort67, ort74, ort73, ort72, ort71, ort70, ort69 };
+	auswahl( text, 6, fn[rotation % 8], ort81, ort83, ort84, ort85, ort86);
 }
 
 void ort83(void) {
@@ -2175,24 +2080,8 @@ void ort87(void) {
 	textausgabe("Du betrittst eine Naturhöhle. Das Licht hier ist intensiver, als in den meisten Gängen, die du bisher betreten hast. Büsche wachsen hier, voller Beeren, die du nicht kennst, deren Farbe aber ein deutliches Signalrot aufweisen, was kein gutes Zeichen in deiner Erinnerung ist. In deinen Ohren klingt es, als würde ein Bach oder ein Fluß in der Nähe rauschen, doch sehen kannst du von hier aus keinen. Die Höhle hat Ausgänge in drei Richtungen: einen behauenen Tunnel im Norden, eine Loch in der Ostwand und einen natürlichen Tunnel im Süden.");
 	raum = 87;
 	char *text = "Du kannst dem behauenen Tunnel nach Norden folgen (1), ebenso kannst du den Südtunnel nehmen (2), oder dich dem Weg hinein in das große Loch in der Ostwand anvertrauen (3)";
-	switch(rotation % 8) {
-		case 1: auswahl(text, 3, ort70, ort151, ort146);
-				break;
-		case 2: auswahl(text, 3, ort69, ort151, ort146);
-				break;
-		case 3: auswahl(text, 3, ort68, ort151, ort146);
-				break;
-		case 4: auswahl(text, 3, ort67, ort151, ort146);
-				break;
-		case 5: auswahl(text, 3, ort74, ort151, ort146);
-				break;
-		case 6: auswahl(text, 3, ort73, ort151, ort146);
-				break;
-		case 7: auswahl(text, 3, ort72, ort151, ort146);
-				break;
-		default: auswahl(text, 3, ort71, ort151, ort146);
-				break;
-	}
+	funktion_s *fn[] = { ort70, ort69, ort68, ort67, ort74, ort73, ort72, ort71 };
+	auswahl( text, 3, fn[rotation % 8], ort151, ort146);
 }
 
 void ort88(void) {
@@ -2202,25 +2091,8 @@ void ort88(void) {
 	raum = 88;
 	char *text = "Du kannst dem Tunnel nach Norden (1) oder nach Süden folgen (2), odern den Weg nach Westen nehmen (3)";
 	textausgabe("Du befindest dich an einer Kreuzung. Ein Tunnel führt von Norden nach Westen, während ein weiterer Stollen in Richtung Westen führt. Das Wurzelwerk in den Wänden schimmert weniger intensiv, als du es bisher gewohnt bist. Ein Schienenstrang führt an der Wand des nach Westen laufenden Gangs entlang.");
-	switch(rotation % 8) {
-		case 1: auswahl(text, 3, ort71, ort89, ort145);
-				break;
-		case 2: auswahl(text, 3, ort70, ort89, ort145);
-				break;
-		case 3: auswahl(text, 3, ort69, ort89, ort145);
-				break;
-		case 4: auswahl(text, 3, ort68, ort89, ort145);
-				break;
-		case 5: auswahl(text, 3, ort67, ort89, ort145);
-				break;
-		case 6: auswahl(text, 3, ort74, ort89, ort145);
-				break;
-		case 7: auswahl(text, 3, ort73, ort89, ort145);
-				break;
-		default: auswahl(text, 3, ort72, ort89, ort45);
-				break;
-
-	}
+	funktion_s *fn[] = { ort71, ort70, ort69, ort68, ort67, ort74, ort73, ort72 };
+	auswahl( text, 3, fn[rotation % 8], ort89, ort145);
 }
 
 void ort89(void) {
@@ -2460,7 +2332,7 @@ void ort112(void) {
 void ort113(void) {
 	// Begegnung mit einem Zufallsgegner der "Militärseite"
 	int zufallsgegner = wuerfel(6);
-	bool kampfausgang;
+	bool kampfausgang = false;
 	charakter_s gegner1 = { "Uniformierter", 2, 2, 3, 3 };
 	charakter_s gegner2 = { "Besatzer", 6, 6, 3, 3 };
 	charakter_s gegner3 = { "aggressiver Uniformträger", 6, 6, 4, 4 };
@@ -2468,36 +2340,28 @@ void ort113(void) {
 	charakter_s gegner5 = { "gutgläubiger Mitläufer", 6, 6, 5, 5 };
 	charakter_s gegner6 = { "Heckenschütze", 8, 8, 4, 4 };
 	charakter_s gegner7 = { "gepanzerter Beserker", 6, 6, 8, 8 };
-	switch(zufallsgegner) {
-		case 1: kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
-				break;
-		case 2: kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
-				break;
-		case 3: kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
-				break;
-		case 4: kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
-				break;
-		case 5: kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
-				break;
-		case 6: kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
-				break;
-		default: kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
-				break;
+	if ( zufallsgegner == 1 ) kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
+	else if ( zufallsgegner == 2 ) kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
+	else if ( zufallsgegner == 3 ) kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
+	else if ( zufallsgegner == 4 ) kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
+	else if ( zufallsgegner == 5 ) kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
+	else if ( zufallsgegner == 6 ) kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
+	else if ( zufallsgegner == 7 ) kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
+	if ( kampfausgang ) {
+		getoetetegegner += 1;
+		if(wuerfel(6) >= 4) {
+			if(objekt[pistole] <= 1)
+				if(janeinfrage("Willst du die Pistole deines Gegners an dich nehmen (j/n)?"))
+					objekt[pistole] += 1;
+		}
+		else {
+			if(objekt[gewehr] <= 0)
+				if(janeinfrage("Willst du das Gewehr deines Gegners an dich nehmen (j/n)?"))
+					objekt[gewehr] += 1;
+		}
+		objekt[patrone] += wuerfel(8);
 	}
-	if(!kampfausgang)
-        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
-	getoetetegegner += 1;
-	if(wuerfel(6) >= 4) {
-		if(objekt[pistole] <= 1)
-			if(janeinfrage("Willst du die Pistole deines Gegners an dich nehmen (j/n)?"))
-				objekt[pistole] += 1;
-	}
-	else {
-		if(objekt[gewehr] <= 0)
-			if(janeinfrage("Willst du das Gewehr deines Gegners an dich nehmen (j/n)?"))
-				objekt[gewehr] += 1;
-	}
-	objekt[patrone] += wuerfel(8);
+	else beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
 }
 
 void ort114(void) {
@@ -2768,17 +2632,12 @@ void ort149(void) {
 	else
 		textausgabe("Der Stollen fällt langsam von Norden nach Süden ab. An dieser Stelle befindet sich ein etwa mannsgroße Türe mit schweren Eisenbeschlägen in der Ostwand. Ein paar Schienen laufen an der Ostwand entlang. Das Wurzelwerk breitet sich nur sehr spärlich an der Decke aus und entsprechend schlecht ist die natürliche Sicht hier unten.");
 	raum = 149;
-	if(wuerfel(6) > 3)
-		textausgabe("Dir kommt es so vor, als würdest du Klopfgeräusche aus dem Stollen kommen hören.");
-	if(wuerfel(6) > 5)
-		textausgabe("Es kommt dir so vor, als hätte sich das Gestein des Felsens leicht verändert.");
-	if(wuerfel(6) > 5)
-		textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
-	if(wuerfel(6) > 4)
-		textausgabe("Für einen kurzen Moment hattest du das Gefühl, ein Stöhnen von hinter der Türe gehört zu haben.");
-	if(schluessel111_1)
-		auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob einer deiner Schlüssel die Türe im Osten öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort150, ort212, NULL, NULL);
-	else if(schluessel9 || schluessel66 || schluessel99 || schluessel111_2 || schluessel125 || schluesselbootshaus)
+	if ( wuerfel(6) > 3 ) textausgabe("Dir kommt es so vor, als würdest du Klopfgeräusche aus dem Stollen kommen hören.");
+	if ( wuerfel(6) > 5 ) textausgabe("Es kommt dir so vor, als hätte sich das Gestein des Felsens leicht verändert.");
+	if ( wuerfel(6) > 5 ) textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
+	if ( wuerfel(6) > 4 ) textausgabe("Für einen kurzen Moment hattest du das Gefühl, ein Stöhnen von hinter der Türe gehört zu haben.");
+	if ( schluessel111_1 ) auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob einer deiner Schlüssel die Türe im Osten öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort150, ort212, NULL, NULL);
+	else if ( schluessel9 || schluessel66 || schluessel99 || schluessel111_2 || schluessel125 || schluesselbootshaus )
 		auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob einer deiner Schlüssel die Türe im Osten öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort149, ort212, NULL, NULL);
 	else
 		auswahl("Du kannst dem Tunnel nach Norden folgen (1) oder nach Süden (2) oder versuchen, ob du die Türe im Osten öffnen kannst (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort144, ort99, ort149, ort212, NULL, NULL);
@@ -2916,12 +2775,9 @@ void ort159(void) {
 	else
 		textausgabe("Der Stollen fällt hier stärker von Osten nach Westen ab. Das Wurzelwerk breitet sich nur sehr spärlich an der Decke aus und entsprechend schlecht ist die natürliche Sicht hier unten. Die Struktur der Wände an der Südwand ist teilweise zerklüftet, scharfkantige Strukturen stehen hervor und der Schattenwurf ist großflächig.");
 	raum = 159;
-	if(wuerfel(6) > 3)
-		textausgabe("Dir kommt es so vor, als würdest du Klopfgeräusche aus dem Stollen kommen hören.");
-	if(wuerfel(6) > 3)
-		textausgabe("Es kommt dir so vor, als hätte sich das Gestein des Felsens leicht verändert.");
-	if(wuerfel(6) > 4)
-		textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
+	if(wuerfel(6) > 3) textausgabe("Dir kommt es so vor, als würdest du Klopfgeräusche aus dem Stollen kommen hören.");
+	if(wuerfel(6) > 3) textausgabe("Es kommt dir so vor, als hätte sich das Gestein des Felsens leicht verändert.");
+	if(wuerfel(6) > 4) textausgabe("Du bist dir nicht sicher, aber trotz des schwachen Lichts hast du das Gefühl, kleine metallische Lichtreflexe auf der Felswand erkennen zu können.");
 	if(schluessel111_2)
 		auswahl("Du kannst dem Tunnel nach Westen folgen (1) oder nach Osten (2) oder versuchen, ob einer deiner Schlüssel die Türe in der Nordwand öffnet (3). Du kannst auch die Wände nach Geheimgängen absuchen (4).", 4, ort158, ort160, ort155, ort212, NULL, NULL);
 	else if(schluessel9 || schluessel66 || schluessel99 || schluessel111_1 || schluessel125 || schluesselbootshaus)
@@ -2957,14 +2813,10 @@ void ort161(void) {
 	if(raum != 161)
 		textausgabe("Du stehst in einer von leuchtenden Adern durchzogenen Höhle, die voller Gold und Juwelen ist. Ein Drachenhort, ganz so, wie man ihn aus den Märchen und Erzählungen der Großväter kennt. Das kleine Kind in dir jauchzt fröhlich vor Vergnügen an dem Anblick - und das Herz des Obdachlosen würde sich am liebsten alles, was es hier sieht, einstecken und zu Geld machen, wenn, ja wenn Geld noch irgendeine Bedeutung hätte. Schmerzlich wirst du dir bewußt, daß du in der Tat ein Flüchtling bist, ein Flüchtling, der vor einer unbekannten Besatzungsmacht flieht, die seine Heimatstadt mit der Hilfe seltsamer Maschinenwesen in eine Landschaft aus rauchenden Trümmern und Asche verwandelt hat.\nDu beginnst dem Berg aus Edelmetallen zu durchsuchen, nach etwas sinnvollem, etwas nützlichem. Eine Waffe wäre vielleicht interessant, aber alles, was du hier findest, sind scheinbar wertvolle Gesteinsbrocken, Juwelen, aber nichts, was dir wirklich weiter helfen würde.");
 	raum = 161;
-	if(wuerfel(6) > 4)
-		textausgabe("In all den Kostbarkeiten, stößt du auf einen Zettel. Du entfaltest ihn und liest nur ein einziges Wort: \"Handschuh\"");
-	if(wuerfel(6) > 4)
-		textausgabe("Während du dich am Fuße des Horts entlangbewegst, bemerkst du ein mit Kreide an die Wand geschriebenes Wort: \"Bett\"");
-	if(wuerfel(6) > 4)
-		textausgabe("In einer Ecke hat jemand das Wort \"Brezel\" auf den Boden geritzt.");
-	if(wuerfel(6) > 4)
-		textausgabe("Am Ausgang des Horts hat jemand das Wort \"Zeit\" in Augenhöhe an die Wand geschrieben.");
+	if(wuerfel(6) > 4) textausgabe("In all den Kostbarkeiten, stößt du auf einen Zettel. Du entfaltest ihn und liest nur ein einziges Wort: \"Handschuh\"");
+	if(wuerfel(6) > 4) textausgabe("Während du dich am Fuße des Horts entlangbewegst, bemerkst du ein mit Kreide an die Wand geschriebenes Wort: \"Bett\"");
+	if(wuerfel(6) > 4) textausgabe("In einer Ecke hat jemand das Wort \"Brezel\" auf den Boden geritzt.");
+	if(wuerfel(6) > 4) textausgabe("Am Ausgang des Horts hat jemand das Wort \"Zeit\" in Augenhöhe an die Wand geschrieben.");
 	auswahl("Du kannst den Hort verlassen und zurück nach Osten gehen (1) oder die Wände absuchen, ob nicht ein Geheimgang an diesen Ort führt (2)", 2, ort98, ort212);
 }
 
@@ -2977,8 +2829,7 @@ void ort162(void) {
 
 void ort163(void) {
 	rotation++;
-	if(raum == 163)
-		textausgabe("Du gehst an den endlosen Reihen der Stämme entlang, hast jedoch Angst den einzigen Weg, den du durch den Pilzwald kennst, aus den Augen zu verlieren, so drehst du um und näherst dich wieder der Felswand im Westen.");
+	if(raum == 163) textausgabe("Du gehst an den endlosen Reihen der Stämme entlang, hast jedoch Angst den einzigen Weg, den du durch den Pilzwald kennst, aus den Augen zu verlieren, so drehst du um und näherst dich wieder der Felswand im Westen.");
 	raum = 163;
 	textausgabe("Du befindest dich an einem großen, weiten Strand, an dessen Ufer die Wellen eines Meeres branden. Weit nördlich von hier aus befindet sich ein riesiger Pilz und ein Pilzwald zieht sich am Strand entlang, soweit dein Auge reicht. Nicht weit im Westen von dir ist die Felswand die sich weit nach oben streckt. Das Meer erstreckt sich bis zum Horizont, du kannst seine Ausmaße nicht einmal erahnen. Salzig duftende, frische Brisen streichen dir durch das Gesicht. In der Westwand befindet sich ein Tunnel.");
 	auswahl("Du kannst dich nach Westen am Strand lang bewegen und den Tunnel im Berg betreten (1) oder du kannst dich in Richtung des Riesenpilzes nach Norden weiterbewegen (2). Wenn du willst, kannst du den Strand auch nach weiteren Wegen absuchen (3)", 3, ort162, ort156, ort210);
@@ -3239,41 +3090,27 @@ void ort209(void) {
 
 void ort210(void) {
 	// Die Untersuchung der Pilze in der Pilzwaldhöhle ruft diese Funktion auf.
-	switch(wuerfel(6)) {
-		case 1: textausgabe("Du berührst einen großen Pilzstamm. Unter der Wärme deiner Hand fühlt es sich an, als würde sein Stamm anfangen zu pulsieren.");
-				break;
-		case 2: textausgabe("Der Pilzstamm fühlt sich warm an, während du mit deiner Hand darüber gehst.");
-				break;
-		case 3: textausgabe("Du glaubst zu hören, das hinter einer undurchdringlichen Wand aus Pilzen das Geräusch eines fließenden Gewässers erklingt.");
-				break;
-		case 4: textausgabe("Während du den Pilzhut eines mannshohen Pilzes genauer untersuchst, kannst du dich des Gefühls nicht erwehren, das etwas dich beobachtet.");
-				break;
-		case 5: textausgabe("Als du den Stamm eines baumhohen Pilzes abklopfst, kommt es dir so vor, als wäre klänge er hohl. Möglicherweise ist der Stamm des Pilzes ja hohl?");
-				break;
-		default: textausgabe("Du kannst absolut nichts ungewöhnliches wahrnehmen.");
-				 break;
-	}
-	switch(wuerfel(4)) {
-		case 1: textausgabe("Vielleicht ist es nur Einbildung, aber du hattest gerade das Gefühl, einen Windstoß im Nacken zu spüren.");
-				break;
-		case 2: textausgabe("Für einen Moment glaubtest du, ein knackendes Geräusch gehört zu haben.");
-				break;
-		case 3: textausgabe("Es kommt dir so vor, als wäre es still hier, sehr still, ja, unnatürlich still. Die Stille erscheint dir zu konsequent, als das sie natürlich erscheint.");
-				break;
-		case 4: textausgabe("Ein ungutes Gefühl breitet sich in deiner Magengrube aus.");
-				break;
-	}
+	int wurf = wuerfel(6);
+	if ( wurf == 1 ) textausgabe("Du berührst einen großen Pilzstamm. Unter der Wärme deiner Hand fühlt es sich an, als würde sein Stamm anfangen zu pulsieren.");
+	else if ( wurf == 2 ) textausgabe("Der Pilzstamm fühlt sich warm an, während du mit deiner Hand darüber gehst.");
+	else if ( wurf == 3 ) textausgabe("Du glaubst zu hören, das hinter einer undurchdringlichen Wand aus Pilzen das Geräusch eines fließenden Gewässers erklingt.");
+	else if ( wurf == 4 ) textausgabe("Während du den Pilzhut eines mannshohen Pilzes genauer untersuchst, kannst du dich des Gefühls nicht erwehren, das etwas dich beobachtet.");
+	else if ( wurf == 5 ) textausgabe("Als du den Stamm eines baumhohen Pilzes abklopfst, kommt es dir so vor, als wäre klänge er hohl. Möglicherweise ist der Stamm des Pilzes ja hohl?");
+	else textausgabe("Du kannst absolut nichts ungewöhnliches wahrnehmen.");
+	wurf = wuerfel(4);
+	if ( wurf == 1 ) textausgabe("Vielleicht ist es nur Einbildung, aber du hattest gerade das Gefühl, einen Windstoß im Nacken zu spüren.");
+	else if ( wurf == 2 ) textausgabe("Für einen Moment glaubtest du, ein knackendes Geräusch gehört zu haben.");
+	else if ( wurf == 3 ) textausgabe("Es kommt dir so vor, als wäre es still hier, sehr still, ja, unnatürlich still. Die Stille erscheint dir zu konsequent, als das sie natürlich erscheint.");
+	else textausgabe("Ein ungutes Gefühl breitet sich in deiner Magengrube aus.");
 	// 20% Wahrscheinlichkeit einer Zufallsbegegnung.
-	if(wuerfel(10) > 6)
-		ort211();
-	else
-		raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
+	if(wuerfel(10) > 6) ort211();
+	else raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 }
 
 void ort211(void) {
 	// Begegnung mit einem Zufallsgegner der oberen Hohlwelt
 	int zufallsgegner = wuerfel(7);
-	bool kampfausgang;
+	bool kampfausgang = false;
 	charakter_s gegner1 = { "gefiederte Schnecke", 6, 6, 3, 3 };
 	charakter_s gegner2 = { "Riesenborkenkäfer", 6, 6, 3, 3 };
 	charakter_s gegner3 = { "gigantische Pilzlaus", 3, 3, 4, 4 };
@@ -3281,83 +3118,62 @@ void ort211(void) {
 	charakter_s gegner5 = { "Sporenkrabbe", 6, 6, 9, 9 };
 	charakter_s gegner6 = { "fleischfressender Pilzaal", 7, 7, 4, 4 };
 	charakter_s gegner7 = { "zu groß geratenes Frettchen", 9, 9, 8, 8 };
-	switch(zufallsgegner) {
-		case 1: textausgabe("Um einen Pilzstamm herum kommt eine Schnecke gekrochen, eine Schnecke, die den Hut eines Pilzes als Haus auf dem Rücken trägt. Plötzlich richtet sie sich auf. Ihr Rücken hat ein Gefieder, das sie ausbreitet, während hier Mund sich weit öffnet, rasiermesserscharfe Zähne zeigt - und ihre Augen sich dir zuwenden.");
-				kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
-				break;
-		case 2: textausgabe("Ein Borkenkäfer, in der größe eines Ponys kommt herabgeschwebt und läßt sich vor dir auf dem Boden nieder, augenscheinlich um zu - fressen?");
-				if(wuerfel(6) >4)
-					textausgabe("Als du dein Gewicht verlagerst, trittst du auf einen kleinen Pilz der jämmerlich zu schreien anfängt. Damit hast du nun die ungeteilte Aufmerksamkeit des Borkenkäfers erlangt.");
-				kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
-				break;
-		case 3: textausgabe("Am Stamm eines größeren Pilzes kommt eine Laus heruntergekrabbelt. Ihr Kopf bewegt sich, als würde sie etwas riechen.");
-		       		if(wuerfel(6) > 4)
-					textausgabe("Und wenn man die Richtung ihrer Bewegung weiter verfolgt, weiß man auch, was sie riecht: Dich!");
-				kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
-				break;
-		case 4: if(wuerfel(6) > 4)
-					textausgabe("Du hast einen Riesensteinpilz erschreckt. Er dreht sich um und kommt schweren Schrittes auf dich zu.");
-				kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
-				break;
-		case 5: if(wuerfel(6) > 4)
-					textausgabe("Du hast gerade einer Sporenkrabbe auf die Schere getreten.");
-				else
-					textausgabe("Du hast gerade einer Sporenkrabbe auf ein Bein getreten.");
-				kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
-				break;
-		case 6: if(wuerfel(6) > 3)
-					textausgabe("Die Vibration deines Klopfens an einen übergroßen Pilzstamm hat eine Pilzaal hervorgelockt. Die großen, scharfen Zähne in seinem weit aufgerissenen Maul lassen darauf schließen, daß es sich bei ihm um einen Fleischfresser handelt. Und seinem Blick nach zu urteilen handelt es sich bei dir um ein Mittagessen in seinen Augen.");
-				else
-					textausgabe("Die Vibration deines Klopfens an einen übergroßen Pilzstamm hat einen wütenden Pilzaal hervorgelockt. Bei deinem Anblick reißt er sein Maul weit auf und präsentiert dir eine paar hübsche Reihen rasiermesserscharfe Zähne, die dich sehr an das Maul eines großen weißen Hais erinnern. Du könntest schwören, gerade in deinem Kopf eine Stimme vernommen zu haben, die sagte: \"Hallo Abendessen!\"");
-				kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
-				break;
-		default: textausgabe("Wie aus dem Nichts heraus, stürmt plötzlich ein ziemlich großes Frettchen auf dich zu.");
-				kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
-				break;
+	if ( zufallsgegner == 1 ) {
+		textausgabe("Um einen Pilzstamm herum kommt eine Schnecke gekrochen, eine Schnecke, die den Hut eines Pilzes als Haus auf dem Rücken trägt. Plötzlich richtet sie sich auf. Ihr Rücken hat ein Gefieder, das sie ausbreitet, während hier Mund sich weit öffnet, rasiermesserscharfe Zähne zeigt - und ihre Augen sich dir zuwenden.");
+		kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
+	} else if ( zufallsgegner == 2 ) {
+		textausgabe("Ein Borkenkäfer, in der größe eines Ponys kommt herabgeschwebt und läßt sich vor dir auf dem Boden nieder, augenscheinlich um zu - fressen?");
+		if(wuerfel(6) >4) textausgabe("Als du dein Gewicht verlagerst, trittst du auf einen kleinen Pilz der jämmerlich zu schreien anfängt. Damit hast du nun die ungeteilte Aufmerksamkeit des Borkenkäfers erlangt.");
+		kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
+	} else if ( zufallsgegner == 3 ) {
+		textausgabe("Am Stamm eines größeren Pilzes kommt eine Laus heruntergekrabbelt. Ihr Kopf bewegt sich, als würde sie etwas riechen.");
+		if(wuerfel(6) > 4) textausgabe("Und wenn man die Richtung ihrer Bewegung weiter verfolgt, weiß man auch, was sie riecht: Dich!");
+		kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
+	} else if ( zufallsgegner == 4 ) {
+		if(wuerfel(6) > 4) textausgabe("Du hast einen Riesensteinpilz erschreckt. Er dreht sich um und kommt schweren Schrittes auf dich zu.");
+		kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
+	} else if ( zufallsgegner == 5 ) {
+		if(wuerfel(6) > 4) textausgabe("Du hast gerade einer Sporenkrabbe auf die Schere getreten.");
+		else textausgabe("Du hast gerade einer Sporenkrabbe auf ein Bein getreten.");
+		kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
+	} else if ( zufallsgegner == 6 ) {
+		if(wuerfel(6) > 3) textausgabe("Die Vibration deines Klopfens an einen übergroßen Pilzstamm hat eine Pilzaal hervorgelockt. Die großen, scharfen Zähne in seinem weit aufgerissenen Maul lassen darauf schließen, daß es sich bei ihm um einen Fleischfresser handelt. Und seinem Blick nach zu urteilen handelt es sich bei dir um ein Mittagessen in seinen Augen.");
+		else textausgabe("Die Vibration deines Klopfens an einen übergroßen Pilzstamm hat einen wütenden Pilzaal hervorgelockt. Bei deinem Anblick reißt er sein Maul weit auf und präsentiert dir eine paar hübsche Reihen rasiermesserscharfe Zähne, die dich sehr an das Maul eines großen weißen Hais erinnern. Du könntest schwören, gerade in deinem Kopf eine Stimme vernommen zu haben, die sagte: \"Hallo Abendessen!\"");
+		kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
+	} else {
+		textausgabe("Wie aus dem Nichts heraus, stürmt plötzlich ein ziemlich großes Frettchen auf dich zu.");
+		kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
 	}
-	if(!kampfausgang)
-        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
-	getoetetegegner += 1;
-	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
+	if( kampfausgang ) {
+		getoetetegegner += 1;
+		raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
+	}
+	else beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
 }
 
 void ort212(void) {
 	// Die Suche nach Geheimgängen im ersten Level der Hohlwelt ruft diese Funktion auf.
-	switch(wuerfel(6)) {
-		case 1: textausgabe("Du hämmerst die Felsen ab, aber von Hohlräumen ist nichts zu hören.");
-				break;
-		case 2: textausgabe("Die Wand fühlt sich warm an, während du mit deiner Hand darüber gehst.");
-				break;
-		case 3: textausgabe("Du könntest schwören, hinter der Wand das Geräusch fließenden Wassers hören zu können.");
-				break;
-		case 4: textausgabe("Während du die Wände abtastest, hast du das Gefühl, beobachtet zu werden.");
-				break;
-		case 5: textausgabe("Es kommt dir so vor, als würdest sich dein Klopfen etwas hohl anhören. Vielleicht befindet sich ja ein Hohlraum hinter der Wand?");
-				break;
-		default: textausgabe("Du kannst absolut nichts ungewöhnliches wahrnehmen.");
-				 break;
-	}
-	switch(wuerfel(4)) {
-		case 1: textausgabe("Vielleicht ist es nur Einbildung, aber du glaubst gerade ganz deutlich, einen Luftzug gespürt zu haben.");
-				break;
-		case 2: textausgabe("Für einen Moment glaubtest du, ein Geräusch gehört zu haben.");
-				break;
-		case 3: textausgabe("Es kommt dir so vor, als wäre es unnatürlich still hier unten.");
-				break;
-		case 4: textausgabe("Ein ungutes Gefühl breitet sich in deinem Magen aus.");
-				break;
-	}
+	int wurf = wuerfel(6);
+	if ( wurf == 1 ) textausgabe("Du hämmerst die Felsen ab, aber von Hohlräumen ist nichts zu hören.");
+	else if ( wurf == 2 ) textausgabe("Die Wand fühlt sich warm an, während du mit deiner Hand darüber gehst.");
+	else if ( wurf == 3 ) textausgabe("Du könntest schwören, hinter der Wand das Geräusch fließenden Wassers hören zu können.");
+	else if ( wurf == 4 ) textausgabe("Während du die Wände abtastest, hast du das Gefühl, beobachtet zu werden.");
+	else if ( wurf == 5 ) textausgabe("Es kommt dir so vor, als würdest sich dein Klopfen etwas hohl anhören. Vielleicht befindet sich ja ein Hohlraum hinter der Wand?");
+	else textausgabe("Du kannst absolut nichts ungewöhnliches wahrnehmen.");
+	wurf = wuerfel(4);
+	if ( wurf == 1 ) textausgabe("Vielleicht ist es nur Einbildung, aber du glaubst gerade ganz deutlich, einen Luftzug gespürt zu haben.");
+	else if ( wurf == 2 ) textausgabe("Für einen Moment glaubtest du, ein Geräusch gehört zu haben.");
+	else if ( wurf == 3 ) textausgabe("Es kommt dir so vor, als wäre es unnatürlich still hier unten.");
+	else if ( wurf == 4 ) textausgabe("Ein ungutes Gefühl breitet sich in deinem Magen aus.");
 	// 20% Wahrscheinlichkeit einer Zufallsbegegnung.
-	if(wuerfel(10) > 8)
-		ort213();
-	else
-		raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
+	if(wuerfel(10) > 8) ort213();
+	else raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 }
 
 void ort213(void) {
 	// Begegnung mit einem Zufallsgegner der oberen Hohlwelt
 	int zufallsgegner = wuerfel(7);
-	bool kampfausgang;
+	bool kampfausgang = false;
 	charakter_s gegner1 = { "wandernder Pilz", 2, 2, 3, 3 };
 	charakter_s gegner2 = { "Riesenraupe", 6, 6, 3, 3 };
 	charakter_s gegner3 = { "Feuerschmetterling", 6, 6, 4, 4 };
@@ -3365,42 +3181,36 @@ void ort213(void) {
 	charakter_s gegner5 = { "Geröllnatter", 6, 6, 5, 5 };
 	charakter_s gegner6 = { "Felsegel", 8, 8, 4, 4 };
 	charakter_s gegner7 = { "Felsenkrebs", 6, 6, 8, 8 };
-	switch(zufallsgegner) {
-		case 1: textausgabe("Du hast einen wandernden Riesenpilz angelockt.");
-				kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
-				break;
-		case 2: textausgabe("Aus einem Loch in der Wand kommt eine Riesenraupe herangekrochen.");
-				if(wuerfel(6) >4)
-					textausgabe("Offenbar hat dein ständiges Geklopfe und Geschabe sie aufgeschreckt.");
-				kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
-				break;
-		case 3: textausgabe("Ein riesiger roter Schmetterling kommt auf dich zugeschwebt. Das illusorische Farbspiel auf seinen Flügel läßt sie aussehen, als wären sie aus Feuer.");
-				kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
-				break;
-		case 4: if(wuerfel(6) > 4)
-					textausgabe("Du hast eine Fledermaus aufgeschreckt");
-				kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
-				break;
-		case 5: if(wuerfel(6) > 4)
-					textausgabe("Du hast gerade einer Felsennatter auf den Kopf gehauen.");
-				else
-					textausgabe("Die Vibration deines Klopfens hat eine Geröllnatter herbeigelockt.");
-				kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
-				break;
-		case 6: if(wuerfel(6) > 3)
-					textausgabe("Ein Felsegel schmiegt sich zärtlich um dein Bein.");
-				else
-					textausgabe("Wie aus dem Nichts heraus, windet sich plötzlich ein Felsegel um deine Hand.");
-				kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
-				break;
-		default: textausgabe("Der Fels, auf den du gerade klopfst, war ein Felsenkrebs.");
-				kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
-				break;
+	if ( zufallsgegner == 1 ) {
+		textausgabe("Du hast einen wandernden Riesenpilz angelockt.");
+		kampfausgang = kampf(&spieler, &gegner1, 1, false, NULL);
+	} else if ( zufallsgegner == 2 ) {
+		textausgabe("Aus einem Loch in der Wand kommt eine Riesenraupe herangekrochen.");
+		if(wuerfel(6) >4) textausgabe("Offenbar hat dein ständiges Geklopfe und Geschabe sie aufgeschreckt.");
+		kampfausgang = kampf(&spieler, &gegner2, 1, false, NULL);
+	} else if ( zufallsgegner == 3 ) {
+		textausgabe("Ein riesiger roter Schmetterling kommt auf dich zugeschwebt. Das illusorische Farbspiel auf seinen Flügel läßt sie aussehen, als wären sie aus Feuer.");
+		kampfausgang = kampf(&spieler, &gegner3, 1, false, NULL);
+	} else if ( zufallsgegner == 4 ) {
+		if(wuerfel(6) > 4) textausgabe("Du hast eine Fledermaus aufgeschreckt");
+		kampfausgang = kampf(&spieler, &gegner4, 1, false, NULL);
+	} else if ( zufallsgegner == 5 ) {
+		if(wuerfel(6) > 4) textausgabe("Du hast gerade einer Felsennatter auf den Kopf gehauen.");
+		else textausgabe("Die Vibration deines Klopfens hat eine Geröllnatter herbeigelockt.");
+		kampfausgang = kampf(&spieler, &gegner5, 1, false, NULL);
+	} else if ( zufallsgegner == 6 ) {
+		if(wuerfel(6) > 3) textausgabe("Ein Felsegel schmiegt sich zärtlich um dein Bein.");
+		else textausgabe("Wie aus dem Nichts heraus, windet sich plötzlich ein Felsegel um deine Hand.");
+		kampfausgang = kampf(&spieler, &gegner6, 1, false, NULL);
+	} else {
+		textausgabe("Der Fels, auf den du gerade klopfst, war ein Felsenkrebs.");
+		kampfausgang = kampf(&spieler, &gegner7, 1, false, NULL);
 	}
-	if(!kampfausgang)
-        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
-	getoetetegegner += 1;
-	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
+	if ( kampfausgang ) {
+		getoetetegegner += 1;
+		raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
+	} else        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
+
 }
 
 void ort214(void) {
