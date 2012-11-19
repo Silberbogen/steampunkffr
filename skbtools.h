@@ -13,9 +13,9 @@
  *          Ended:  00.00.0000 00:00:00
  *       Revision:  none
  *       Compiler:  c99/c11
- *        compile:  Nicht zur eigentständigen Verwendung
+ *        compile:  make
  *
- *         Author:  Sascha K. Biermanns (saschakb), saschakb@gmail.com
+ *         Author:  Sascha K. Biermanns (skbierm), skbierm@gmail.com
  *        Company:
  *        License:  ISC
  *

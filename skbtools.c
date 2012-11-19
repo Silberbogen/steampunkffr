@@ -13,9 +13,9 @@
  *          Ended:  00.00.0000 00:00:00
  *       Revision:  none
  *       Compiler:  c99/c11
- *        compile:  Nicht zur eigenständigen Verwendung
+ *        compile:  make
  *
- *         Author:  Sascha K. Biermanns (saschakb), http://privacybox.de/saschakb.msg
+ *         Author:  Sascha K. Biermanns (skbierm), skbierm@gmail.com
  *        Company:
  *        License:  ISC
  *

@@ -16,7 +16,7 @@
  *       Compiler:  c99/c11
  *        compile:  make
  *
- *         Author:  Sascha K. Biermanns (saschakb), saschakb@gmail.com
+ *         Author:  Sascha K. Biermanns (skbierm), skbierm@gmail.com
  *        Company:
  *        License:  ISC
  *

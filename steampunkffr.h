@@ -13,10 +13,10 @@
  *        Created:  28.08.2012 02:05:00
  *          Ended:  00.00.0000 00:00:00
  *       Revision:  none
- *       Compiler:  C99 compatible or better
- *        compile:  cc -o steampunkffr skbtools.c steampunkffr.c -lncurses -std=c99
+ *       Compiler:  c99/c11
+ *        compile:  make
  *
- *         Author:  Sascha K. Biermanns (saschakb), saschakb@gmail.com
+ *         Author:  Sascha K. Biermanns (skbierm), skbierm@gmail.com
  *        Company:
  *        License:  ISC
  *
