@@ -80,7 +80,7 @@
 #include <locale.h>
 #include "skbtools.h"
 #include "steampunkffr.h"
-
+	
 #define DATEINAME ".steampunkffrsicherung.txt"
 
 // ----------------

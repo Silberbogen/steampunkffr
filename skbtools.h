@@ -66,6 +66,11 @@
 
 #include <ncurses.h>
 
+// Makro zur Erklärung statischer Variablen
+#define Staticdef( typ, variable, initwert) \
+	static typ variable = 0; \
+	if ( !(var) ) var = (initwert);
+
 // ----------------------------------------------------------
 // farben - kann ich mir leichter als die Originale merken ;)
 // ----------------------------------------------------------
