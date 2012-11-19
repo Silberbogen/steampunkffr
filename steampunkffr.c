@@ -68,6 +68,7 @@
  *	 - 28.08.2012 steampunkffr.h hinzugefügt, teile aus der .c-Datei ausgelagert.
  *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen, Beginn der
  *                Entfernung von switch und ähnlichen Strukturen
+ *   - 19.11.2012 enum Konstanten korrigiert
  * =====================================================================================
  */
 
@@ -120,9 +121,8 @@ bool kampfrunde(charakter_s *angreifer, charakter_s *verteidiger, void (*fluchtp
 	int testgewandheit[2];
 	testgewandheit[0] = angreifer->gewandheit + wuerfel(6) + wuerfel(6) + angriffsbonus + paralysiert;
 	testgewandheit[1] = verteidiger->gewandheit + wuerfel(6) + wuerfel(6);
-	if(unsichtbar) // Falls du unsichtbar bist
-		testgewandheit[0] += 2;
-	if(testgewandheit[0] == testgewandheit[1]) return true; // Unentschieden, das heißt - nicht getroffen
+	if ( unsichtbar ) testgewandheit[0] += 2; // Falls du unsichtbar bist gibt's einen Vorteilsbonus
+	if ( testgewandheit[0] == testgewandheit[1] ) return true; // Unentschieden, das heißt - nicht getroffen
 	momentane_werte(angreifer);
 	momentane_werte(verteidiger);
 	// Möchte der Spieler fliehen?
@@ -641,8 +641,6 @@ void zweisamkeit(int wert) {
 // -------------------------
 
 void intro(void) {
-	int eingabe = 0;
-
     vordergrundfarbe(FARBE_GELB);
     textausgabe("Hinweis!");
 	vordergrundfarbe(FARBE_GRUEN);
@@ -662,6 +660,7 @@ void intro(void) {
 	spieler.glueck = spieler.glueck_start;
     vordergrundfarbe(FARBE_GRUEN);
 	textausgabe("\nZu Beginn dieses Abenteuer wirst du nur ein absolutes Minimum an Objekten bei dir führen, als da wären ein Rucksack, ein Multifunktionstaschenmesser, eine Pumptaschenlampe und etwas Proviant. Außerdem ein Engergydrink, den du dir selber auswählen kannst. Welchen der Energydrinks wählst du?\n(1) den Gewandheitstrank - er stellt die anfängliche Gewandheitspunktzahl wieder her\n(2) den Stärketrank - er stellt die anfängliche Stärkepunktzahl wieder her\n(3) den Glückstrank - er stellt die anfängliche Glückspunktzahl wieder her und verbesser sie zusätzlich um einen Punkt");
+	int eingabe = 0;
 	while ( eingabe < 1 || eingabe > 3 ) {
         vordergrundfarbe(FARBE_ZYAN);
 		eingabe = waehle("Für welchen Energydrink entscheidest du dich? ", 3);

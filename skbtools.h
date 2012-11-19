@@ -46,6 +46,7 @@
  *                - nstrcorr()
  *                neu aufgenommen
  *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen
+ * 	 - 19.11.2012 enum Konstanten korrigiert
  *
  * =====================================================================================
  */

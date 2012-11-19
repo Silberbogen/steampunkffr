@@ -48,7 +48,7 @@
  *   - 17.09.2011 Textausgabe wurde vereinfacht
  *                Diverse Funktionen haben keine vordefinierte Farbwahl mehr
  *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen
- *   - 19.11.2012 Kleine Überarbeitung der Routinen
+ *   - 19.11.2012 Kleine Überarbeitung der Routinen, enum Konstanten korrigiert
  *
  * =====================================================================================
  */
