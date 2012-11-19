@@ -102,7 +102,7 @@ typedef struct narr_s {
 
 // Funktion: Beenden des Programms
 // Implementation: Gibt eine farbige Meldung text in der Farbe f aus und beendet das Programm mit dem Status status
-void beenden(enum farben f, int status, char* text, ...);
+void beenden(enum farben f, int status, char * text, ...);
 
 // Funktion: Hintergrundfarbe
 // Implementation: Setzt die Hintergrundfarbe auf den Farbwert f

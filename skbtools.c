@@ -48,6 +48,7 @@
  *   - 17.09.2011 Textausgabe wurde vereinfacht
  *                Diverse Funktionen haben keine vordefinierte Farbwahl mehr
  *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen
+ *   - 19.11.2012 Kleine Überarbeitung der Routinen
  *
  * =====================================================================================
  */
@@ -75,26 +76,23 @@ void beenden(enum farben f, int status, char* text, ...) {
     // Reservierung für den maximalen Speicherplatz, den rest benötigt
     // -------------------------------------------------------------------
     char *cp = (char*) malloc( (sizeof(text) + 100) * sizeof(char));
-    if(!cp) {
+    if ( !cp ) {
         vordergrundfarbe(rot);
         printw("Fehler!\nSicherheitszeiger in beenden() erhielt keinen Speicher!\n");
         vordergrundfarbe(weiss);
         exit(EXIT_FAILURE);
     }
     char *umgewandeltertext = cp;
-
     // Verarbeitung der Parameterliste und Umwandlung der Parameter + Text zu einem String
     // -----------------------------------------------------------------------------------
     va_list par; // Parameterliste
     va_start(par, text);
     vsprintf(umgewandeltertext, text, par);
     va_end(par);
-    // -----------------------------------------------------------------------------------
-    
+    // -----------------------------------------------------------------------------------   
     hinweis(f, umgewandeltertext);
     // cp löschen, sonst gibt es üble Speicherlöcher ;)
-    if(!cp)
-        free(cp);
+    if ( !cp ) free(cp);
     exit(status);
 }
 
@@ -109,14 +107,13 @@ void hinweis(enum farben f, char* text, ...) {
     // Reservierung für den maximalen Speicherplatz, den rest benötigt
     // -------------------------------------------------------------------
     char *cp = (char*) malloc( (sizeof(text) + 100) * sizeof(char));
-    if(!cp) {
+    if ( !cp ) {
         vordergrundfarbe(rot);
         printw("Fehler!\nsicherheitszeiger in hinweis() erhielt keinen Speicher!\n");
         vordergrundfarbe(weiss);
         exit(EXIT_FAILURE);
     }
     char *umgewandeltertext = cp;
-
     // Verarbeitung der Parameterliste und Umwandlung der Parameter + Text zu einem String
     // -----------------------------------------------------------------------------------
     va_list par; // Parameterliste
@@ -124,21 +121,17 @@ void hinweis(enum farben f, char* text, ...) {
     vsprintf(umgewandeltertext, text, par);
     va_end(par);
     // -----------------------------------------------------------------------------------
-    
     vordergrundfarbe(f);
     textausgabe(umgewandeltertext);
     weiter();
     // cp löschen, sonst gibt es üble Speicherlöcher ;)
-    if(!cp)
-        free(cp);
+    if ( !cp ) free(cp);
 }
 
 // Implementation: Ja-Nein-Frage
 bool janeinfrage(char *frage) {
-	char eingabe;
-	
     textausgabe(frage);
-	eingabe = taste();
+	char eingabe = taste();
 	if((eingabe == 'j') || (eingabe == 'J'))
 		return true;
 	else
@@ -146,25 +139,23 @@ bool janeinfrage(char *frage) {
 }
 
 // Initialisierung der ncurses-Umgebung
-void ncurses_init(void (*funktion)()) {
-	// Umgebungsvariable setzen
-	setlocale(LC_ALL, "");
-
+void ncurses_init(void (*funktion)()) {	
+	setlocale(LC_ALL, ""); // Umgebungsvariablen setzen
 	initscr(); // beginne ncurses
 	keypad(stdscr, true); // Keymapping aktivieren
 	cbreak(); // kein Warten bei der Eingabe auf ENTER
 	echo(); // Cursort-Echo
 	scrollok(stdscr, true); // Automatisches Scrollen aktivieren
 	start_color(); // Beginne mit Farben
-        // Initialisierung aller Farbpaare
-        for(int x = schwarz; x <= weiss; x++)
-          for(int y = schwarz; y <= weiss; y++)
-            init_pair((8 * x) + y + 1, x, y);
+	// Initialisierung aller Farbpaare
+	for(int x = schwarz; x <= weiss; ++x)
+		for(int y = schwarz; y <= weiss; ++y)
+			init_pair((8 * x) + y + 1, x, y);
     vordergrundfarbe(weiss);
     hintergrundfarbe(schwarz);
 	clear(); // Bildschirm löschen
 	curs_set(0);
-	atexit(funktion); // Routine, die bei der Beendung ausgeführt wird
+	atexit( funktion ); // Routine, die bei der Beendung ausgeführt wird
 }
 
 // Implementation: Taste
@@ -180,13 +171,6 @@ char taste(void) {
 
 // Implementation: Textausgabe
 void textausgabe(char *t, ...) {
-	char textzeile[COLS]; // Ausgabezeile
-	int i; // Schleifenzähler
-	int j; // Schleifenzähler
-	int zeile = 0;
-	bool erstausgabe = true;
-	int x, y; // Speichern die Bildschirmkoordinaten (für getyx)
-
     // Reservierung für den maximalen Speicherplatz, den rest benötigt
     // -------------------------------------------------------------------
     char *cp = (char*) malloc( (sizeof(t) + 100) * sizeof(char));
@@ -197,7 +181,6 @@ void textausgabe(char *t, ...) {
     }
     char *rest = cp;
     // -------------------------------------------------------------------
-    
     // Verarbeitung der Parameterliste und Umwandlung der Parameter + Text zu einem String
     // -----------------------------------------------------------------------------------
     va_list par; // Parameterliste
@@ -205,48 +188,42 @@ void textausgabe(char *t, ...) {
     vsprintf(rest, t, par);
     va_end(par);
     // -----------------------------------------------------------------------------------
-
-	for(i = 0; i < COLS; i++)
-		textzeile[i] = '\0'; // Sicherheitslöschung, sonst gibt es Fehler bei der Leerzeilenausgabe
-	while(strlen(rest) > (COLS - 1)) {
-		for(i = (COLS - 1); (*(rest+i) != ' ') && (i > 0); i--);
-		if(!i)
-			i = (COLS - 1); // Das Wort ist so länger als die verdammte Zeile
-		for(j = 0; (*(rest+j) != '\n') && (j < i); j++);
-		if(j < i)
-			i = j; // Auf das Zeilenendezeichen verkürzen
+	char textzeile[COLS]; // Ausgabezeile	
+	bool erstausgabe = true; // Wir haben bisher noch nichts ausgegeben
+	int zeile = 0; // Damit wir immer wissen, in welcher Zeile wir gerade sind	
+	// Zuerst eine Sicherheitslöschung, sonst gibt es Fehler bei der Leerzeilenausgabe
+	for (int i = 0; i < COLS; ++i) textzeile[i] = '\0';
+	// Solange der Text länger als eine Zeile ist, begeben wir uns in die while-Schleife
+	while (strlen(rest) > (COLS - 1)) {
+		int i, j; // Schleifenzähler
+		for ( i = (COLS - 1); (rest[i] != ' ') && (i > 0); --i );
+		if ( !i ) i = (COLS - 1); // Das Wort ist so länger als die verdammte Zeile
+		for ( j = 0; (rest[j] != '\n') && (j < i); ++j );		
+		if ( j < i ) i = j; // Auf das Zeilenendezeichen verkürzen
 		strncpy(textzeile, rest, i); // Den Textteil kopieren
 		rest += i+1;
-		while(*rest == ' ')
-			rest++;
+		while ( *rest == ' ' ) ++rest;		
 		// Prüfen, ob wir in der vorletzten Zeile angekommen sind
-	  	getyx(stdscr, y, x); // Cursorposition feststellen
-		if((erstausgabe) && (y >= (LINES - 1))) {
+		if ( (erstausgabe) && ( getcury( stdscr ) >= (LINES - 1)) ) {
 			weiter();
 			zeile = 0;
 			erstausgabe = false;
-		}
-		if(zeile == (LINES - 1)) {
-				weiter();
-				zeile = 0;
-		}
-		printw("%s\n", textzeile);
-		for(i = 0; i < COLS; i++)
-			textzeile[i] = '\0'; // Sicherheitslöschung, sonst gibt es Fehler bei der Leerzeilenausgabe
+		} else if ( zeile == (LINES - 1) ) {
+			weiter();
+			zeile = 0;
+		}		
+		printw("%s\n", textzeile); // Ziel erreicht, wir können den Text ausgeben		
+		// Sicherheitslöschung, sonst gibt es Fehler bei der Leerzeilenausgabe
+		for ( i = 0; i < COLS; ++i ) textzeile[i] = '\0';
 		zeile += 1;
-	}
-	// Text ist kürzer als eine Zeile.
-	// Prüfen, ob wir in der vorletzten Zeile angekommen sind
-	if(zeile == (LINES - 1)) {
+	}	
+	if ( zeile == (LINES - 1) ) { // Prüfen, ob wir in der vorletzten Zeile angekommen sind
 			weiter();
 			zeile = 0;
 	}
-//	printw("%s\n", rest); // altes System mit erzwungenem Zeilenende
-	printw("%s\n", rest); // neues System mit freiem Zeilenende - mehr printf-artig
-	refresh();
-    // cp löschen, sonst gibt es üble Speicherlöcher ;)
-    if(!cp)
-        free(cp);
+	printw("%s\n", rest); // Der restliche Text ist kürzer als eine Zeile.	
+	refresh();    
+    if ( !cp ) free(cp); // cp löschen, sonst gibt es üble Speicherlöcher ;)
 }
 
 // Implementation: Texteingabe
@@ -264,7 +241,7 @@ void vordergrundfarbe(enum farben vf) {
 
 // Implementation: waehle
 int waehle(char* beschreibung, int maxzahl) {
-	int ergebnis;
+	int ergebnis = 0;
 	char eingabe[20];
 
     while((ergebnis < 1) || (ergebnis > maxzahl)) {
@@ -298,8 +275,7 @@ int wuerfel(unsigned int maximalzahl) {
 
 // Initialisierung der Zufallszahlen
 void zufall_per_zeit(void) {
-  time_t jetzt;
-  jetzt = time((time_t *) NULL);
+  time_t jetzt = time((time_t *) NULL);
   srand((unsigned) jetzt);
 }
 
@@ -307,7 +283,7 @@ void zufall_per_zeit(void) {
 // Implementation des nstr_s-Bereichs
 // --------------------------------
 
-char* nstring(const nstr_s t) {
+char * nstring(const nstr_s t) {
     return(t.str);
 }
 
