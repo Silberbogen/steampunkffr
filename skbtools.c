@@ -61,10 +61,11 @@
 #include <ncurses.h> // Farbige Grafische Ausgabe
 #include <locale.h>
 #include <stdarg.h> // Für die VA-Liste
+#include <ctype.h> // toupper
 #include "skbtools.h" // Die Modul-Beschreibung
 
-static int vfarbe = weiss; // Vordergrundfarbe
-static int hfarbe = schwarz; // Hintergrundfarbe
+static enum farben vfarbe = FARBE_WEISS; // Vordergrundfarbe
+static enum farben hfarbe = FARBE_SCHWARZ; // Hintergrundfarbe
 
 // -----------------------------------
 // Implementation des ncurses-Bereichs
@@ -77,9 +78,9 @@ void beenden(enum farben f, int status, char* text, ...) {
     // -------------------------------------------------------------------
     char *cp = (char*) malloc( (sizeof(text) + 100) * sizeof(char));
     if ( !cp ) {
-        vordergrundfarbe(rot);
+        vordergrundfarbe(FARBE_ROT);
         printw("Fehler!\nSicherheitszeiger in beenden() erhielt keinen Speicher!\n");
-        vordergrundfarbe(weiss);
+        vordergrundfarbe(FARBE_WEISS);
         exit(EXIT_FAILURE);
     }
     char *umgewandeltertext = cp;
@@ -108,9 +109,9 @@ void hinweis(enum farben f, char* text, ...) {
     // -------------------------------------------------------------------
     char *cp = (char*) malloc( (sizeof(text) + 100) * sizeof(char));
     if ( !cp ) {
-        vordergrundfarbe(rot);
+        vordergrundfarbe(FARBE_ROT);
         printw("Fehler!\nsicherheitszeiger in hinweis() erhielt keinen Speicher!\n");
-        vordergrundfarbe(weiss);
+        vordergrundfarbe(FARBE_WEISS);
         exit(EXIT_FAILURE);
     }
     char *umgewandeltertext = cp;
@@ -132,10 +133,7 @@ void hinweis(enum farben f, char* text, ...) {
 bool janeinfrage(char *frage) {
     textausgabe(frage);
 	char eingabe = taste();
-	if((eingabe == 'j') || (eingabe == 'J'))
-		return true;
-	else
-		return false;
+	return toupper( eingabe ) == 'J' ? true : false;
 }
 
 // Initialisierung der ncurses-Umgebung
@@ -148,23 +146,22 @@ void ncurses_init(void (*funktion)()) {
 	scrollok(stdscr, true); // Automatisches Scrollen aktivieren
 	start_color(); // Beginne mit Farben
 	// Initialisierung aller Farbpaare
-	for(int x = schwarz; x <= weiss; ++x)
-		for(int y = schwarz; y <= weiss; ++y)
+	for(int x = FARBE_SCHWARZ; x <= FARBE_WEISS; ++x)
+		for(int y = FARBE_SCHWARZ; y <= FARBE_WEISS; ++y)
 			init_pair((8 * x) + y + 1, x, y);
-    vordergrundfarbe(weiss);
-    hintergrundfarbe(schwarz);
+	// Standardfarben setzen
+    vordergrundfarbe(FARBE_WEISS);
+    hintergrundfarbe(FARBE_SCHWARZ);
 	clear(); // Bildschirm löschen
-	curs_set(0);
+	curs_set(0); // Cursor in die linke obere Ecke
 	atexit( funktion ); // Routine, die bei der Beendung ausgeführt wird
 }
 
 // Implementation: Taste
-char taste(void) {
-	char zeichen;
-
-	noecho();
-	zeichen = getch();
-	echo();
+int taste(void) {
+	noecho(); // Cursorecho ausschalten
+	int zeichen = getch(); // Taste holen
+	echo(); // Cursorecho einschalten
 	return(zeichen);
 }
 
@@ -174,8 +171,8 @@ void textausgabe(char *t, ...) {
     // Reservierung für den maximalen Speicherplatz, den rest benötigt
     // -------------------------------------------------------------------
     char *cp = (char*) malloc( (sizeof(t) + 100) * sizeof(char));
-    if(!cp) {
-        vordergrundfarbe(rot);
+    if ( !cp ) {
+        vordergrundfarbe(FARBE_ROT);
         printw("Fehler!\ncp in textausgabe() erhielt keinen Speicher!\n");
         exit(EXIT_FAILURE);
     }
@@ -257,9 +254,9 @@ void weiter(void) {
     attrset(A_BLINK);
 	printw("--- Bitte ENTER-Taste drücken um fortzufahren ---");
     attrset(A_NORMAL);
-	getch();
+	getch(); // Auf Tastendruck warten
 	clear(); // Bildschirm löschen
-	curs_set(0);
+	curs_set(0); // Cursor in die linke obere Ecke
 }
 
 // --------------------------------------
@@ -344,7 +341,7 @@ nstr_s *nstradd(nstr_s *t,  const char *c) {
 	char *cp;
 	
     cp = realloc(t->str, t->len + l);
-	if(!cp) {
+	if ( !cp ) {
 		fputs("Fehler in Funktion nstradd(nstr_s *,  const char *), Bibliothek nstr_s.c: Reallokation von t endete in einem NULL-Zeiger, es konnte also kein Speicher alloziert werden!\n",  stderr);
 		return(t);
 	}
@@ -370,7 +367,7 @@ nstr_s *nstrset(nstr_s *t,  const char *c) {
 	// Reallocates the memory
 	// If there isn't enough memory anymore, we get a NULL pointer
 	cp = realloc(t->str,  l + 1);
-	if(!cp) {
+	if ( !cp ) {
 		fputs("Fehler in Funktion nstrset(nstr_s *,  const char *), Bibliothek nstr_s.c: Reallokation von t endete in einem NULL-Zeiger, es konnte also kein Speicher alloziert werden!\n",  stderr);
 		return(t);
 	}
@@ -396,13 +393,13 @@ char *nstrrchr(nstr_s *t, const int searchchar) {
 
 narr_s *narrnew(const unsigned int n) {
 	narr_s *r = malloc(sizeof(narr_s));
-	if(!r) {
+	if ( !r ) {
 		fputs("Fehler: r konnte nicht erstellt werden in Funktion narrnew, Bibliothek nstr_s.c\n",  stderr);
 		return(r);
 	}
 	// That was the arraystructure - now to the array of elements
 	r->elm = malloc(sizeof(nstr_s) * n);
-	if(!r) {
+	if ( !r ) {
 		fputs("Fehler: r->elm[] konnte nicht erstellt werden in Funktion narrnew, Bibliothek nstr_s.c\n",  stderr);
 		return(r);
 	}
@@ -410,7 +407,7 @@ narr_s *narrnew(const unsigned int n) {
 	// Now initialise all the stringelements
 	for(unsigned int i = 0;  i < n;  ++i) {
 		r->elm[i] = nstrnew("");
-		if(!r->elm[i]) {
+		if ( !r->elm[i] ) {
 			fprintf(stderr, "Fehler: r->elm[%d] konnte nicht erstellt werden in Funktion narrnew, Bibliothek nstr_s.c\n", i);
 			return(r);
 		}
@@ -421,14 +418,12 @@ narr_s *narrnew(const unsigned int n) {
 
 bool narrdel(narr_s *t) {
 	bool ok = true; // Hält fest, ob alles glatt gegangen ist
-	if(!t) // NULL-Zeiger = Abbruch
-		return false;
+	if ( !t ) return false; // NULL-Zeiger = Abbruch
 	// freeing all the substrings
-	for(unsigned int i=0;  i < t->cnt;  ++i)
-		if(!nstrdel(t->elm[i]))
-				ok = false;
+	for ( unsigned int i=0;  i < t->cnt;  ++i )
+		if ( !nstrdel(t->elm[i]) ) ok = false; 
 	// and last freeing the t itself
-	free(t);
+	free( t );
 	// done - now return if there have been any problems
 	return(ok);
 }
@@ -437,21 +432,21 @@ narr_s *narradd(narr_s *t,  const unsigned int n) {
 	nstr_s **cp; // for realloc
 
 	// Ist der geforderte Index größer als die Anzahl an Elementen?
-	if((t->cnt + n) < (t->cnt || n)) {
+	if ( (t->cnt + n) < (t->cnt || n) ) {
 		fputs("Fehler: n ist größer als die mögliche Anzahl an Elementen in Funktion narradd, Bibliothek nstr_s.c\n",  stdout);
 		return(t);
 	}
 	// Speicher neu zuweisen
 	cp = realloc(t->elm, t->cnt * sizeof(nstr_s));
-	if(!cp) {
+	if ( !cp ) {
 		fputs("Fehler: cp ist ein NULL-Zeiger in Funktion narradd, Bibliothek nstr_s.c\n",  stderr);
 		return(t);
 	}
 	t->elm = cp;
 	// Now initialise all the stringelements
-	for(unsigned int i = t->cnt;  i < (t->cnt + n);  ++i) {
+	for ( unsigned int i = t->cnt;  i < (t->cnt + n);  ++i ) {
 		t->elm[i] = nstrnew("");
-		if(!t->elm[i]) {
+		if ( !t->elm[i] ) {
 			fprintf(stderr, "Fehler: t->elm[%d] konnte nicht erstellt werden in Funktion narradd, Bibliothek nstr_s.c\n", i);
 			return(t);
 		}
@@ -465,14 +460,13 @@ narr_s *narradd(narr_s *t,  const unsigned int n) {
 bool narrrmv(narr_s *t,  const unsigned int n) {
 	nstr_s *cp;
 
-	if(n > t->cnt) {
+	if ( n > t->cnt ) {
 			fprintf(stderr, "Fehler: n to remove from t was outside the stringarrays range in function strinarrayremove,  library nstringarray.c\n");
 			return(false);
 	}
 	cp = t->elm[n];
-	for(int i=n;   i < (t->cnt - 1); ++i)
-		t->elm[i] = t->elm[i+1];
-	if(!nstrdel(cp)) {
+	for ( int i=n;   i < (t->cnt - 1); ++i ) t->elm[i] = t->elm[i+1];
+	if ( !nstrdel(cp) ) {
 			fprintf(stderr, "Error: Couldn't remove nstr_s from safetypt in function strinarrayremove,  library nstringarray.c\n");
 			return(false);
 	}

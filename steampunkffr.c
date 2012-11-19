@@ -90,17 +90,16 @@
 int main(void) {
 	zufall_per_zeit();
     ncurses_init(quit);
-	vordergrundfarbe(blau);
+	vordergrundfarbe(FARBE_BLAU);
 	textausgabe("--------------------------");
 	textausgabe("Steampunk FFR - Der Anfang");
 	textausgabe("--------------------------");
-	vordergrundfarbe(gelb);
+	vordergrundfarbe(FARBE_GELB);
     textausgabe("Ein \"Das-ist-dein-Abenteuer\" Roman\n");
-	vordergrundfarbe(magenta);
+	vordergrundfarbe(FARBE_MAGENTA);
     textausgabe("Nach einer Geschichte von Sascha Biermanns\n");
-    vordergrundfarbe(weiss);
-	if(janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?"))
-		laden();
+    vordergrundfarbe(FARBE_WEISS);
+	if ( janeinfrage("Möchtest du ein gespeichertes Spiel fortführen (j/n)?") ) laden();
 	intro();
 	vorwort();
 	ort1();
@@ -112,9 +111,8 @@ int main(void) {
 
 // Implementation Teste dein Glück
 bool tdg(charakter_s *figur) {
-	if(figur->glueck <= 0) return false; // Da kann man nur noch Pech haben!
-	if( (wuerfel(6) + wuerfel(6)) <= figur->glueck-- ) return true; // Glück gehabt
-	else return false; // Pech gehabt
+	if ( figur->glueck <= 0 ) return false; // Da kann man nur noch Pech haben!
+	return (wuerfel(6) + wuerfel(6)) <= figur->glueck-- ? true : false;
 }
 
 // Implementation: Kampfrunde
@@ -219,7 +217,7 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
 
 	// Die Zusatzfunktionen
 	while((ergebnis < 1) || (ergebnis > maxzahl)) {
-		vordergrundfarbe(zyan);
+		vordergrundfarbe(FARBE_ZYAN);
 		strcpy(zusatzbeschreibung, " ");
 		if(objekt[gewandheitstrank] > 0)
 			strcat(zusatzbeschreibung, "(44) Gewandheitstrank trinken ");
@@ -230,98 +228,81 @@ void auswahl(char *beschreibung, int maxzahl, ...) {
 		strcat(zusatzbeschreibung, "(77) Spielstand laden (88) Spielstand speichern (99) Speichern & beenden");
 		textausgabe(beschreibung);
         textausgabe(zusatzbeschreibung);
-        vordergrundfarbe(gelb);
+        vordergrundfarbe(FARBE_GELB);
 		textausgabe("Du wählst: ");
-        vordergrundfarbe(gruen);
+        vordergrundfarbe(FARBE_GRUEN);
         texteingabe(eingabe, 20);
 		ergebnis = atoi(eingabe);
-		vordergrundfarbe(weiss);
+		vordergrundfarbe(FARBE_WEISS);
 		if ( ergebnis == 44 ) gewandheitstrank_trinken();
 		else if ( ergebnis == 55 ) staerketrank_trinken();
 		else if ( ergebnis == 66 ) glueckstrank_trinken();
 		else if ( ergebnis == 77 ) laden();
 		else if ( ergebnis == 88 ) speichern();
-		else if ( ergebnis == 99 ) beenden(gruen, EXIT_SUCCESS, "Bis bald!");
+		else if ( ergebnis == 99 ) beenden(FARBE_GRUEN, EXIT_SUCCESS, "Bis bald!");
 	}
 	fptr[ergebnis-1](); // Umwandlung menschliche Nummerierung in Arraynummerierung
 }
 
 // Funktion: VersucheDeinGlueck
 void versuchedeinglueck(void (*funktion1)(), void (*funktion2)()) {
-	vordergrundfarbe(gruen);
+	vordergrundfarbe(FARBE_GRUEN);
 	textausgabe("--- Versuche dein Glück! - Drücke ENTER ---");
-//	getchar();
 	getch();
-	vordergrundfarbe(weiss);
-	if(tdg(&spieler)) // Glück gehabt
-		funktion1();
-	else 			// Pech gehabt
-		funktion2();
+	vordergrundfarbe(FARBE_WEISS);
+	tdg(&spieler) ? funktion1() : funktion2();
 }
 
 // Funktion: VersucheDeineGewandheit
 void versuchedeinegewandheit(void (*funktion1)(), void (*funktion2)()) {
 	bool gewandheit;
 
-	vordergrundfarbe(gruen);
+	vordergrundfarbe(FARBE_GRUEN);
 	textausgabe("--- Versuche deine Gewandheit! - Drücke ENTER ---");
 	getch();
-	vordergrundfarbe(gelb);
+	vordergrundfarbe(FARBE_GELB);
 	gewandheit = wuerfel(6) + wuerfel(6);
 	textausgabe("Deine momentane Gewandheit ist %d, dein Würfelergebnis ist %d\n", spieler.gewandheit, gewandheit);
-	vordergrundfarbe(weiss);
-    if(gewandheit <= spieler.gewandheit) // Glück gehabt
-		funktion1();
-	else 			// Pech gehabt
-		funktion2();
+	vordergrundfarbe(FARBE_WEISS);
+    gewandheit <= spieler.gewandheit ?  funktion1() : funktion2();
 }
 
 
 // Funktion: Flucht
 void flucht(void (*funktion1)()) {
-    vordergrundfarbe(rot);
+    vordergrundfarbe(FARBE_ROT);
 	textausgabe("Du entschließt dich zu fliehen, was dich 2 Stärkepunkte kosten wird.");
-    vordergrundfarbe(weiss);
+    vordergrundfarbe(FARBE_WEISS);
 	if(spieler.glueck > 0) { // Ist ein Glückstest möglich?
 		textausgabe("Du könntest natürlich auch dein Glück auf die Probe stellen. Hast du Glück, ist es eine geordnete Flucht - und du verlierst nur 1 Stärkepunkt. Wenn du jedoch kein Glück hast, wird es zu einer heilosen Flucht und du verlierst 3 Stärkepunkte.");
-		if(janeinfrage("Möchtest du dein Glück testen (j/n)? ")) {
-			if(tdg(&spieler)) // Glück gehabt
-				spieler.staerke -= 1;
-			else // Pech gehabt
-				spieler.staerke -= 3;
-		}
-		else
-			spieler.staerke -= 2;
+		if ( janeinfrage("Möchtest du dein Glück testen (j/n)? ") )
+			if ( tdg(&spieler) ) spieler.staerke -= 1; else spieler.staerke -= 3;
+		else spieler.staerke -= 2;
 	}
-	else {
-		spieler.staerke -= 2;
-	}
-	if(spieler.staerke) {
+	else spieler.staerke -= 2;
+	if ( spieler.staerke ) {
 		funktion1();
-        beenden(rot, EXIT_FAILURE, "Fehler!\nEine Ortsvariable ist wohl noch leer.\nDer letzer bekannte Raum war %d.", raum);
+        beenden(FARBE_ROT, EXIT_FAILURE, "Fehler!\nEine Ortsvariable ist wohl noch leer.\nDer letzer bekannte Raum war %d.", raum);
 	}
-	else 
-        beenden(rot, EXIT_SUCCESS, "Du bist zu geschwächt, um auch nur einen einzigen weiteren Atemzug zu machen. Unter Schmerzen entweicht dir Atemluft aus deinen Lungen. Die Umgebung wird erst Rot vor deinen Augen und gleitet schließlich ins Schwarze ab. Das ist dein ENDE.");
-	beenden(rot, EXIT_FAILURE, "Fehler!\nIch bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
+	else beenden(FARBE_ROT, EXIT_SUCCESS, "Du bist zu geschwächt, um auch nur einen einzigen weiteren Atemzug zu machen. Unter Schmerzen entweicht dir Atemluft aus deinen Lungen. Die Umgebung wird erst Rot vor deinen Augen und gleitet schließlich ins Schwarze ab. Das ist dein ENDE.");
+	beenden(FARBE_ROT, EXIT_FAILURE, "Fehler!\nIch bin am Ende der Fluchtroutine angelangt. Der letzte bekannte Raum war %d.", raum);
 }
 
 // Implementation: Mahlzeit
 void mahlzeit(void) {
-	if(janeinfrage("Möchtest du eine Mahlzeit zu dir nehmen (j/n)? ")) {
-		if(objekt[proviant] > 0) {
+	if ( janeinfrage("Möchtest du eine Mahlzeit zu dir nehmen (j/n)? ") ) {
+		if (objekt[proviant] > 0) {
 			textausgabe("Nachdem du dich versichert hast, das niemand in der Nähe ist, entnimmst du ein Proviantpaket aus deinem Rucksack. Genüsslich und so leise wie möglich verzehrst du es. Du kannst spüren, wie etwas Kraft in deinen müden Körper zurückkehrt.");
 			objekt[proviant] -= 1;
 			staerkesteigerung(4, 0);
 		}
-		else
-			textausgabe("Nachdem du dich versichert hast, das niemand in der Nähe ist, durchwühlst du deinen Rucksack auf der Suche nach einem Proviantpaket. Nach einigen Minuten und mehrfachen aus- und einpacken des Rucksacks gibst du verzweifelt auf. Es ist tatsächlich kein einziger Brotkrummen mehr übrig.");
-
+		else textausgabe("Nachdem du dich versichert hast, das niemand in der Nähe ist, durchwühlst du deinen Rucksack auf der Suche nach einem Proviantpaket. Nach einigen Minuten und mehrfachen aus- und einpacken des Rucksacks gibst du verzweifelt auf. Es ist tatsächlich kein einziger Brotkrummen mehr übrig.");
 	}
 }
 
 // Funktion: Gewandheitstrank trinken
 void gewandheitstrank_trinken() {
-	if(objekt[gewandheitstrank] > 0) {
+	if ( objekt[gewandheitstrank] > 0 ) {
 		objekt[gewandheitstrank] -= 1;
 		spieler.gewandheit = spieler.gewandheit_start;
 		textausgabe("Du trinkst den Gewandheitstrank. Deine Gewandheit könnte nicht besser sein.");
@@ -330,7 +311,7 @@ void gewandheitstrank_trinken() {
 
 // Funktion: Stärketrank trinken
 void staerketrank_trinken() {
-	if(objekt[staerketrank]) {
+	if ( objekt[staerketrank] ) {
 		objekt[staerketrank] -= 1;
 		spieler.staerke = spieler.staerke_start;
 		textausgabe("Du trinkst den Stärketrank. Deine Stärke könnte nicht besser sein.");
@@ -339,7 +320,7 @@ void staerketrank_trinken() {
 
 // Funktion Glückstrank trinken
 void glueckstrank_trinken() {
-	if(objekt[glueckstrank]) {
+	if ( objekt[glueckstrank] ) {
 		objekt[glueckstrank] -= 1;
 		spieler.glueck_start += 1;
 		spieler.glueck = spieler.glueck_start;
@@ -361,21 +342,21 @@ void objekt_ablegen(void) {
 			textausgabe("\n");
 	}
 	while((ergebnis < 0) || (ergebnis >= maximalobjekt)) {
-	    vordergrundfarbe(gruen);
+	    vordergrundfarbe(FARBE_GRUEN);
         textausgabe("Bitte gib die Nummer des abzulegenden Objektes an! ");
-        vordergrundfarbe(rot);
+        vordergrundfarbe(FARBE_ROT);
         texteingabe(eingabe, 20);
 		ergebnis = atoi(eingabe);
 	}
-	vordergrundfarbe(gelb);
+	vordergrundfarbe(FARBE_GELB);
 	textausgabe("%s wirklich ablegen? ", objektname[ergebnis]);
 	bestaetigung = taste();
-	vordergrundfarbe(weiss);
+	vordergrundfarbe(FARBE_WEISS);
 	if((bestaetigung == 'j') || (bestaetigung == 'J')) {
 	    objekt[ergebnis] -= 1;
-        vordergrundfarbe(gelb);
+        vordergrundfarbe(FARBE_GELB);
 		textausgabe("\n%s abgelegt.\n", objektname[ergebnis]);
-        vordergrundfarbe(weiss);
+        vordergrundfarbe(FARBE_WEISS);
 	}
 }
 
@@ -412,7 +393,7 @@ int speichern(void) {
 	FILE *datei;
 	datei = fopen(DATEINAME, "w");
 	if(ferror(datei)) {
-        hinweis(rot, "Fehler!\nDie Datei läßt sich nicht speichern. Fahre ohne gespeicherten Spielstand fort.");
+        hinweis(FARBE_ROT, "Fehler!\nDie Datei läßt sich nicht speichern. Fahre ohne gespeicherten Spielstand fort.");
 		return 1;
 	}
 
@@ -469,7 +450,7 @@ int speichern(void) {
 	fprintf(datei, "%d\n", elke);
 	fprintf(datei, "%d\n", (int) schluesselarianna);
 	fprintf(datei, "%d\n", verloben);
-    hinweis(gruen, "Spielstand gespeichert.\nRaum: %d\n", raum);
+    hinweis(FARBE_GRUEN, "Spielstand gespeichert.\nRaum: %d\n", raum);
     fflush(datei);
     fclose(datei);
 	return 0;
@@ -485,9 +466,9 @@ int laden(void) {
 	FILE *datei;
 	datei = fopen(DATEINAME, "r");
 	if(!datei) {
-		vordergrundfarbe(rot);
+		vordergrundfarbe(FARBE_ROT);
 		textausgabe("\nFehler!\nDie Datei ließ sich nicht öffnen. Fahre ohne geladenen Spielstand fort.\n");
-		vordergrundfarbe(weiss);
+		vordergrundfarbe(FARBE_WEISS);
 		return 1;
 	}
 	fgets(eingabe, 100, datei);
@@ -601,7 +582,7 @@ int laden(void) {
 	verloben = (int) atoi(eingabe);
 	fclose(datei);
 
-    hinweis(gruen, "Spielstand geladen. Raum: %d\n", raum);
+    hinweis(FARBE_GRUEN, "Spielstand geladen. Raum: %d\n", raum);
 	momentane_werte(&spieler);
 	raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 	return 0;
@@ -615,17 +596,14 @@ void quit() {
 // Funktion: Rätsel
 bool raetsel(char *raetseltext, char *antworttext) {
 	char eingabe[41];
-    vordergrundfarbe(magenta);
+    vordergrundfarbe(FARBE_MAGENTA);
 	textausgabe(raetseltext);
-    vordergrundfarbe(gelb);
+    vordergrundfarbe(FARBE_GELB);
     textausgabe("Bitte beantworte das Rätsel mit der Eingabe eines einzigen Wortes!");
-    vordergrundfarbe(zyan);
+    vordergrundfarbe(FARBE_ZYAN);
     texteingabe(eingabe, 40);
-    vordergrundfarbe(weiss);
-	if(0 == strcmp(antworttext, eingabe))
-		return true;
-	else
-		return false;
+    vordergrundfarbe(FARBE_WEISS);
+	return !strcmp(antworttext, eingabe) ? true : false;
 }
 
 // Funktion: Zweisamkeit
@@ -665,41 +643,41 @@ void zweisamkeit(int wert) {
 void intro(void) {
 	int eingabe = 0;
 
-    vordergrundfarbe(gelb);
+    vordergrundfarbe(FARBE_GELB);
     textausgabe("Hinweis!");
-	vordergrundfarbe(gruen);
+	vordergrundfarbe(FARBE_GRUEN);
 	textausgabe("In diesem Roman wird niemand anderes als du selbst die Person sein, die das Abenteuer durchlebt. Von daher würde ich sagen, würdest du dir selber beim Erleben der Spielatmosspähre helfen, wenn du die Spielfigur nach dir benennst, oder ihr einen Namen gibst, der dir gefällt oder den du gerne tragen würdest.\nViel Spaß beim Lesen und Spielen!\n");
-    vordergrundfarbe(blau);
+    vordergrundfarbe(FARBE_BLAU);
     textausgabe("Sascha\n");
-	vordergrundfarbe(zyan);
+	vordergrundfarbe(FARBE_ZYAN);
     textausgabe("Welchen Namen möchtest du deinem Abenteurer geben? ");
-    vordergrundfarbe(gelb);
+    vordergrundfarbe(FARBE_GELB);
     texteingabe(spieler.name, 30);
-    vordergrundfarbe(weiss);
+    vordergrundfarbe(FARBE_WEISS);
 	spieler.gewandheit_start = wuerfel(6) + 6;
 	spieler.gewandheit = spieler.gewandheit_start;
 	spieler.staerke_start = wuerfel(6) + wuerfel(6) + 12;
 	spieler.staerke = spieler.staerke_start;
 	spieler.glueck_start = wuerfel(6) + 6;
 	spieler.glueck = spieler.glueck_start;
-    vordergrundfarbe(gruen);
+    vordergrundfarbe(FARBE_GRUEN);
 	textausgabe("\nZu Beginn dieses Abenteuer wirst du nur ein absolutes Minimum an Objekten bei dir führen, als da wären ein Rucksack, ein Multifunktionstaschenmesser, eine Pumptaschenlampe und etwas Proviant. Außerdem ein Engergydrink, den du dir selber auswählen kannst. Welchen der Energydrinks wählst du?\n(1) den Gewandheitstrank - er stellt die anfängliche Gewandheitspunktzahl wieder her\n(2) den Stärketrank - er stellt die anfängliche Stärkepunktzahl wieder her\n(3) den Glückstrank - er stellt die anfängliche Glückspunktzahl wieder her und verbesser sie zusätzlich um einen Punkt");
 	while ( eingabe < 1 || eingabe > 3 ) {
-        vordergrundfarbe(zyan);
+        vordergrundfarbe(FARBE_ZYAN);
 		eingabe = waehle("Für welchen Energydrink entscheidest du dich? ", 3);
-        vordergrundfarbe(weiss);
+        vordergrundfarbe(FARBE_WEISS);
         if ( eingabe == 1 ) objekt[gewandheitstrank] += 2;
         else if ( eingabe == 2 ) objekt[staerketrank] += 2;
         else if ( eingabe == 3 ) objekt[glueckstrank] += 2;
         else {
-			vordergrundfarbe(rot);
+			vordergrundfarbe(FARBE_ROT);
 			textausgabe("Unerklärbarer Fehler!\nIn der Energydrink-Auswahl,  in Funktion intro().");
-			vordergrundfarbe(weiss);
+			vordergrundfarbe(FARBE_WEISS);
 		}
 	}
-    vordergrundfarbe(gruen);
+    vordergrundfarbe(FARBE_GRUEN);
     textausgabe("\nSo möge es denn sein! Du hast deine Wahl getroffen. Viel Spaß!\n");
-    vordergrundfarbe(weiss);
+    vordergrundfarbe(FARBE_WEISS);
     weiter();
 }
 
@@ -856,7 +834,7 @@ void ort13(void) {
 		}
 		objekt[patrone] += wuerfel(8);
 	}
-	else beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");	
+	else beenden(FARBE_ROT, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");	
 }
 
 void ort14(void) {
@@ -1136,7 +1114,7 @@ void ort35(void) {
 		textausgabe("Als du langsam den Abteiberg hinaufsteigst, erblickst du am oberen Ende des Berges drei Gestalten in seltsamen Uniformen. Sie tragen eine Art von Helmen, die an Taucherglocken erinnern, mit großen Filtern daran wie von Gasmasken. Und wie es scheint, haben sie dich gesehen. Als Fluchroute hast du jetzt nur noch den hinter dir liegenden Geroweiher.");
 		charakter_s soldat[3] = { { "1. Soldat", 7, 7, 6, 6 }, { "2. Soldat", 6, 6, 4, 4}, { "3. Soldat", 7, 7, 8, 8} };
 		if(!kampf(&spieler, soldat, 1, false, ort46))
-            beenden(rot, EXIT_SUCCESS, "Sich auf drei kampferprobte Soldaten war einerseits sehr mutig von dir, andererseits aber auch sehr dumm. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du durch das Haus rechts von dir hindurch. Dahinter befindet sich ein Hügel, die Mauer, die zum Münstervorplatz führt, und an dieser Mauer wachsen Ranken herunter. Guido, Marco und du - ihr habt hier früher Verstecken gespielt, und du bist immer klammheimlich an den Ranken  gewesen - hast gewartet, bis sie oben an dir vorbei sind - und dann hinter ihrem Rücken, während sie die Treppen hinunterstiegen, nach oben geklettert. Warum warst du dieses Mal nicht so schlau, diesen Weg zu nehmen. Dann, als die Tritte der Soldaten auf dich einprasseln, naht für dich das ENDE.");
+            beenden(FARBE_ROT, EXIT_SUCCESS, "Sich auf drei kampferprobte Soldaten war einerseits sehr mutig von dir, andererseits aber auch sehr dumm. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du durch das Haus rechts von dir hindurch. Dahinter befindet sich ein Hügel, die Mauer, die zum Münstervorplatz führt, und an dieser Mauer wachsen Ranken herunter. Guido, Marco und du - ihr habt hier früher Verstecken gespielt, und du bist immer klammheimlich an den Ranken  gewesen - hast gewartet, bis sie oben an dir vorbei sind - und dann hinter ihrem Rücken, während sie die Treppen hinunterstiegen, nach oben geklettert. Warum warst du dieses Mal nicht so schlau, diesen Weg zu nehmen. Dann, als die Tritte der Soldaten auf dich einprasseln, naht für dich das ENDE.");
 	}
 	raum = 35;
 	if(wuerfel(6) > 4)
@@ -1157,7 +1135,7 @@ void ort36(void) {
 		textausgabe("Der ganze Boden erhebt, und du hörst ein lautes mechanisch Geräusch, als du oben auf dem Alten Markt einen Dreistelzer sehen kannst, der sich in Stellung bringt. Schreie ertönen aus seiner Richtung, dann siehst du zwei fremde Soldaten, die in deine Richtung die Treppe von Mariä Himmelfahrt heruntergelaufen kommen. Ein weitere stürmt aus der Polizeiwache heran, er ist ein richtiger Hühne.");
 		charakter_s soldat[3] = { { "1. Soldat", 6, 6, 7, 7 }, { "2. Soldat", 5, 5, 6, 6}, { "3. Soldat", 8, 8, 7, 7} };
 		if(!kampf(&spieler, soldat, 1, false, ort46))
-            beenden(rot, EXIT_SUCCESS, "Sich auf drei kampferprobte Soldaten war nicht gerade deine klügste Entscheidung. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du hinüber zur Treppe, die von Mariä Himmelfahrt herunterführt. Du erinnerst dich, wie ihr als Kinder auf den Sohlen eurer Sandalen im Stehen das Geländer heruntergerutscht seid, so als wärt ihr Wellenreiter in den Brandungen vor Hawai. Dann landet der Absatz eines Stiefels in deinem Gesicht. Der Schmerz explodiert in deinem Gesicht, alles wird Schwarz. Und dann ist es auch schon vorbei. Dein ENDE ist gekommen.");
+            beenden(FARBE_ROT, EXIT_SUCCESS, "Sich auf drei kampferprobte Soldaten war nicht gerade deine klügste Entscheidung. Du sinkst tödlich getroffen von einer Kugel zu Boden, während du die Schritte ihrer genagelten Stiefel näher kommen hörst. In Gedanken blickst du hinüber zur Treppe, die von Mariä Himmelfahrt herunterführt. Du erinnerst dich, wie ihr als Kinder auf den Sohlen eurer Sandalen im Stehen das Geländer heruntergerutscht seid, so als wärt ihr Wellenreiter in den Brandungen vor Hawai. Dann landet der Absatz eines Stiefels in deinem Gesicht. Der Schmerz explodiert in deinem Gesicht, alles wird Schwarz. Und dann ist es auch schon vorbei. Dein ENDE ist gekommen.");
 		raum = 36;
 		auswahl("Du bist dir nicht sicher, ob es eine gute Idee ist, zum Alten Markt zu laufen. Immerhin bleibt dir noch der Rückzug in den Innenhof des Münsters (1), du könntest auch den Abteiberg hinunterlaufen, der Hügel sieht zu steil für den Dreistelzer aus (2), oder den Vorplatz des Münsters entlanglaufen (3) in der Hoffnung, es vielleicht zum Geroweiher zu schaffen. Zu guter letzt bleibt dir noch die Flucht durch die Gasse, in der Hoffnung, die Hindenburgstraße zu erreichen (4)", 4, ort41, ort35, ort37, ort51);
 	}
@@ -1914,7 +1892,7 @@ void ort81(void) {
 	char *text = "Willst du den Tunnel nach Westen nehmen (1) oder den nach Südosten(2)?";
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Smaragd heraus geschnitten. An einer Wand ist ein Symbol sichtbar.");
 	weiter();
-    vordergrundfarbe(rot);
+    vordergrundfarbe(FARBE_ROT);
 	textausgabe("*###*");
 	textausgabe("    #");
 	textausgabe("    #");
@@ -1922,7 +1900,7 @@ void ort81(void) {
 	textausgabe("#");
 	textausgabe("#");
 	textausgabe("*##n_");
-	vordergrundfarbe(weiss);
+	vordergrundfarbe(FARBE_WEISS);
     if ( !raetsel1  ) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if ( janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?") ) {
@@ -1959,7 +1937,7 @@ void ort83(void) {
 	raum = 83;
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Rubin heraus geschnitten. An der Wand befindet sich ein Symbol.");
 	weiter();
-	vordergrundfarbe(blau);
+	vordergrundfarbe(FARBE_BLAU);
 	textausgabe("*####_");
 	textausgabe(" #");
 	textausgabe("#");
@@ -1967,7 +1945,7 @@ void ort83(void) {
 	textausgabe(" #");
 	textausgabe(" #");
 	textausgabe("  V");
-    vordergrundfarbe(weiss);
+    vordergrundfarbe(FARBE_WEISS);
 	if ( !raetsel3 ) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if ( janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?") ) {
@@ -1987,7 +1965,7 @@ void ort84(void) {
 	raum = 84;
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Lapislazuli heraus geschnitten. An der Wand siehst du ein Symbol.");
 	weiter();
-	vordergrundfarbe(gruen);
+	vordergrundfarbe(FARBE_GRUEN);
 	textausgabe("*###*");
 	textausgabe(" # #");
 	textausgabe("#   #");
@@ -1995,7 +1973,7 @@ void ort84(void) {
 	textausgabe("#   #");
 	textausgabe(" # #");
 	textausgabe(" \\ /");
-    vordergrundfarbe(weiss);
+    vordergrundfarbe(FARBE_WEISS);
 	if ( !raetsel4 ) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if ( janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?") ) {
@@ -2015,7 +1993,7 @@ void ort85(void) {
 	raum = 85;
 	textausgabe("Du stehst in einem Raum, der aus eine einzigen, riesigen Tigerauge geschnitzt zu sein scheint. Du siehst ein Symbol an der Wand.");
 	weiter();
-	vordergrundfarbe(magenta);
+	vordergrundfarbe(FARBE_MAGENTA);
 	textausgabe("*##*");
 	textausgabe(" ##");
 	textausgabe(" ##");
@@ -2024,7 +2002,7 @@ void ort85(void) {
 	textausgabe("  # V");
 	textausgabe("  /");
 	textausgabe(" /");
-	vordergrundfarbe(weiss);
+	vordergrundfarbe(FARBE_WEISS);
     if ( !raetsel5 ) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if ( janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?") ) {
@@ -2044,7 +2022,7 @@ void ort86(void) {
 	raum = 86;
 	textausgabe("Der Raum, in dem du dich jetzt befindest, ist aus einem einzigen großen Türkis heraus geschnitten.");
 	weiter();
-	vordergrundfarbe(zyan);
+	vordergrundfarbe(FARBE_ZYAN);
 	textausgabe("  #");
 	textausgabe("   #");
 	textausgabe("##  #");
@@ -2053,7 +2031,7 @@ void ort86(void) {
 	textausgabe("  #");
 	textausgabe("  #");
 	textausgabe(" \\/");
-	vordergrundfarbe(weiss);
+	vordergrundfarbe(FARBE_WEISS);
     if ( !raetsel2 ) {
 		textausgabe("Eine Stimme ertönt plötzlich und stellt dir eine Frage:");
 		if ( janeinfrage("Glaubst du, du kannst mein Rätsel lösen (j/n)?") ) {
@@ -2199,14 +2177,14 @@ void ort98(void) {
 		textausgabe("Der Drache dreht sich blitzschnell um die eigene Achse. Du siehst noch, wie sein Schwanz heranrast, dann wirst du auch schon von ihm getroffen. Der Schmerz ist fürchterlich. Im weiten Bogen fliegst du rücklinks in die Dunkelheit hinein.");
 		// schwerer Treffer, eventuell tödlich
 		staerkesteigerung(-5,0);
-		if ( spieler.staerke <= 0 ) beenden(rot, EXIT_SUCCESS, "Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
+		if ( spieler.staerke <= 0 ) beenden(FARBE_ROT, EXIT_SUCCESS, "Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
 	}
 	if ( dracheverletzt && !drachetot ) {
 		drache.gewandheit = 16;
 		drache.staerke = 15;
 	}
 	if ( !drachetot ) { // Der Drache lebt
-		if ( !kampf(&spieler, &drache, 1, false, ort162) ) beenden(rot, EXIT_SUCCESS, "Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
+		if ( !kampf(&spieler, &drache, 1, false, ort162) ) beenden(FARBE_ROT, EXIT_SUCCESS, "Du hörst es laut krachen, als du gegen die Felswand schmetterst. Alle Knochen tun dir weh. Am liebsten würdest du jetzt stöhen, aber du fühlst dich viel zu kraftlos. Dann siehst du eine Wand aus Feuer, wie sie durch den Tunnel auf dich zuströmt. Deine Augen tränen und alles wird Schwarz, bis auf den beißenden, brennenden Schmerz, der erst nachläßt, als du dein Leben losläßt. Die Begegnung mit dem Drachen hat dein Leben beENDEt.");
 		textausgabe("Ein Ruck geht durch den Körper des Drachen, ein letztes Aufbäumen, dann sinkt er tot zusammen. Sein Körper sieht aus, als würde er glühen. Vielleicht verbrennt er ja innerlich, du weißt es nicht. Das hier war der erste Drache, den du in deinem Leben gesehen hast. Und du dachtest immer, Drachen würden in das Reich der Märchen gehören. Die Legende von der Unverwundbarkeit durch Drachenblut jedenfalls hast du wiederlegt. Dein linker Arm ist nur so besudelt von Drachenblut, trotzdem hast du lange Schnittwunden darauf.\nPlötzlich mußt du lachen, als du bemerkst, das jemand ein Wort auf die Unterseite des Drachens gemalt hat: \"Bauch\"\nEin ganz klares Zeichen dafür, das du nicht der erste bist, der sich hier in die Höhle des Drachens gewagt hat.");
 		// Ich denke, an der Legende ist doch ein Körnchen Wahrheit
 		staerkesteigerung(0,1);
@@ -2261,7 +2239,7 @@ void ort103(void) {
 
 void ort104(void) {
 // Im Auto bleiben
-    beenden(rot, EXIT_SUCCESS, "Du verhältst dich muskmäuschen still. Den Rucksack hast du auf dem Schoß. Du atmest nur gan flach, schluchzt aber auch immer wieder. Du bedauerst deine eigene verzweifelte Lage noch viel mehr, als den Tod der freundlichen Frau, die hier, nur wenige Zentimeter entfernt von dir, unter einem tonnenschweren Stahlfuß zerquetscht wurde. Plötzlich hörst rechts neben dir ein Geräusch. Erschreckt siehst du zur Seite - und starrst in die Mündung eines Automatikgewehres.\nBefriedigt grunzt das Wesen, das gerade seine Waffe in deinem Kopf entladen hat, dann wendet es sich vom Anblick deines Kadavers ab und sucht nach weiteren \"Ausreißern\".");
+    beenden(FARBE_ROT, EXIT_SUCCESS, "Du verhältst dich muskmäuschen still. Den Rucksack hast du auf dem Schoß. Du atmest nur gan flach, schluchzt aber auch immer wieder. Du bedauerst deine eigene verzweifelte Lage noch viel mehr, als den Tod der freundlichen Frau, die hier, nur wenige Zentimeter entfernt von dir, unter einem tonnenschweren Stahlfuß zerquetscht wurde. Plötzlich hörst rechts neben dir ein Geräusch. Erschreckt siehst du zur Seite - und starrst in die Mündung eines Automatikgewehres.\nBefriedigt grunzt das Wesen, das gerade seine Waffe in deinem Kopf entladen hat, dann wendet es sich vom Anblick deines Kadavers ab und sucht nach weiteren \"Ausreißern\".");
 }
 
 void ort105(void) {
@@ -2324,7 +2302,7 @@ void ort113(void) {
 		else if ( objekt[gewehr] <= 0 && janeinfrage("Willst du das Gewehr deines Gegners an dich nehmen (j/n)?") ) objekt[gewehr] += 1;
 		objekt[patrone] += wuerfel(8);
 	}
-	else beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
+	else beenden(FARBE_ROT, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
 }
 
 void ort114(void) {
@@ -2595,7 +2573,7 @@ void ort150(void) {
 	++rotation;
 	if ( raum == 14 && stollentroll == 150 ) {
 		charakter_s troll = { "Stollentroll", 9, 9, 10, 10 };
-		if ( !kampf(&spieler, &troll, 1, false, NULL) ) beenden(rot, EXIT_SUCCESS, "Die Fäuste des Stollentrolls hämmern gnadenlos auf deinen Kopf ein. Du spürst das Blut in deine Augen laufen, hörst das Knacken und Krachen deiner berstenden Schädelplatte. Ein heftiger Schmerz durchzuckt dich - dann verschwimmt alles vor deinen Augen, wird blasser, dunkel. Ein Tunnel ... da ist ein Licht am ENDE des Tunnels ...");
+		if ( !kampf(&spieler, &troll, 1, false, NULL) ) beenden(FARBE_ROT, EXIT_SUCCESS, "Die Fäuste des Stollentrolls hämmern gnadenlos auf deinen Kopf ein. Du spürst das Blut in deine Augen laufen, hörst das Knacken und Krachen deiner berstenden Schädelplatte. Ein heftiger Schmerz durchzuckt dich - dann verschwimmt alles vor deinen Augen, wird blasser, dunkel. Ein Tunnel ... da ist ein Licht am ENDE des Tunnels ...");
 		// Dann platzieren wir mal die Zwerge um
 		if(minenzwerge == 158) minenzwerge = 160;
 	}
@@ -2677,7 +2655,7 @@ void ort158(void) {
 	if ( minenzwerge == 158 ) {
 		if ( schluessel111_1 && (wuerfel(6) > 4) ) {
 			textausgabe("Die Zwerge beäugen dich äußerst mißtrauisch.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt er feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
-			if ( !kampf(&spieler, zwerg, 1, false, ort99) ) beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
+			if ( !kampf(&spieler, zwerg, 1, false, ort99) ) beenden(FARBE_ROT, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
 			// Aus ist's mit den Zwergen
 			minenzwerge = 0;
 		}
@@ -2688,7 +2666,7 @@ void ort158(void) {
 					schluessel111_1 = true;
 					textausgabe("Gerade, als keiner der Zwerge in deine Richtung schaut, hältst du für einen Moment die Luft an und greifst zu. Es ist ganz leicht, den Knoten zu lösen - und schon hältst du den Schlüssel in der Hand. Mit einer sanft gleitenden Bewegung läßt du ihn in deiner Tasche verschwinden.");
 				} else {
-					if (!kampf(&spieler, zwerg, 1, false, ort99) ) beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
+					if (!kampf(&spieler, zwerg, 1, false, ort99) ) beenden(FARBE_ROT, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
 					// Aus ist's mit den Zwergen
 					minenzwerge = 0;
 				}
@@ -2707,7 +2685,7 @@ void ort159(void) {
 		charakter_s zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
 		textausgabe("Die Zwerge sind herangestürmt und beäugen dich äußerst mißtrauisch.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt einer von ihnen feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
 		if(!kampf(&spieler, zwerg, 1, false, ort158))
-            beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
+            beenden(FARBE_ROT, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
 		// Aus ist's mit den Zwergen
 		minenzwerge = 0;
 	}
@@ -2741,7 +2719,7 @@ void ort160(void) {
 	if ( minenzwerge == 160 && (schluessel111_1 || schluessel111_2) ) {
 		charakter_s zwerg[3] = { { "Zwerg mit Spitzhacke", 7, 7, 9, 9 }, { "Zwerg mit Schaufel", 5, 5, 6, 6}, { "Zwerg mit Hammer", 8, 8, 7, 7} };
 		textausgabe("Erst spät bemerkst du die Zwerge, die zwischen den Gerätschaften im Schatten stehen.\n\"Du weißt nicht zufällig, wo mein Schlüssel abgeblieben ist, Fremder, hm?\" fragt einer von ihnen feindselig, während ein anderer Zwerg um dich herumgeht und versucht, deinen Rucksack zu öffnen.\n\"Wie ich's mir gedacht habe!\" brüllt er triumphierend, \"Der Mensch ist ein lausiger Dieb!\"\nDu siehst, wie sie ihre Schaufeln und Spitzhacken in der Haltung verlagern. Jetzt sind es keine Werkzeuge mehr, sondern Waffen.");
-		if ( !kampf(&spieler, zwerg, 1, false, ort159) ) beenden(rot, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
+		if ( !kampf(&spieler, zwerg, 1, false, ort159) ) beenden(FARBE_ROT, EXIT_SUCCESS, "Drei Zwerge gegen sich aufzubringen war wirklich eine dumme Idee. Du sinkst mit einer riesigen Schädelwunde am Hinterkopf zusammen. Du siehst nichts mehr, hörst aber das Näherkommen ihrer Schritte. In Gedanken bist du auf dem Mönchengladbacher Hauptfriedhof. Du kniest nieder am Grab deiner Großeltern und entspannst dich. DU erträgst den Schmerz der Schläge - und dann verebbt der Schmerz ganz. Du hörst nichts mehr. Du siehst nichts mehr. Du gleitest hinab in die Schwärze. Dein ENDE ist gekommen.");
 		// Aus ist's mit den Zwergen
 		minenzwerge = 0;
 	}
@@ -2801,12 +2779,12 @@ void ort164(void) {
 	if ( !schluessel9 && janeinfrage("Das kleine Männlein sagt: \"Ein Rätsel habe ich für dich, löst du es, dann lohnt es sich! Möchtest du, daß ich dir mein Rätsel stelle (j/n)?\"") ) {
 		textausgabe("Der kleine Gnom lächelt dich gutmütig an.\n\"Ich habe mir eine Zahl zwischen 1 und 1000 ausgedacht. Du hast 9 Versuche, die Zahl zu erraten.\"");
 		for(int i=1; i <= 9; ++i) {
-            vordergrundfarbe(gelb);
+            vordergrundfarbe(FARBE_GELB);
 			textausgabe("\"Was denkst du, wie lautet meine Zahl?\"");
-            vordergrundfarbe(magenta);
+            vordergrundfarbe(FARBE_MAGENTA);
             char eingabe[21];
             texteingabe(eingabe, 20);
-            vordergrundfarbe(weiss);
+            vordergrundfarbe(FARBE_WEISS);
 			int geraten = atoi(eingabe);
 			int zufallszahl = wuerfel(1000);
 			if ( zufallszahl == geraten ) {
@@ -3080,7 +3058,7 @@ void ort211(void) {
 		getoetetegegner += 1;
 		raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
 	}
-	else beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
+	else beenden(FARBE_ROT, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
 }
 
 void ort212(void) {
@@ -3143,7 +3121,7 @@ void ort213(void) {
 	if ( kampfausgang ) {
 		getoetetegegner += 1;
 		raumptr[raum](); // weiter geht's im Spiel in Raum [raum]
-	} else        beenden(rot, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
+	} else        beenden(FARBE_ROT, EXIT_SUCCESS, "Das war nicht dein bester Kampf. Um ehrlich zu sein, das war dein schlechtester Kampf - und auch dein letzter Kampf. Dein allerletzter Kampf, den du nicht überlebt hast. Mit dir ist es zu ENDE gegangen.");
 }
 
 void ort214(void) {

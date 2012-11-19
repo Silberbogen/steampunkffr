@@ -639,7 +639,7 @@ extern bool janeinfrage(char *); // Funktion: Ja-Nein-Frage
 
 extern void ncurses_init(void (*)()); // Initialisierung der ncurses-Umgebung
 
-extern char taste(void); // Funktion: Taste
+extern int taste(void); // Funktion: Taste
 
 extern void textausgabe(char *, ...); // Funktion: Textausgabe
 
