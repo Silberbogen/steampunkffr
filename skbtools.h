@@ -47,6 +47,7 @@
  *                neu aufgenommen
  *   - 14.11.2012 Vereinfachung bei Strukturnamen, kleine Korrekturen
  * 	 - 19.11.2012 enum Konstanten korrigiert
+ *   
  *
  * =====================================================================================
  */
@@ -85,12 +86,17 @@ enum farben { FARBE_SCHWARZ = COLOR_BLACK,
               FARBE_ZYAN = COLOR_CYAN,
               FARBE_WEISS = COLOR_WHITE };
 
+// ---------------------
+// Neuer Datentyp string
+// ---------------------
+typedef char * string;
+
 // -----------------------------
 // Neuer Datentyp nstr_s (nstring)
 // -----------------------------
 typedef struct nstr_s {
 	unsigned int len;  // Die Länge der Zeichenkette, inklusive des \0
-	char *str; // Zeiger auf die Zeichenkette
+	string str; // Zeiger auf die Zeichenkette
 } nstr_s;
 
 // ------------------------------------
@@ -124,7 +130,7 @@ void hinweis(enum farben f, char * text, ...);
 // Hinweis: Man muß ausschließlich 'j' oder 'J' tippen zum bestätigen, sonst ist die Antwort NEIN.
 // Rückgabe: Bei 'j' oder 'J': wahr
 //           ansonsten:        falsch
-bool janeinfrage(char * text); // Funktion: Ja-Nein-Frage
+bool janeinfrage(string text); // Funktion: Ja-Nein-Frage
 
 // Funktion: ncurses_initialisierung
 // Implementation: Initialisiert ncurses auf die von mir üblicherweise gewünschte Art.
@@ -138,7 +144,7 @@ int taste(void);
 // Funktion: Textausgabe
 // Implementation: Erlaubt die Ausgabe eines Textes auf dem Bildschirm. Die Ausgabe erfolgt in der von Vordergrundfarbe und Hintergrundfarbe ausgewählten Farbwahl. Die Ausgabe kann nach Art des printf-Mechanismus formatiert werden.
 // Hinweis: Die Ausgabe wird Zeile für Zeile ausgegeben. Ist die Ausgabe länger als die Bilschirmgröße, so wird zu einem Tastendruck augefordert, erst danach wird weiterer Text ausgegeben. Nach Beendigung der Ausgabe befindet sich der Cursor am Beginn der darauffolgenden Zeile.
-void textausgabe(char *, ...);
+void textausgabe(string text, ...);
 
 // Funktion: Texteingabe
 // Implementation: Erlaubt das eingeben einer Zeichenkette text mit einer vorgegebenen Länge.
