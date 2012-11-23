@@ -178,6 +178,11 @@ int wuerfel(unsigned int seitenanzahl);
 // Implementation: Initialisiert den Zufallszahlengenerator anhand der aktuellen Uhrzeit
 void zufall_per_zeit(void);
 
+// --------------------------------------------------------------
+// Entfernt unnütze Tab- oder Newlinezeichen, z.B. für eine Suche
+// --------------------------------------------------------------
+char * str_strip(const char * s);
+
 // -------------------------------
 // Prototypen für den nstr_s-Bereich
 // -------------------------------

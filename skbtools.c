@@ -276,6 +276,20 @@ void zufall_per_zeit(void) {
   srand((unsigned) jetzt);
 }
 
+// --------------------------------------------------------------
+// Entfernt unnütze Tab- oder Newlinezeichen, z.B. für eine Suche
+// --------------------------------------------------------------
+char * str_strip(const char * s) {
+    char * p = malloc( strlen(s) + 1);
+    if ( p ) {
+    	char * p2 = p;
+    	while ( * s != '\0' )
+			if ( * s != '\t' && * s != '\n' && * s != '\v' ) *p2++ = *s++; else ++s;
+    	* p2 = '\0';	
+    }
+    return p;
+}
+
 // --------------------------------
 // Implementation des nstr_s-Bereichs
 // --------------------------------
