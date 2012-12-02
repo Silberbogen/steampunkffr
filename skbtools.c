@@ -57,6 +57,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h> // uint8_t
 #include <time.h> // Zufallsgenerator
 #include <string.h>
 #include <ncurses.h> // Farbige Grafische Ausgabe
@@ -67,6 +68,24 @@
 
 static enum farben vfarbe = FARBE_WEISS; // Vordergrundfarbe
 static enum farben hfarbe = FARBE_SCHWARZ; // Hintergrundfarbe
+
+// -----------
+// Algorithmen
+// -----------
+
+// swap - ein generischer swap-Algorithmus
+void swap(void *va /* vektor object a */,
+		  void *vb /* vektor object b */,
+		  size_t i /* length of the objects */ )
+{
+	uint8_t temp;		// address for buffering one byte
+	uint8_t * a = va;	// bytewise moving pointer to va
+	uint8_t * b = vb;	// bytewise moving pointer to vb
+	// Counting down from the length of the objects to 1
+	// Reaching zero stops the while loop, all addresses
+	// copied one to one.
+	while ( i-- ) temp = a[i], a[i] = b[i], b[i] = temp;
+}
 
 // -----------------------------------
 // Implementation des ncurses-Bereichs

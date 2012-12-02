@@ -73,6 +73,18 @@
 	static typ variable = 0; \
 	if ( !(var) ) var = (initwert);
 
+// Makro zur Nutzung von SWAP
+#define SWAP(a,b) swap(&(a),&(b),sizeof(a))
+
+// -----------
+// Algorithmen
+// -----------
+
+// swap - ein generischer swap-Algorithmus
+void swap(void *va /* vektor object a */,
+		  void *vb /* vektor object b */,
+		  size_t i /* length of the objects */ );
+
 // ----------------------------------------------------------
 // farben - kann ich mir leichter als die Originale merken ;)
 // ----------------------------------------------------------
