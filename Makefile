@@ -3,6 +3,8 @@ LDFLAGS = -lncursesw
 
 OBJ = steampunkffr.o skbtools.o
 
+all: steampunkffr
+
 steampunkffr: $(OBJ)
 	        $(CC) $(CFLAGS) -o steampunkffr $(OBJ) $(LDFLAGS)
 
@@ -12,3 +14,12 @@ steampunkffr: $(OBJ)
 clean:
 	rm -f steampunkffr
 
+install: all
+	@echo Installiere steampunkffr nach /usr/local/bin
+	@mkdir -p /usr/local/bin
+	@cp -f steampunkffr /usr/local/bin
+	@chmod 755 /usr/local/bin/steampunkffr
+
+uninstall:
+	@echo Entferne steampunkffr aus /usr/local/bin
+	@rm -f /usr/local/bin/steampunkffr
